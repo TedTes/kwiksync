@@ -1,5 +1,5 @@
 import express from "express";
-import { AppDataSource } from "./config/database";
+import { AppDataSource } from "./config";
 import { productRoutes, trendRoutes } from "./routes";
 
 const app = express();
