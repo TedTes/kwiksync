@@ -1,17 +1,20 @@
 import express from "express";
 import { AppDataSource } from "./config";
 import { productRoutes, trendRoutes } from "./routes";
-
+import { requestLogger, errorHandler, authenticate } from "./middlewares";
 const app = express();
 
 app.use(express.json());
+app.use(requestLogger);
+app.use(authenticate);
+
+app.use("/products", productRoutes);
+app.use("/trends", trendRoutes);
+app.use(errorHandler);
 
 AppDataSource.initialize()
   .then(() => console.log("Database connected"))
   .catch((error) => console.error("Database connection error:", error));
-
-app.use("/products", productRoutes);
-app.use("/trends", trendRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
