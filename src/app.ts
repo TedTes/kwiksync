@@ -12,15 +12,16 @@ import { startInventorySyncScheduler } from "./schedulers/inventorySync.schedule
 
 const app = express();
 
-app.use(express.json());
-app.use(requestLogger);
-app.use("/auth", authRoutes);
-app.use("/api", webhookRoutes);
-app.use(authenticate);
+app
+  .use(express.json())
+  .use(requestLogger)
+  .use("/auth", authRoutes)
+  .use("/api", webhookRoutes)
+  .use(authenticate)
 
-app.use("/products", productRoutes);
-app.use("/trends", trendRoutes);
-app.use(errorHandler);
+  .use("/products", productRoutes)
+  .use("/trends", trendRoutes)
+  .use(errorHandler);
 
 AppDataSource.initialize()
   .then(() => console.log("Database connected"))

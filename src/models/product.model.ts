@@ -11,7 +11,7 @@ import { Merchant } from "./merchant.model";
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: string;
 
   @ManyToOne(() => Merchant, (merchant) => merchant.id, { onDelete: "CASCADE" })
   merchant!: Merchant;
