@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { login, logout, registerUser } from "../services/auth.service";
+import {
+  login,
+  logout,
+  registerUser,
+  refreshTokens,
+} from "../services/auth.service";
 
 export const registerNewUser = async (
   req: Request,
@@ -34,13 +39,23 @@ export const logoutUser = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      res.status(400).json({ error: "Token is required for logout" });
-      return;
-    }
-    const data = await logout(token);
+    const userId = (req as any).user.id;
+    const data = await logout(userId);
     res.status(200).json(data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const refreshTokensHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { refreshToken } = req.body;
+    const tokens = await refreshTokens(refreshToken);
+    res.status(200).json(tokens);
   } catch (err) {
     next(err);
   }

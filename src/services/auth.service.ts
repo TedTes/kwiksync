@@ -36,19 +36,62 @@ export const login = async (email: string, password: string) => {
     throw new Error("Invalid email or password");
   }
 
-  const secret = process.env.JWT_SECRET || "test_jwt_secret";
-  const token = jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
-    secret,
-    {
-      expiresIn: "1h",
-    }
-  );
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
 
-  return { token };
+  const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+  user.refreshToken = hashedRefreshToken;
+  await userRepository.save(user);
+
+  return { accessToken, refreshToken };
 };
 
-export const logout = async (token: string) => {
-  // TODO: token blacklisting or session expiration logic
+export const refreshTokens = async (refreshToken: string) => {
+  const secret = process.env.JWT_REFRESH_SECRET || "refresh_secret";
+
+  try {
+    const decoded: any = jwt.verify(refreshToken, secret);
+
+    const user = await userRepository.findOneBy({ id: decoded.id });
+    if (!user) throw new Error("User not found");
+
+    const isValidRefreshToken = await bcrypt.compare(
+      refreshToken,
+      user.refreshToken || ""
+    );
+    if (!isValidRefreshToken) throw new Error("Invalid refresh token");
+
+    const accessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+
+    const hashedRefreshToken = await bcrypt.hash(newRefreshToken, 10);
+    user.refreshToken = hashedRefreshToken;
+    await userRepository.save(user);
+
+    return { accessToken, refreshToken: newRefreshToken };
+  } catch (err) {
+    throw new Error("Invalid or expired refresh token");
+  }
+};
+
+const generateAccessToken = (user: User) => {
+  const secret = process.env.JWT_SECRET || "access_secret";
+  return jwt.sign({ id: user.id, email: user.email, role: user.role }, secret, {
+    expiresIn: "15m",
+  });
+};
+
+const generateRefreshToken = (user: User) => {
+  const secret = process.env.JWT_REFRESH_SECRET || "refresh_secret";
+  return jwt.sign({ id: user.id }, secret, { expiresIn: "7d" });
+};
+
+export const logout = async (userId: number) => {
+  const user = await userRepository.findOneBy({ id: userId });
+  if (!user) throw new Error("User not found");
+
+  user.refreshToken = null;
+  await userRepository.save(user);
+
   return { message: "Logged out successfully" };
 };

@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { body } from "express-validator";
 import { validateRequest } from "../middlewares";
-import { loginUser, logoutUser, registerNewUser } from "../controllers";
+import {
+  loginUser,
+  logoutUser,
+  registerNewUser,
+  refreshTokensHandler,
+} from "../controllers";
 
 export const authRoutes = Router();
 
@@ -29,5 +34,5 @@ authRoutes.post(
   ],
   loginUser
 );
-
+authRoutes.post("/refresh", refreshTokensHandler);
 authRoutes.post("/logout", logoutUser);
