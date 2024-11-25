@@ -11,6 +11,7 @@ import { requestLogger, errorHandler, authenticate } from "./middlewares";
 import {
   startInventorySyncScheduler,
   startLowStockCheckScheduler,
+  startTrendTrackingScheduler,
 } from "./schedulers";
 
 const app = express();
@@ -32,5 +33,7 @@ AppDataSource.initialize()
 
 startInventorySyncScheduler();
 startLowStockCheckScheduler();
+startTrendTrackingScheduler();
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));

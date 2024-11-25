@@ -13,6 +13,9 @@ export class Product {
   @PrimaryGeneratedColumn()
   id!: string;
 
+  @Column()
+  merchantId!: string;
+
   @ManyToOne(() => Merchant, (merchant) => merchant.id, { onDelete: "CASCADE" })
   merchant!: Merchant;
 

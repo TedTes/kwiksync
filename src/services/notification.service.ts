@@ -35,3 +35,25 @@ export const sendLowStockAlert = async (product: Product) => {
     );
   }
 };
+
+export const sendTrendingNotification = async (
+  merchantId: number,
+  productName: string
+) => {
+  try {
+    // TODO: merchant email?????
+    const merchantEmail = `merchant${merchantId}@example.com`;
+
+    const emailOptions = {
+      from: '"KwikSync Alerts" <alerts@kwiksync.com>',
+      to: merchantEmail,
+      subject: `Your product "${productName}" is trending on TikTok!`,
+      text: `Congratulations! Your product "${productName}" has reached trending status. Check your dashboard for more details.`,
+    };
+
+    await transporter.sendMail(emailOptions);
+    console.log(`Trending notification sent to merchant ID: ${merchantId}`);
+  } catch (error) {
+    console.error("Error sending trending notification:", error);
+  }
+};

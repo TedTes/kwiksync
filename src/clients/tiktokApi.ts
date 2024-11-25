@@ -21,3 +21,22 @@ export const fetchTikTokInventory = async () => {
     throw error;
   }
 };
+
+export const fetchProductEngagement = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/engagement`, {
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data.products;
+    }
+
+    throw new Error(`TikTok API returned status: ${response.status}`);
+  } catch (error) {
+    console.error("Error fetching TikTok engagement data:", error);
+    throw error;
+  }
+};
