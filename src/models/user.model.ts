@@ -17,7 +17,7 @@ export class User {
   @Column()
   password!: string;
 
-  @Column({ default: "user" })
+  @Column({ default: "merchant" })
   role!: string;
 
   @CreateDateColumn()

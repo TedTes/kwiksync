@@ -10,7 +10,7 @@ import {
   restockProduct,
 } from "../controllers";
 import { validateRequest } from "../middlewares";
-
+import { authorizeRoles } from "../middlewares";
 export const productRoutes = Router();
 
 productRoutes
@@ -31,7 +31,7 @@ productRoutes
     addProduct
   )
   .put("/:id", updateProduct)
-  .delete("/:id", deleteProduct)
+  .delete("/:id", authorizeRoles(["admin"]), deleteProduct)
 
   .get("/low-stock", getLowStockProducts)
   .patch(

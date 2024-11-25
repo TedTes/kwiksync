@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
+import { User } from "../models";
 export const authenticate = (
   req: Request,
   res: Response,
@@ -15,8 +15,12 @@ export const authenticate = (
 
   try {
     const secret = process.env.JWT_SECRET || "temp_jwt_secret";
-    const decoded = jwt.verify(token, secret);
-    (req as any).user = decoded;
+    const decoded = jwt.verify(token, secret) as User;
+    (req as any).user = {
+      id: decoded.id,
+      role: decoded.role,
+      email: decoded.email,
+    };
     next();
   } catch (error) {
     next(error);

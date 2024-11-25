@@ -8,7 +8,7 @@ const userRepository = AppDataSource.getRepository(User);
 export const registerUser = async (
   email: string,
   password: string,
-  role = "user"
+  role = "merchant"
 ) => {
   const existingUser = await userRepository.findOneBy({ email });
   if (existingUser) {
