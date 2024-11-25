@@ -4,6 +4,7 @@ import {
   restockProductById,
   createProduct,
 } from "../services/product.service";
+import CryptoJS from "crypto-js";
 
 export const tiktokWebhookHandler = async (
   req: Request,
@@ -46,7 +47,25 @@ const verifyWebhookSignature = (
   signature: string | undefined | string[],
   payload: any
 ): boolean => {
+  if (!signature || typeof signature !== "string") {
+    console.error("Invalid or missing signature");
+    return false;
+  }
+
   const secret = process.env.TIKTOK_WEBHOOK_SECRET || "webhook_secret";
-  const computedSignature = someHashingFunction(payload, secret); //?????
-  return signature === computedSignature;
+
+  const computedSignature = CryptoJS.HmacSHA256(
+    JSON.stringify(payload),
+    secret
+  ).toString(CryptoJS.enc.Hex);
+  return timingSafeEqual(signature, computedSignature);
+};
+
+const timingSafeEqual = (a: string, b: string): boolean => {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
 };
