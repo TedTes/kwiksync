@@ -3,18 +3,25 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  UpdateDateColumn,
   ManyToOne,
 } from "typeorm";
 
 import { Product } from "./product.model";
 
 @Entity()
-export class Trend {
+export class TrendingProduct {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: string;
+
+  @Column()
+  productId!: string;
 
   @ManyToOne(() => Product, (product) => product.id, { onDelete: "CASCADE" })
   product!: Product;
+
+  @Column()
+  merchantId!: string;
 
   @Column({ default: 0 })
   likes!: number;
@@ -28,6 +35,12 @@ export class Trend {
   @Column({ nullable: true })
   trendScore!: number;
 
+  @Column()
+  isTrending!: boolean;
+
   @CreateDateColumn()
   createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
