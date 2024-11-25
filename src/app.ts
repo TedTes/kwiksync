@@ -8,7 +8,10 @@ import {
 } from "./routes";
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
-import { startInventorySyncScheduler } from "./schedulers/inventorySync.scheduler";
+import {
+  startInventorySyncScheduler,
+  startLowStockCheckScheduler,
+} from "./schedulers";
 
 const app = express();
 
@@ -28,5 +31,6 @@ AppDataSource.initialize()
   .catch((error) => console.error("Database connection error:", error));
 
 startInventorySyncScheduler();
+startLowStockCheckScheduler();
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
