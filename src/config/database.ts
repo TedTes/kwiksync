@@ -6,5 +6,5 @@ export const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL,
   synchronize: true,
   logging: true,
-  entities: [Merchant, Product, Supplier, SupplierProduct, Trend],
+  entities: [Merchant, Product, Supplier, SupplierProduct, Trend, Notification],
 });
