@@ -5,6 +5,7 @@ import {
   trendRoutes,
   authRoutes,
   webhookRoutes,
+  analyticsRoutes,
 } from "./routes";
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
@@ -25,6 +26,7 @@ app
 
   .use("/products", productRoutes)
   .use("/trends", trendRoutes)
+  .use("/analytics", analyticsRoutes)
   .use(errorHandler);
 
 AppDataSource.initialize()

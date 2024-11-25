@@ -5,3 +5,4 @@ export * from "./lowStock.service";
 export * from "./notification.service";
 export * from "./inAppNotification.service";
 export * from "./trendTracking.service";
+export * from "./inventoryHistory.service";

@@ -4,3 +4,4 @@ export * from "./supplier.model";
 export * from "./supplierProduct.model";
 export * from "./trendingProduct.model";
 export * from "./user.model";
+export * from "./inventoryHistory.model";
