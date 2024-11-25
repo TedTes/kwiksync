@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { fetchInventoryHistory, logInventoryChange } from "../services";
+import {
+  fetchInventoryHistory,
+  logInventoryChange,
+  fetchSalesReport,
+} from "../services";
 
 export const getInventoryHistory = async (
   req: Request,
@@ -26,4 +30,27 @@ export const logInventoryChangeController = async (
 
   await logInventoryChange(productId, quantity);
   res.status(200).json();
+};
+
+export const getSalesReport = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+      next({ status: 400, message: "startDate and endDate are required" });
+    }
+
+    const report = await fetchSalesReport(
+      startDate as string,
+      endDate as string
+    );
+
+    res.status(200).json({ report });
+  } catch (error) {
+    next(error);
+  }
 };
