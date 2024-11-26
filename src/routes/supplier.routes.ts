@@ -1,6 +1,17 @@
 import { Router } from "express";
-import { assignSupplier } from "../controllers/supplier.controller";
+import {
+  assignSupplier,
+  addSupplier,
+  updateSupplier,
+  removeSupplier,
+  getMerchantSuppliers,
+} from "../controllers/supplier.controller";
 
 export const supplierRoutes = Router();
 
-supplierRoutes.put("/link/:productId", assignSupplier);
+supplierRoutes
+  .put("/link/:productId", assignSupplier)
+  .post("/", addSupplier)
+  .put("/:id", updateSupplier)
+  .delete("/:id", removeSupplier)
+  .get("/", getMerchantSuppliers);

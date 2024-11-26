@@ -26,3 +26,48 @@ export const linkProductToSupplier = async (
   product.supplier = supplier;
   return productRepository.save(product);
 };
+
+export const createSupplier = async (
+  name: string,
+  email: string,
+  phone?: string
+) => {
+  const supplier = supplierRepository.create({ name, email, phone });
+  return supplierRepository.save(supplier);
+};
+
+export const editSupplier = async (
+  supplierId: string,
+  updates: Partial<Supplier>
+) => {
+  const supplier = await supplierRepository.findOneBy({ id: supplierId });
+  if (!supplier) {
+    throw new Error("Supplier not found");
+  }
+
+  Object.assign(supplier, updates);
+  return supplierRepository.save(supplier);
+};
+
+export const deleteSupplier = async (supplierId: string) => {
+  const supplier = await supplierRepository.findOneBy({ id: supplierId });
+  if (!supplier) {
+    throw new Error("Supplier not found");
+  }
+
+  await supplierRepository.remove(supplier);
+};
+
+export const fetchMerchantSuppliers = async (merchantId: string) => {
+  return supplierRepository
+    .createQueryBuilder("supplier")
+    .innerJoinAndSelect(
+      "supplier.products",
+      "product",
+      "product.merchantId = :merchantId",
+      {
+        merchantId,
+      }
+    )
+    .getMany();
+};

@@ -7,3 +7,4 @@ export * from "./inAppNotification.service";
 export * from "./trendTracking.service";
 export * from "./inventoryHistory.service";
 export * from "./salesReport.service";
+export * from "./supplier.service";
