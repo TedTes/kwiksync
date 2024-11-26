@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { body } from "express-validator";
 import { validateRequest } from "../middlewares";
+import passport from "passport";
 import {
   loginUser,
   logoutUser,
@@ -36,3 +37,17 @@ authRoutes.post(
 );
 authRoutes.post("/refresh", refreshTokensHandler);
 authRoutes.post("/logout", logoutUser);
+
+// Google OAuth2
+authRoutes.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+authRoutes.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/dashboard");
+  }
+);
