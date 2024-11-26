@@ -29,7 +29,10 @@ export class Product {
   quantity!: number;
 
   @Column({ default: 10 })
-  threshold!: number;
+  restockThreshold!: number;
+
+  @Column({ nullable: true })
+  restockAmount!: number;
 
   @CreateDateColumn()
   createdAt!: Date;

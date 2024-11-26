@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   fetchAllProducts,
-  fetchProductById,
   createProduct,
-  modifyProduct,
   removeProduct,
   fetchLowStockProducts,
-  restockProductById,
+  fetchMerchantProducts,
+  updateProduct,
+  fetchProductById,
+  setRestockingRules,
 } from "../services";
 
 export const getAllProducts = async (req: Request, res: Response) => {
@@ -24,25 +25,83 @@ export const addProduct = async (req: Request, res: Response) => {
   res.status(201).json(newProduct);
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
-  const updatedProduct = await modifyProduct(req.params.id, req.body);
-  res.json(updatedProduct);
-};
-
 export const deleteProduct = async (req: Request, res: Response) => {
   await removeProduct(req.params.id);
   res.status(204).send();
 };
 
-export const getLowStockProducts = async (req: Request, res: Response) => {
-  const lowStockProducts = await fetchLowStockProducts();
-  res.json(lowStockProducts);
+export const getMerchantProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const merchantId = (req as any).user.id;
+    const products = await fetchMerchantProducts(merchantId);
+
+    res.status(200).json({ products });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const restockProduct = async (req: Request, res: Response) => {
-  const restockedProduct = await restockProductById(
-    req.params.id,
-    req.body.quantity
-  );
-  res.json(restockedProduct);
+export const editProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const productId = req.params.id;
+    const merchantId = (req as any).user.id;
+    const updates = req.body;
+
+    const updatedProduct = await updateProduct(productId, merchantId, updates);
+
+    res.status(200).json({
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const updateRestockingRules = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const productId = req.params.id;
+    const merchantId = (req as any).user.id;
+    const { restockThreshold, restockAmount } = req.body;
+
+    const updatedProduct = await setRestockingRules(
+      productId,
+      merchantId,
+      restockThreshold,
+      restockAmount
+    );
+
+    res.status(200).json({
+      message: "Restocking rules updated successfully",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getLowStockProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const merchantId = (req as any).user.id;
+    const products = await fetchLowStockProducts(merchantId);
+
+    res.status(200).json({ lowStockProducts: products });
+  } catch (error) {
+    next(error);
+  }
 };

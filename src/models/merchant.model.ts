@@ -9,7 +9,7 @@ import {
 @Entity()
 export class Merchant {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: string;
 
   @Column()
   name!: string;

@@ -13,20 +13,57 @@ export const createProduct = async (product: Partial<Product>) => {
   return await productRepository.save(newProduct);
 };
 
-export const modifyProduct = async (id: string, updates: Partial<Product>) =>
-  productRepository.update(id, updates);
-
 export const removeProduct = async (id: string) => productRepository.delete(id);
 
-export const fetchLowStockProducts = async () =>
-  productRepository
-    .createQueryBuilder("product")
-    .where("product.quantity < product.threshold")
-    .getMany();
+export const setRestockingRules = async (
+  productId: string,
+  merchantId: string,
+  restockThreshold: number,
+  restockAmount: number
+) => {
+  const product = await productRepository.findOne({
+    where: { id: productId, merchant: { id: merchantId } },
+  });
 
-export const restockProductById = async (id: string, quantity: number) => {
-  const product = await fetchProductById(id);
-  if (!product) throw new Error(`Product with ID ${id} not found`);
-  product.quantity = quantity;
+  if (!product) {
+    throw new Error("Product not found or access denied");
+  }
+
+  product.restockThreshold = restockThreshold;
+  product.restockAmount = restockAmount;
+
   return productRepository.save(product);
+};
+
+export const fetchMerchantProducts = async (merchantId: string) => {
+  return productRepository.find({
+    where: { merchant: { id: merchantId } },
+    order: { createdAt: "DESC" },
+  });
+};
+
+export const updateProduct = async (
+  productId: string,
+  merchantId: string,
+  updates: Partial<Product>
+) => {
+  const product = await productRepository.findOne({
+    where: { id: productId, merchant: { id: merchantId } },
+  });
+
+  if (!product) {
+    throw new Error("Product not found or access denied");
+  }
+
+  Object.assign(product, updates);
+  return productRepository.save(product);
+};
+
+export const fetchLowStockProducts = async (merchantId: string) => {
+  return productRepository
+    .createQueryBuilder("product")
+    .where("product.merchantId = :merchantId", { merchantId })
+    .andWhere("product.quantity < product.restockThreshold")
+    .orderBy("product.quantity", "ASC")
+    .getMany();
 };

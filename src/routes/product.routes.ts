@@ -4,10 +4,11 @@ import {
   getAllProducts,
   getProductById,
   addProduct,
-  updateProduct,
+  editProduct,
   deleteProduct,
   getLowStockProducts,
-  restockProduct,
+  getMerchantProducts,
+  updateRestockingRules,
 } from "../controllers";
 import { validateRequest } from "../middlewares";
 import { authorizeRoles } from "../middlewares";
@@ -16,6 +17,7 @@ export const productRoutes = Router();
 productRoutes
   .get("/", getAllProducts)
   .get("/:id", getProductById)
+  .get("/", getMerchantProducts)
   .post(
     "/",
     [
@@ -30,7 +32,7 @@ productRoutes
     ],
     addProduct
   )
-  .put("/:id", updateProduct)
+  .put("/:id", editProduct)
   .delete("/:id", authorizeRoles(["admin"]), deleteProduct)
 
   .get("/low-stock", getLowStockProducts)
@@ -42,5 +44,5 @@ productRoutes
         .withMessage("Quantity must be a positive integer"),
       validateRequest,
     ],
-    restockProduct
+    updateRestockingRules
   );
