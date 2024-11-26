@@ -25,7 +25,7 @@ export const sendLowStockAlert = async (product: Product) => {
     await transporter.sendMail(emailOptions);
 
     // Save In-App Notification
-    await saveNotification(product.merchant.id, message);
+    await saveNotification(product.merchantId, message);
 
     console.log(`Low-stock email sent for product: ${product.name}`);
   } catch (error) {
@@ -55,5 +55,29 @@ export const sendTrendingNotification = async (
     console.log(`Trending notification sent to merchant ID: ${merchantId}`);
   } catch (error) {
     console.error("Error sending trending notification:", error);
+  }
+};
+
+export const notifySupplier = async (product: Product) => {
+  if (!product.supplier || !product.supplier.email) {
+    console.warn(`No supplier linked for product ${product.id}`);
+    return;
+  }
+
+  const emailOptions = {
+    from: '"KwikSync Alerts" <alerts@kwiksync.com>',
+    to: product.supplier.email,
+    subject: `Restocking Alert: ${product.name}`,
+    text: `The stock for your product "${product.name}" is running low. Current quantity: ${product.quantity}. Please restock.`,
+  };
+
+  try {
+    await transporter.sendMail(emailOptions);
+    console.log(`Notification sent to supplier for product: ${product.name}`);
+  } catch (error) {
+    console.error(
+      `Failed to send supplier notification for product: ${product.name}`,
+      error
+    );
   }
 };

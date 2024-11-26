@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from "typeorm";
-import { Merchant } from "./merchant.model";
+import { Merchant, Supplier } from "./";
 
 @Entity()
 export class Product {
@@ -33,6 +33,15 @@ export class Product {
 
   @Column({ nullable: true })
   restockAmount!: number;
+
+  @ManyToOne(() => Supplier, (supplier) => supplier.products, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  supplier!: Supplier;
+
+  @Column({ nullable: true })
+  supplierId!: number;
 
   @CreateDateColumn()
   createdAt!: Date;

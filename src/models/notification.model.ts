@@ -12,7 +12,7 @@ export class Notification {
   id!: string;
 
   @Column()
-  merchantId!: number;
+  merchantId!: string;
 
   @Column()
   message!: string;
