@@ -54,6 +54,9 @@ export const refreshTokensHandler = async (
 ) => {
   try {
     const { refreshToken } = req.body;
+    if (!refreshToken) {
+      next({ status: 400, message: "Refresh token is required" });
+    }
     const tokens = await refreshTokens(refreshToken);
     res.status(200).json(tokens);
   } catch (err) {

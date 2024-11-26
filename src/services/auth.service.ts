@@ -86,7 +86,7 @@ const generateRefreshToken = (user: User) => {
   return jwt.sign({ id: user.id }, secret, { expiresIn: "7d" });
 };
 
-export const logout = async (userId: number) => {
+export const logout = async (userId: string) => {
   const user = await userRepository.findOneBy({ id: userId });
   if (!user) throw new Error("User not found");
 

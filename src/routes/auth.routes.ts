@@ -35,7 +35,7 @@ authRoutes.post(
   ],
   loginUser
 );
-authRoutes.post("/refresh", refreshTokensHandler);
+authRoutes.post("/refresh-token", refreshTokensHandler);
 authRoutes.post("/logout", logoutUser);
 
 // Google OAuth2
