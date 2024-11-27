@@ -1,4 +1,4 @@
-import { fetchTikTokInventory } from "../clients/tiktokApi";
+import { fetchTikTokInventory } from "../integration/tiktokApi";
 import { AppDataSource } from "../config/database";
 import { Product } from "../models/product.model";
 import { fetchProductById, restockProductById, createProduct } from "./";

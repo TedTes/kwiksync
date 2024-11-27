@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import { AppDataSource } from "./config";
 import {
   productRoutes,
@@ -18,6 +19,7 @@ import {
 const app = express();
 
 app
+  .use(express.static(path.join(__dirname, "/web")))
   .use(express.json())
   .use(requestLogger)
   .use("/auth", authRoutes)
