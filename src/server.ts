@@ -19,8 +19,14 @@ import {
 const app = express();
 
 app
-  .use(express.static(path.join(__dirname, "/web")))
+  .use(express.static(path.join(__dirname, "../dist/public")))
   .use(express.json())
+  .get("/api/health", (req, res) => {
+    res.json({ status: "OK" });
+  })
+  .get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../dist/public/index.html"));
+  })
   .use(requestLogger)
   .use("/auth", authRoutes)
   .use("/api", webhookRoutes)
