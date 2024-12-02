@@ -35,6 +35,12 @@ export const setRestockingRules = async (
   return productRepository.save(product);
 };
 
+export const restockProductById = async (id: string, quantity: number) => {
+  const product = await fetchProductById(id);
+  if (!product) throw new Error(`Product with ID ${id} not found`);
+  product.quantity = quantity;
+};
+
 export const fetchMerchantProducts = async (merchantId: string) => {
   return productRepository.find({
     where: { merchant: { id: merchantId } },

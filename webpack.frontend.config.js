@@ -29,8 +29,11 @@ module.exports = {
     }),
   ],
   devServer: {
-    static: "./dist/public",
-    historyApiFallback: true,
-    port: 3000,
+    static: path.resolve(__dirname, "./dist/public"), // Serve from dist
+    historyApiFallback: true, // Support client-side routing
+    port: 3001,
+    devMiddleware: {
+      writeToDisk: true, // Write files to disk
+    },
   },
 };

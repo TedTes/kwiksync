@@ -37,7 +37,7 @@ export const sendLowStockAlert = async (product: Product) => {
 };
 
 export const sendTrendingNotification = async (
-  merchantId: number,
+  merchantId: string,
   productName: string
 ) => {
   try {
