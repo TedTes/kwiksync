@@ -31,10 +31,10 @@ const Trends: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
+      {/* <Typography variant="h4" gutterBottom>
         Real-Time Trend Tracking
-      </Typography>
-      <Table>
+      </Typography> */}
+      <Table style={{ border: "2px black solid", maxWidth: "400px" }}>
         <TableHead>
           <TableRow>
             <TableCell>Product ID</TableCell>

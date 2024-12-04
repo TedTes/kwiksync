@@ -1,9 +1,12 @@
 export interface Product {
-  id: number;
+  id: string;
   name: string;
+  category: string;
   description: string;
   quantity: number;
   price?: number;
+  restockThreshold?: number;
+  supplier?: string;
 }
 
 export interface Trend {
