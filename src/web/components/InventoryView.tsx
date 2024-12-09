@@ -8,7 +8,7 @@ import {
   Package,
 } from "lucide-react";
 
-const InventoryView = () => {
+export const InventoryView = () => {
   const inventoryItems = [
     {
       id: 1,
@@ -175,5 +175,3 @@ const InventoryView = () => {
     </div>
   );
 };
-
-export default InventoryView;
