@@ -1,41 +1,70 @@
-import React from "react";
-import { Grid, Typography, Container, Box } from "@mui/material";
-import InventoryTable from "./web/components/InventoryTable";
-import TrendingCards from "./web/components/TrendingCards";
-import TrendingChart from "./web/components/TrendingChart";
+import React, { useState } from "react";
+import { Layers, Link2, Package, TrendingUp, RefreshCw } from "lucide-react";
+import {
+  OverviewView,
+  PlatformsView,
+  InventoryView,
+  ProductAnalytics,
+} from "./web/components";
 
-const App: React.FC = () => {
+const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState("overview");
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return <OverviewView />;
+      case "platforms":
+        return <PlatformsView />;
+      case "inventory":
+        return <InventoryView />;
+      case "analytics":
+        return <ProductAnalytics />;
+      default:
+        return <OverviewView />;
+    }
+  };
+
   return (
-    <Container style={{ background: "black", color: "white" }}>
-      <Typography variant="h4" gutterBottom>
-        Inventory Dashboard & Trends
-      </Typography>
-      {/* Trending Cards and Charts */}
-      <Grid container spacing={4} mb={4}>
-        {/* Trending Cards */}
-        <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom>
-            Trending Products
-          </Typography>
-          <TrendingCards />
-        </Grid>
-        {/* Trending Chart */}
-        <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom>
-            Engagement Trends
-          </Typography>
-          <TrendingChart />
-        </Grid>
-      </Grid>
-      {/* Inventory Table */}
-      <Box>
-        <Typography variant="h6" gutterBottom>
-          Inventory Table
-        </Typography>
-        <InventoryTable />
-      </Box>
-    </Container>
+    <div className="w-full bg-gray-50">
+      <div className="container mx-auto max-w-6xl px-4">
+        <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
+          <div className="flex border-b pb-2 mb-4 space-x-4 items-center justify-between">
+            <div className="flex space-x-4">
+              {[
+                { key: "overview", icon: Layers, label: "Overview" },
+                { key: "platforms", icon: Link2, label: "Platforms" },
+                { key: "inventory", icon: Package, label: "Inventory" },
+                { key: "analytics", icon: TrendingUp, label: "Analytics" },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`
+                    flex items-center space-x-2 p-3 rounded-lg transition-colors
+                    ${
+                      activeTab === tab.key
+                        ? "bg-blue-50 text-blue-600"
+                        : "text-gray-500 hover:bg-gray-100"
+                    }
+                  `}
+                >
+                  <tab.icon size={20} />
+                  <span className="font-medium">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+            <button className="flex items-center space-x-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition-colors">
+              <RefreshCw size={16} />
+              <span>Sync Now</span>
+            </button>
+          </div>
+
+          {renderTabContent()}
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default App;
+export default Dashboard;

@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const OverviewView = () => {
+export const OverviewView = () => {
   const weeklyData = [
     { day: "Mon", revenue: 2400 },
     { day: "Tue", revenue: 1398 },
@@ -172,5 +172,3 @@ const OverviewView = () => {
     </div>
   );
 };
-
-export default OverviewView;

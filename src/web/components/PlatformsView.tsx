@@ -27,7 +27,7 @@ interface Platform {
   revenue: number;
   lowStockItems: number;
 }
-const PlatformsView = () => {
+export const PlatformsView = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
     null
@@ -255,5 +255,3 @@ const PlatformsView = () => {
     </div>
   );
 };
-
-export default PlatformsView;
