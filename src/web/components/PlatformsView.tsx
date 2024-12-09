@@ -11,22 +11,7 @@ import {
   X,
 } from "lucide-react";
 import "../../index.css";
-interface Platform {
-  name: string;
-  status: string;
-  products: number;
-  lastSync: string;
-  syncIssues: number;
-  syncHealth: number;
-  productCategories: string[];
-  performanceMetrics: {
-    conversionRate: number;
-    averageOrderValue: number;
-    totalSales: number;
-  };
-  revenue: number;
-  lowStockItems: number;
-}
+
 export const PlatformsView = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(

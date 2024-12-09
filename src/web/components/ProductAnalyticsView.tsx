@@ -9,61 +9,12 @@ import {
 } from "recharts";
 import { Search, Eye, Heart, Share2, ShoppingCart, Medal } from "lucide-react";
 
-interface Performance {
-  date: string;
-  views: number;
-  sales: number;
-  revenue: number;
-}
-
-interface Metrics {
-  views: number;
-  likes: number;
-  shares: number;
-  revenue: number;
-  units_sold: number;
-  conversion_rate: number;
-}
-
-interface Trending {
-  views_change: number;
-  likes_change: number;
-  sales_change: number;
-}
-
-interface Rank {
-  engagement: number;
-  views: number;
-  sales: number;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  sku: string;
-  platform: string;
-  rank: Rank;
-  metrics: Metrics;
-  trending: Trending;
-  performance: Performance[];
-}
-
-interface ProductCardProps {
-  product: Product;
-}
-
 const rankColors: Record<number, string> = {
   1: "text-yellow-500",
   2: "text-gray-400",
   3: "text-amber-600",
 };
 
-interface Rank {
-  [key: string]: number;
-  engagement: number;
-  views: number;
-  sales: number;
-}
 type SortByType = "engagement" | "views" | "sales";
 export const ProductAnalytics = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("week");

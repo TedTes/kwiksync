@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Product } from "../types";
 import { Alert, Container } from "@mui/material";
 
 const LowStockAlerts: React.FC = () => {
