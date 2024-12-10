@@ -33,9 +33,9 @@ const Dashboard = () => {
             <div className="flex space-x-4">
               {[
                 { key: "overview", icon: Layers, label: "Overview" },
-                { key: "platforms", icon: Link2, label: "Platforms" },
                 { key: "inventory", icon: Package, label: "Inventory" },
                 { key: "analytics", icon: TrendingUp, label: "Analytics" },
+                { key: "platforms", icon: Link2, label: "Platforms" },
               ].map((tab) => (
                 <button
                   key={tab.key}
