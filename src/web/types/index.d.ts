@@ -63,4 +63,30 @@ declare global {
     totalQuantity: number;
     totalRevenue: number;
   }
+  interface InventoryItem {
+    id: string;
+    product: string;
+    sku: string;
+    platform: "TikTok" | "Instagram" | "Shopify";
+    stock: number;
+    stockChange: number;
+    status: StatusType;
+    lastUpdated: string;
+    price: number;
+    platforms: {
+      tiktok: PlatformData;
+      instagram: PlatformData;
+      shopify: PlatformData;
+    };
+  }
+  interface PlatformData {
+    stock: number;
+    sales: number;
+    status: "active" | "inactive";
+  }
+  interface StatusBadgeProps {
+    status: StatusType;
+  }
+  type StatusType = "low" | "critical" | "healthy";
+  type PlatformType = "all" | "tiktok" | "instagram" | "shopify";
 }
