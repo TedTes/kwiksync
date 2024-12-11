@@ -26,7 +26,16 @@ declare global {
     trending: Trending;
     performance: Performance2[];
   }
-
+  interface AutoOrderSettings {
+    active: boolean;
+    lowStockThreshold: number;
+    reorderPoint: number;
+    supplierPreference: {
+      primary: string;
+      secondary: string;
+      selectionCriteria: "price" | "leadTime" | "reliability" | "auto";
+    };
+  }
   interface Rank {
     [key: string]: number;
     engagement: number;

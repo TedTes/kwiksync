@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Package,
   Link2,
@@ -10,6 +10,7 @@ import {
   ArrowUp,
   Clock,
   Box,
+  Building2,
 } from "lucide-react";
 
 const initialInventory: InventoryItem[] = [
@@ -99,6 +100,27 @@ export const InventoryView = () => {
   const [filteredInventory, setFilteredInventory] =
     useState<InventoryItem[]>(inventory);
 
+  //  useRef and useEffect for click outside handling
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showAutomationSettings) {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target as Node)
+        ) {
+          setShowAutomationSettings(false);
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [showAutomationSettings]);
+
   const PlatformStock: React.FC<PlatformStockProps> = ({ stocks }) => {
     const [showAll, setShowAll] = useState(false);
     const displayLimit = 2;
@@ -145,20 +167,26 @@ export const InventoryView = () => {
     }
   }, [selectedPlatform, inventory]);
 
-  // Automation settings popover
-  const AutomationSettingsPopover = () => (
-    <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-lg shadow-lg p-4 z-50 border">
-      <div className="space-y-4">
-        <div className="flex justify-between items-center border-b pb-2">
-          <h3 className="font-medium">Auto-Order Settings</h3>
+  const AutoOrderSettingsPanel = () => {
+    const [settings, setSettings] = useState<AutoOrderSettings>({
+      active: true,
+      lowStockThreshold: 15,
+      reorderPoint: 10,
+      supplierPreference: {
+        primary: "SUP-1",
+        secondary: "SUP-2",
+        selectionCriteria: "auto",
+      },
+    });
+
+    return (
+      <div className="absolute left-0 top-full mt-2 w-[400px] p-4 bg-white rounded-lg shadow-lg z-50 border space-y-4">
+        {/* Existing settings */}
+        <div className="flex items-center justify-between border-b pb-3">
+          <span className="font-medium">Auto-Order Settings</span>
           <div className="flex items-center space-x-2">
-            <span
-              className={
-                isAutomationEnabled ? "text-green-600" : "text-gray-400"
-              }
-            >
-              {isAutomationEnabled ? "Active" : "Inactive"}
-            </span>
+            <span>Active</span>
+
             <button
               onClick={() => setIsAutomationEnabled(!isAutomationEnabled)}
               className={`
@@ -178,30 +206,137 @@ export const InventoryView = () => {
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Low Stock Threshold
-          </label>
-          <input
-            type="number"
-            className="w-full border rounded px-2 py-1 text-sm"
-            defaultValue={15}
-          />
+        {/* Thresholds */}
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">
+              Low Stock Threshold
+            </label>
+            <input
+              type="number"
+              value={settings.lowStockThreshold}
+              onChange={(e) =>
+                setSettings((s) => ({
+                  ...s,
+                  lowStockThreshold: parseInt(e.target.value),
+                }))
+              }
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">
+              Reorder Point
+            </label>
+            <input
+              type="number"
+              value={settings.reorderPoint}
+              onChange={(e) =>
+                setSettings((s) => ({
+                  ...s,
+                  reorderPoint: parseInt(e.target.value),
+                }))
+              }
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Reorder Point
-          </label>
-          <input
-            type="number"
-            className="w-full border rounded px-2 py-1 text-sm"
-            defaultValue={10}
-          />
+        {/* Supplier Preferences - New Section */}
+        <div className="space-y-3 pt-2 border-t">
+          <h3 className="font-medium flex items-center">
+            <Building2 size={16} className="mr-2" />
+            Supplier Preferences
+          </h3>
+
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">
+              Primary Supplier
+            </label>
+            <select
+              className="w-full border rounded px-3 py-2"
+              value={settings.supplierPreference.primary}
+              onChange={(e) =>
+                setSettings((s) => ({
+                  ...s,
+                  supplierPreference: {
+                    ...s.supplierPreference,
+                    primary: e.target.value,
+                  },
+                }))
+              }
+            >
+              <option value="SUP-1">Fashion Wholesale Co</option>
+              <option value="SUP-2">Textile Direct</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">
+              Secondary Supplier (Backup)
+            </label>
+            <select
+              className="w-full border rounded px-3 py-2"
+              value={settings.supplierPreference.secondary}
+              onChange={(e) =>
+                setSettings((s) => ({
+                  ...s,
+                  supplierPreference: {
+                    ...s.supplierPreference,
+                    secondary: e.target.value,
+                  },
+                }))
+              }
+            >
+              <option value="SUP-1">Fashion Wholesale Co</option>
+              <option value="SUP-2">Textile Direct</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">
+              Selection Criteria
+            </label>
+            <select
+              className="w-full border rounded px-3 py-2"
+              value={settings.supplierPreference.selectionCriteria}
+              onChange={(e) =>
+                setSettings((s) => ({
+                  ...s,
+                  supplierPreference: {
+                    ...s.supplierPreference,
+                    selectionCriteria: e.target.value as
+                      | "price"
+                      | "leadTime"
+                      | "reliability"
+                      | "auto",
+                  },
+                }))
+              }
+            >
+              <option value="auto">Automatic (Best Available)</option>
+              <option value="price">Lowest Price</option>
+              <option value="leadTime">Fastest Delivery</option>
+              <option value="reliability">Most Reliable</option>
+            </select>
+          </div>
+
+          <div className="bg-blue-50 p-3 rounded-lg">
+            <p className="text-sm text-blue-600">
+              When set to "Automatic", the system will choose the best supplier
+              based on:
+              <ul className="mt-1 space-y-1 list-disc list-inside">
+                <li>Current stock levels</li>
+                <li>Supplier availability</li>
+                <li>Price and lead time</li>
+                <li>Historical reliability</li>
+              </ul>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
   //   // Helper function to determine status based on stock level
   const determineStatus = (stock: number): StatusType => {
     if (stock <= 5) return "critical";
@@ -232,7 +367,10 @@ export const InventoryView = () => {
   return (
     <div className="w-full min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center space-x-2 text-blue-600">
+        <div
+          className="flex items-center space-x-2 text-blue-600 relative"
+          ref={dropdownRef}
+        >
           <select
             value={selectedPlatform}
             onChange={(e) =>
@@ -263,7 +401,7 @@ export const InventoryView = () => {
                 Auto-Order {isAutomationEnabled ? "Active" : "Inactive"}
               </span>
             </button>
-            {showAutomationSettings && <AutomationSettingsPopover />}
+            {showAutomationSettings && <AutoOrderSettingsPanel />}
           </div>
         </div>
         {/* Metrics Cards */}
