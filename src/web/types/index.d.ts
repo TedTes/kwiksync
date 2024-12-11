@@ -26,16 +26,6 @@ declare global {
     trending: Trending;
     performance: Performance2[];
   }
-  interface AutoOrderSettings {
-    active: boolean;
-    lowStockThreshold: number;
-    reorderPoint: number;
-    supplierPreference: {
-      primary: string;
-      secondary: string;
-      selectionCriteria: "price" | "leadTime" | "reliability" | "auto";
-    };
-  }
   interface Rank {
     [key: string]: number;
     engagement: number;
@@ -98,4 +88,41 @@ declare global {
   }
   type StatusType = "low" | "critical" | "healthy";
   type PlatformType = "all" | "tiktok" | "instagram" | "shopify";
+  interface SupplierInfo {
+    id: string;
+    name: string;
+    price: number;
+    leadTime: number;
+    reliability: number;
+    minOrderQuantity: number;
+  }
+  interface AutoOrderSettings {
+    active: boolean;
+    lowStockThreshold: number;
+    reorderPoint: number;
+    primarySupplier: string;
+    secondarySupplier: string;
+    selectionCriteria: "auto" | "price" | "leadTime" | "reliability";
+  }
+
+  interface Order {
+    id: string;
+    sku: string;
+    supplier: string;
+    quantity: number;
+    status: "pending" | "confirmed" | "shipped";
+    createdAt: Date;
+    estimatedDelivery: Date;
+  }
+  interface StatusBadgeProps {
+    status: StatusType;
+  }
+
+  interface PlatformStock {
+    platform: string;
+    count: number;
+  }
+  interface PlatformStockProps {
+    stocks: PlatformStock[];
+  }
 }

@@ -63,18 +63,25 @@ const initialInventory: InventoryItem[] = [
     },
   },
 ];
+const suppliers: Record<string, SupplierInfo> = {
+  "SUP-1": {
+    id: "SUP-1",
+    name: "Fashion Wholesale Co",
+    price: 12.99,
+    leadTime: 5,
+    reliability: 0.95,
+    minOrderQuantity: 100,
+  },
+  "SUP-2": {
+    id: "SUP-2",
+    name: "Textile Direct",
+    price: 14.99,
+    leadTime: 7,
+    reliability: 0.98,
+    minOrderQuantity: 50,
+  },
+};
 
-interface StatusBadgeProps {
-  status: StatusType;
-}
-
-interface PlatformStock {
-  platform: string;
-  count: number;
-}
-interface PlatformStockProps {
-  stocks: PlatformStock[];
-}
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const styles = {
     low: "bg-yellow-100 text-yellow-800",
@@ -99,9 +106,55 @@ export const InventoryView = () => {
   const [isAutomationEnabled, setIsAutomationEnabled] = useState(true);
   const [filteredInventory, setFilteredInventory] =
     useState<InventoryItem[]>(inventory);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [settings, setSettings] = useState<AutoOrderSettings>({
+    active: true,
+    lowStockThreshold: 15,
+    reorderPoint: 10,
+    primarySupplier: "SUP-1",
+    secondarySupplier: "SUP-2",
+    selectionCriteria: "auto",
+  });
 
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  //   // Update filtered inventory when platform selection changes
+  useEffect(() => {
+    if (selectedPlatform === "all") {
+      setFilteredInventory(inventory);
+    } else {
+      // Filter and update inventory items based on selected platform
+      const updated = inventory.map((item) => ({
+        ...item,
+        stock: item.platforms[selectedPlatform].stock,
+        status: getItemStatus(
+          item.platforms[selectedPlatform].stock,
+          settings
+        ) as StatusType,
+        stockChange: item.platforms[selectedPlatform].sales, // Using sales as stock change for demo
+      }));
+      setFilteredInventory(updated);
+    }
+  }, [selectedPlatform, inventory]);
+  // Monitor inventory status
+  useEffect(() => {
+    if (!settings.active) return;
+
+    const monitorInterval = setInterval(() => {
+      inventory.forEach((item) => {
+        // Update item status based on stock levels
+        // const newStatus = getItemStatus(item.stock, settings);
+
+        // Create order if needed
+        if (shouldCreateOrder(item, settings, orders)) {
+          createOrder(item);
+        }
+      });
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(monitorInterval);
+  }, [inventory, settings, orders]);
 
   useEffect(() => {
     if (showAutomationSettings) {
@@ -121,6 +174,105 @@ export const InventoryView = () => {
     }
   }, [showAutomationSettings]);
 
+  // Function to determine if order should be created
+  const shouldCreateOrder = (
+    item: InventoryItem,
+    settings: AutoOrderSettings,
+    existingOrders: Order[]
+  ): boolean => {
+    // Check if there's already an active order
+    const hasActiveOrder = existingOrders.some(
+      (order) =>
+        order.sku === item.sku &&
+        ["pending", "confirmed"].includes(order.status)
+    );
+
+    // Status-based ordering logic
+    const needsOrder =
+      // Critical status - immediate order if below reorderPoint
+      (item.status === "critical" && item.stock <= settings.reorderPoint) ||
+      // Low status - order when stock hits reorderPoint
+      (item.status === "low" && item.stock <= settings.reorderPoint) ||
+      // Any status - emergency order if stock is zero
+      item.stock === 0;
+
+    return settings.active && needsOrder && !hasActiveOrder;
+  };
+
+  // Helper to determine status
+  const getItemStatus = (
+    stock: number,
+    settings: AutoOrderSettings
+  ): "healthy" | "low" | "critical" => {
+    if (stock <= settings.reorderPoint) return "critical";
+    if (stock <= settings.lowStockThreshold) return "low";
+    return "healthy";
+  };
+
+  const selectSupplier = (item: InventoryItem): SupplierInfo => {
+    const primary = suppliers[settings.primarySupplier];
+    const secondary = suppliers[settings.secondarySupplier];
+
+    if (settings.selectionCriteria === "auto") {
+      // Weighted scoring system
+      const scoreSupplier = (supplier: SupplierInfo) => {
+        return (
+          supplier.reliability * 0.4 +
+          (1 - supplier.price / 20) * 0.3 +
+          (1 - supplier.leadTime / 10) * 0.3
+        );
+      };
+
+      const primaryScore = scoreSupplier(primary);
+      const secondaryScore = scoreSupplier(secondary);
+
+      return primaryScore >= secondaryScore ? primary : secondary;
+    }
+
+    // Direct criteria selection
+    switch (settings.selectionCriteria) {
+      case "price":
+        return primary.price <= secondary.price ? primary : secondary;
+      case "leadTime":
+        return primary.leadTime <= secondary.leadTime ? primary : secondary;
+      case "reliability":
+        return primary.reliability >= secondary.reliability
+          ? primary
+          : secondary;
+      default:
+        return primary;
+    }
+  };
+  const createOrder = (item: InventoryItem) => {
+    const supplier = selectSupplier(item);
+    const quantity = Math.max(
+      supplier.minOrderQuantity,
+      50 - item.stock // Order up to 50 units
+    );
+
+    const newOrder: Order = {
+      id: `PO-${Math.random().toString(36).substr(2, 9)}`,
+      sku: item.sku,
+      supplier: supplier.id,
+      quantity,
+      status: "pending",
+      createdAt: new Date(),
+      estimatedDelivery: new Date(
+        Date.now() + supplier.leadTime * 24 * 60 * 60 * 1000
+      ),
+    };
+
+    setOrders((prev) => [...prev, newOrder]);
+
+    // Simulate order confirmation
+    // setTimeout(() => {
+    //   setOrders((prev) =>
+    //     prev.map((order) =>
+    //       order.id === newOrder.id ? { ...order, status: "confirmed" } : order
+    //     )
+    //   );
+    // }, 2000);
+  };
   const PlatformStock: React.FC<PlatformStockProps> = ({ stocks }) => {
     const [showAll, setShowAll] = useState(false);
     const displayLimit = 2;
@@ -149,36 +301,8 @@ export const InventoryView = () => {
       </div>
     );
   };
-  //   // Update filtered inventory when platform selection changes
-  useEffect(() => {
-    if (selectedPlatform === "all") {
-      setFilteredInventory(inventory);
-    } else {
-      // Filter and update inventory items based on selected platform
-      const updated = inventory.map((item) => ({
-        ...item,
-        stock: item.platforms[selectedPlatform].stock,
-        status: determineStatus(
-          item.platforms[selectedPlatform].stock
-        ) as StatusType,
-        stockChange: item.platforms[selectedPlatform].sales, // Using sales as stock change for demo
-      }));
-      setFilteredInventory(updated);
-    }
-  }, [selectedPlatform, inventory]);
 
   const AutoOrderSettingsPanel = () => {
-    const [settings, setSettings] = useState<AutoOrderSettings>({
-      active: true,
-      lowStockThreshold: 15,
-      reorderPoint: 10,
-      supplierPreference: {
-        primary: "SUP-1",
-        secondary: "SUP-2",
-        selectionCriteria: "auto",
-      },
-    });
-
     return (
       <div className="absolute left-0 top-full mt-2 w-[400px] p-4 bg-white rounded-lg shadow-lg z-50 border space-y-4">
         {/* Existing settings */}
@@ -255,14 +379,11 @@ export const InventoryView = () => {
             </label>
             <select
               className="w-full border rounded px-3 py-2"
-              value={settings.supplierPreference.primary}
+              value={settings.primarySupplier}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
-                  supplierPreference: {
-                    ...s.supplierPreference,
-                    primary: e.target.value,
-                  },
+                  primarySupplier: e.target.value,
                 }))
               }
             >
@@ -277,14 +398,11 @@ export const InventoryView = () => {
             </label>
             <select
               className="w-full border rounded px-3 py-2"
-              value={settings.supplierPreference.secondary}
+              value={settings.secondarySupplier}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
-                  supplierPreference: {
-                    ...s.supplierPreference,
-                    secondary: e.target.value,
-                  },
+                  secondarySupplier: e.target.value,
                 }))
               }
             >
@@ -299,18 +417,15 @@ export const InventoryView = () => {
             </label>
             <select
               className="w-full border rounded px-3 py-2"
-              value={settings.supplierPreference.selectionCriteria}
+              value={settings.selectionCriteria}
               onChange={(e) =>
                 setSettings((s) => ({
                   ...s,
-                  supplierPreference: {
-                    ...s.supplierPreference,
-                    selectionCriteria: e.target.value as
-                      | "price"
-                      | "leadTime"
-                      | "reliability"
-                      | "auto",
-                  },
+                  selectionCriteria: e.target.value as
+                    | "price"
+                    | "leadTime"
+                    | "reliability"
+                    | "auto",
                 }))
               }
             >
@@ -337,12 +452,6 @@ export const InventoryView = () => {
       </div>
     );
   };
-  //   // Helper function to determine status based on stock level
-  const determineStatus = (stock: number): StatusType => {
-    if (stock <= 5) return "critical";
-    if (stock <= 15) return "low";
-    return "healthy";
-  };
 
   //   // Calculate metrics based on filtered inventory
   const metrics = {
@@ -367,10 +476,7 @@ export const InventoryView = () => {
   return (
     <div className="w-full min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div
-          className="flex items-center space-x-2 text-blue-600 relative"
-          ref={dropdownRef}
-        >
+        <div className="flex items-center space-x-2 text-blue-600 relative">
           <select
             value={selectedPlatform}
             onChange={(e) =>
@@ -384,7 +490,7 @@ export const InventoryView = () => {
             <option value="shopify">Shopify</option>
           </select>
 
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowAutomationSettings(!showAutomationSettings)}
               className={`
