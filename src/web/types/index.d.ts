@@ -110,9 +110,10 @@ declare global {
     sku: string;
     supplier: string;
     quantity: number;
-    status: "pending" | "confirmed" | "shipped";
+    status: OrderStatus;
     createdAt: Date;
     estimatedDelivery: Date;
+    tracking?: string;
   }
   interface StatusBadgeProps {
     status: StatusType;
@@ -125,4 +126,20 @@ declare global {
   interface PlatformStockProps {
     stocks: PlatformStock[];
   }
+  // Types for order fulfillment
+  interface OrderUpdate {
+    id: string;
+    status: OrderStatus;
+    deliveryDate?: Date;
+    quantity: number;
+    sku: string;
+  }
+
+  type OrderStatus =
+    | "pending"
+    | "confirmed"
+    | "shipped"
+    | "delivered"
+    | "cancelled"
+    | "delayed";
 }

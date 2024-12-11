@@ -106,6 +106,8 @@ export const InventoryView = () => {
   const [isAutomationEnabled, setIsAutomationEnabled] = useState(true);
   const [filteredInventory, setFilteredInventory] =
     useState<InventoryItem[]>(inventory);
+  const [showOrderPanel, setShowOrderPanel] = useState(false);
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [settings, setSettings] = useState<AutoOrderSettings>({
     active: true,
@@ -118,8 +120,25 @@ export const InventoryView = () => {
 
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (showAutomationSettings) {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target as Node)
+        ) {
+          setShowAutomationSettings(false);
+        }
+      };
 
-  //   // Update filtered inventory when platform selection changes
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [showAutomationSettings]);
+
+  // Update filtered inventory when platform selection changes
   useEffect(() => {
     if (selectedPlatform === "all") {
       setFilteredInventory(inventory);
@@ -156,25 +175,106 @@ export const InventoryView = () => {
     return () => clearInterval(monitorInterval);
   }, [inventory, settings, orders]);
 
-  useEffect(() => {
-    if (showAutomationSettings) {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (
-          dropdownRef.current &&
-          !dropdownRef.current.contains(event.target as Node)
-        ) {
-          setShowAutomationSettings(false);
-        }
-      };
+  const getStatusColor = (status: OrderStatus): string => {
+    const colors = {
+      pending: "bg-yellow-100 text-yellow-800",
+      confirmed: "bg-blue-100 text-blue-800",
+      shipped: "bg-green-100 text-green-800",
+      delivered: "bg-green-100 text-green-800",
+      cancelled: "bg-red-100 text-red-800",
+      delayed: "bg-gray-100 text-gray-800",
+    };
+    return colors[status] || "bg-gray-100 text-gray-800";
+  };
 
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
+  const orderSummary = {
+    pending: orders.filter((o) => o.status === "pending").length,
+    confirmed: orders.filter((o) => o.status === "confirmed").length,
+    shipped: orders.filter((o) => o.status === "shipped").length,
+    delivered: orders.filter((o) => o.status === "delivered").length,
+  };
+
+  const updateInventoryFromOrder = (
+    inventory: InventoryItem[],
+    order: OrderUpdate
+  ): InventoryItem[] => {
+    return inventory.map((item) => {
+      if (item.sku === order.sku) {
+        // Calculate total sales across all platforms
+        const totalSales = Object.values(item.platforms).reduce(
+          (sum, platform) => sum + platform.sales,
+          0
+        );
+        // Update stock across all platforms
+        const updatedPlatforms = {
+          tiktok: {
+            ...item.platforms.tiktok,
+            stock: Math.floor(
+              item.platforms.tiktok.stock +
+                order.quantity * (item.platforms.tiktok.sales / totalSales)
+            ),
+          },
+          instagram: {
+            ...item.platforms.instagram,
+            stock: Math.floor(
+              item.platforms.instagram.stock +
+                order.quantity * (item.platforms.instagram.sales / totalSales)
+            ),
+          },
+          shopify: {
+            ...item.platforms.shopify,
+            stock: Math.floor(
+              item.platforms.shopify.stock +
+                order.quantity * (item.platforms.shopify.sales / totalSales)
+            ),
+          },
+        };
+
+        // Calculate total new stock
+        const newTotalStock = Object.values(updatedPlatforms).reduce(
+          (sum, platform) => sum + platform.stock,
+          0
+        );
+        return {
+          ...item,
+          stock: newTotalStock,
+          status: getItemStatus(newTotalStock, settings),
+          lastUpdated: "Just now",
+          platforms: updatedPlatforms,
+          // Update stockChange to reflect the order quantity
+          stockChange: order.quantity,
+        };
+      }
+      return item;
+    });
+  };
+
+  const handleOrderFulfillment = (
+    order: Order,
+    newStatus: OrderStatus,
+    setInventory: React.Dispatch<React.SetStateAction<InventoryItem[]>>,
+    setOrders: React.Dispatch<React.SetStateAction<Order[]>>
+  ) => {
+    // Update order status
+    setOrders((prevOrders) =>
+      prevOrders.map((o) =>
+        o.id === order.id ? { ...o, status: newStatus } : o
+      )
+    );
+
+    // If order is delivered, update inventory
+    if (newStatus === "delivered") {
+      setInventory((prevInventory) =>
+        updateInventoryFromOrder(prevInventory, {
+          id: order.id,
+          status: newStatus,
+          quantity: order.quantity,
+          sku: order.sku,
+        })
+      );
     }
-  }, [showAutomationSettings]);
+  };
 
-  // Function to determine if order should be created
   const shouldCreateOrder = (
     item: InventoryItem,
     settings: AutoOrderSettings,
@@ -199,7 +299,6 @@ export const InventoryView = () => {
     return settings.active && needsOrder && !hasActiveOrder;
   };
 
-  // Helper to determine status
   const getItemStatus = (
     stock: number,
     settings: AutoOrderSettings
@@ -453,7 +552,7 @@ export const InventoryView = () => {
     );
   };
 
-  //   // Calculate metrics based on filtered inventory
+  // Calculate metrics based on filtered inventory
   const metrics = {
     totalStock: filteredInventory.reduce(
       (sum, item) =>
@@ -542,7 +641,105 @@ export const InventoryView = () => {
           </div>
         </div>
       </div>
+      {/* Order Status Panel */}
+      {orders.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium">Active Orders</h3>
+            <button
+              onClick={() => setShowOrderPanel(!showOrderPanel)}
+              className="text-blue-600 hover:text-blue-700"
+            >
+              {showOrderPanel ? "Hide Details" : "Show Details"}
+            </button>
+          </div>
 
+          {/* Order Summary */}
+          <div className="grid grid-cols-4 gap-4 mb-4">
+            <div className="text-center">
+              <span className="text-2xl font-bold text-yellow-500">
+                {orderSummary.pending}
+              </span>
+              <p className="text-sm text-gray-600">Pending</p>
+            </div>
+            <div className="text-center">
+              <span className="text-2xl font-bold text-blue-500">
+                {orderSummary.confirmed}
+              </span>
+              <p className="text-sm text-gray-600">Confirmed</p>
+            </div>
+            <div className="text-center">
+              <span className="text-2xl font-bold text-green-500">
+                {orderSummary.shipped}
+              </span>
+              <p className="text-sm text-gray-600">Shipped</p>
+            </div>
+            <div className="text-center">
+              <span className="text-2xl font-bold text-green-700">
+                {orderSummary.delivered}
+              </span>
+              <p className="text-sm text-gray-600">Delivered</p>
+            </div>
+          </div>
+
+          {/* Detailed Order Panel */}
+          {showOrderPanel && (
+            <div className="border-t pt-4">
+              {orders.map((order) => (
+                <div key={order.id} className="border-b last:border-b-0 py-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="font-medium">Order {order.id}</span>
+                      <p className="text-sm text-gray-500">
+                        SKU: {order.sku} • Quantity: {order.quantity}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
+                          order.status
+                        )}`}
+                      >
+                        {order.status}
+                      </span>
+                      {order.status === "confirmed" && (
+                        <button
+                          onClick={() =>
+                            handleOrderFulfillment(
+                              order,
+                              "shipped",
+                              setInventory,
+                              setOrders
+                            )
+                          }
+                          className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg"
+                        >
+                          Mark Shipped
+                        </button>
+                      )}
+                      {order.status === "shipped" && (
+                        <button
+                          onClick={() =>
+                            handleOrderFulfillment(
+                              order,
+                              "delivered",
+                              setInventory,
+                              setOrders
+                            )
+                          }
+                          className="px-3 py-1 bg-green-50 text-green-600 rounded-lg"
+                        >
+                          Mark Delivered
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {/* Inventory Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
