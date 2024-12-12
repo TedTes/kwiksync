@@ -12,6 +12,7 @@ import {
   Box,
   Building2,
 } from "lucide-react";
+import { PlatformStock, ActiveOrdersPanel, AutoOrderSettingsPanel } from "./";
 
 const initialInventory: InventoryItem[] = [
   {
@@ -100,12 +101,12 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
 export const InventoryView = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>(initialInventory);
-  const [activeTab, setActiveTab] = useState("inventory");
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>("all");
   const [showAutomationSettings, setShowAutomationSettings] = useState(false);
   const [isAutomationEnabled, setIsAutomationEnabled] = useState(true);
   const [filteredInventory, setFilteredInventory] =
     useState<InventoryItem[]>(inventory);
+  const [isActiveOrder, setShowActiveOrder] = useState(false);
   const [showOrderPanel, setShowOrderPanel] = useState(false);
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -174,25 +175,6 @@ export const InventoryView = () => {
 
     return () => clearInterval(monitorInterval);
   }, [inventory, settings, orders]);
-
-  const getStatusColor = (status: OrderStatus): string => {
-    const colors = {
-      pending: "bg-yellow-100 text-yellow-800",
-      confirmed: "bg-blue-100 text-blue-800",
-      shipped: "bg-green-100 text-green-800",
-      delivered: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      delayed: "bg-gray-100 text-gray-800",
-    };
-    return colors[status] || "bg-gray-100 text-gray-800";
-  };
-
-  const orderSummary = {
-    pending: orders.filter((o) => o.status === "pending").length,
-    confirmed: orders.filter((o) => o.status === "confirmed").length,
-    shipped: orders.filter((o) => o.status === "shipped").length,
-    delivered: orders.filter((o) => o.status === "delivered").length,
-  };
 
   const updateInventoryFromOrder = (
     inventory: InventoryItem[],
@@ -372,185 +354,6 @@ export const InventoryView = () => {
     //   );
     // }, 2000);
   };
-  const PlatformStock: React.FC<PlatformStockProps> = ({ stocks }) => {
-    const [showAll, setShowAll] = useState(false);
-    const displayLimit = 2;
-
-    const visibleStocks = showAll ? stocks : stocks.slice(0, displayLimit);
-    const remainingCount = stocks.length - displayLimit;
-
-    return (
-      <div className="flex items-center space-x-1">
-        {visibleStocks.map((stock, index: number) => (
-          <span
-            key={stock.platform}
-            className="px-2 py-1 bg-gray-100 rounded text-xs whitespace-nowrap"
-          >
-            {stock.platform}: {stock.count}
-          </span>
-        ))}
-        {!showAll && remainingCount > 0 && (
-          <button
-            onClick={() => setShowAll(true)}
-            className="px-2 py-1 bg-gray-100 rounded text-xs hover:bg-gray-200"
-          >
-            +{remainingCount}
-          </button>
-        )}
-      </div>
-    );
-  };
-
-  const AutoOrderSettingsPanel = () => {
-    return (
-      <div className="absolute left-0 top-full mt-2 w-[400px] p-4 bg-white rounded-lg shadow-lg z-50 border space-y-4">
-        {/* Existing settings */}
-        <div className="flex items-center justify-between border-b pb-3">
-          <span className="font-medium">Auto-Order Settings</span>
-          <div className="flex items-center space-x-2">
-            <span>Active</span>
-
-            <button
-              onClick={() => setIsAutomationEnabled(!isAutomationEnabled)}
-              className={`
-              relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full
-              transition-colors duration-200 ease-in-out
-              ${isAutomationEnabled ? "bg-green-500" : "bg-gray-200"}
-            `}
-            >
-              <span
-                className={`
-                inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0
-                transition duration-200 ease-in-out mt-0.5
-                ${isAutomationEnabled ? "translate-x-4" : "translate-x-0.5"}
-              `}
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* Thresholds */}
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              Low Stock Threshold
-            </label>
-            <input
-              type="number"
-              value={settings.lowStockThreshold}
-              onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  lowStockThreshold: parseInt(e.target.value),
-                }))
-              }
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              Reorder Point
-            </label>
-            <input
-              type="number"
-              value={settings.reorderPoint}
-              onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  reorderPoint: parseInt(e.target.value),
-                }))
-              }
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-        </div>
-
-        {/* Supplier Preferences - New Section */}
-        <div className="space-y-3 pt-2 border-t">
-          <h3 className="font-medium flex items-center">
-            <Building2 size={16} className="mr-2" />
-            Supplier Preferences
-          </h3>
-
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              Primary Supplier
-            </label>
-            <select
-              className="w-full border rounded px-3 py-2"
-              value={settings.primarySupplier}
-              onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  primarySupplier: e.target.value,
-                }))
-              }
-            >
-              <option value="SUP-1">Fashion Wholesale Co</option>
-              <option value="SUP-2">Textile Direct</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              Secondary Supplier (Backup)
-            </label>
-            <select
-              className="w-full border rounded px-3 py-2"
-              value={settings.secondarySupplier}
-              onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  secondarySupplier: e.target.value,
-                }))
-              }
-            >
-              <option value="SUP-1">Fashion Wholesale Co</option>
-              <option value="SUP-2">Textile Direct</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              Selection Criteria
-            </label>
-            <select
-              className="w-full border rounded px-3 py-2"
-              value={settings.selectionCriteria}
-              onChange={(e) =>
-                setSettings((s) => ({
-                  ...s,
-                  selectionCriteria: e.target.value as
-                    | "price"
-                    | "leadTime"
-                    | "reliability"
-                    | "auto",
-                }))
-              }
-            >
-              <option value="auto">Automatic (Best Available)</option>
-              <option value="price">Lowest Price</option>
-              <option value="leadTime">Fastest Delivery</option>
-              <option value="reliability">Most Reliable</option>
-            </select>
-          </div>
-
-          <div className="bg-blue-50 p-3 rounded-lg">
-            <p className="text-sm text-blue-600">
-              When set to "Automatic", the system will choose the best supplier
-              based on:
-              <ul className="mt-1 space-y-1 list-disc list-inside">
-                <li>Current stock levels</li>
-                <li>Supplier availability</li>
-                <li>Price and lead time</li>
-                <li>Historical reliability</li>
-              </ul>
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   // Calculate metrics based on filtered inventory
   const metrics = {
@@ -606,7 +409,14 @@ export const InventoryView = () => {
                 Auto-Order {isAutomationEnabled ? "Active" : "Inactive"}
               </span>
             </button>
-            {showAutomationSettings && <AutoOrderSettingsPanel />}
+            {showAutomationSettings && (
+              <AutoOrderSettingsPanel
+                setSettings={setSettings}
+                setIsAutomationEnabled={setIsAutomationEnabled}
+                isAutomationEnabled={isAutomationEnabled}
+                settings={settings}
+              />
+            )}
           </div>
         </div>
         {/* Metrics Cards */}
@@ -642,104 +452,30 @@ export const InventoryView = () => {
         </div>
       </div>
       {/* Order Status Panel */}
-      {orders.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium">Active Orders</h3>
-            <button
-              onClick={() => setShowOrderPanel(!showOrderPanel)}
-              className="text-blue-600 hover:text-blue-700"
-            >
-              {showOrderPanel ? "Hide Details" : "Show Details"}
-            </button>
-          </div>
 
-          {/* Order Summary */}
-          <div className="grid grid-cols-4 gap-4 mb-4">
-            <div className="text-center">
-              <span className="text-2xl font-bold text-yellow-500">
-                {orderSummary.pending}
-              </span>
-              <p className="text-sm text-gray-600">Pending</p>
-            </div>
-            <div className="text-center">
-              <span className="text-2xl font-bold text-blue-500">
-                {orderSummary.confirmed}
-              </span>
-              <p className="text-sm text-gray-600">Confirmed</p>
-            </div>
-            <div className="text-center">
-              <span className="text-2xl font-bold text-green-500">
-                {orderSummary.shipped}
-              </span>
-              <p className="text-sm text-gray-600">Shipped</p>
-            </div>
-            <div className="text-center">
-              <span className="text-2xl font-bold text-green-700">
-                {orderSummary.delivered}
-              </span>
-              <p className="text-sm text-gray-600">Delivered</p>
-            </div>
-          </div>
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        {/* Detailed Order Panel */}
+        {orders.length > 0 && (
+          <button
+            onClick={() => setShowActiveOrder(!isActiveOrder)}
+            className="text-blue-600 hover:text-blue-700 text-sm"
+          >
+            Show Active Orders
+          </button>
+        )}
 
-          {/* Detailed Order Panel */}
-          {showOrderPanel && (
-            <div className="border-t pt-4">
-              {orders.map((order) => (
-                <div key={order.id} className="border-b last:border-b-0 py-3">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="font-medium">Order {order.id}</span>
-                      <p className="text-sm text-gray-500">
-                        SKU: {order.sku} • Quantity: {order.quantity}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
-                          order.status
-                        )}`}
-                      >
-                        {order.status}
-                      </span>
-                      {order.status === "confirmed" && (
-                        <button
-                          onClick={() =>
-                            handleOrderFulfillment(
-                              order,
-                              "shipped",
-                              setInventory,
-                              setOrders
-                            )
-                          }
-                          className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg"
-                        >
-                          Mark Shipped
-                        </button>
-                      )}
-                      {order.status === "shipped" && (
-                        <button
-                          onClick={() =>
-                            handleOrderFulfillment(
-                              order,
-                              "delivered",
-                              setInventory,
-                              setOrders
-                            )
-                          }
-                          className="px-3 py-1 bg-green-50 text-green-600 rounded-lg"
-                        >
-                          Mark Delivered
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+        {orders.length > 0 && isActiveOrder && (
+          <ActiveOrdersPanel
+            orders={orders}
+            showOrderPanel={showOrderPanel}
+            setShowOrderPanel={setShowOrderPanel}
+            handleOrderFulfillment={handleOrderFulfillment}
+            setInventory={setInventory}
+            setOrders={setOrders}
+          />
+        )}
+      </div>
+
       {/* Inventory Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
