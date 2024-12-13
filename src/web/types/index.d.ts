@@ -66,7 +66,7 @@ declare global {
     id: string;
     product: string;
     sku: string;
-    platform: "TikTok" | "Instagram" | "Shopify";
+    platform: PlatformType;
     stock: number;
     stockChange: number;
     status: StatusType;
@@ -81,13 +81,13 @@ declare global {
   interface PlatformData {
     stock: number;
     sales: number;
-    status: "active" | "inactive";
+    status?: "active" | "inactive";
   }
   interface StatusBadgeProps {
     status: StatusType;
   }
   type StatusType = "low" | "critical" | "healthy";
-  type PlatformType = "all" | "tiktok" | "instagram" | "shopify";
+  type PlatformType = "All" | "tiktok" | "instagram" | "shopify";
   interface SupplierInfo {
     id: string;
     name: string;

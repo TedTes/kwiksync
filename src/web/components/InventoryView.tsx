@@ -10,16 +10,23 @@ import {
   ArrowUp,
   Clock,
   Box,
+  PlusCircle,
   Building2,
 } from "lucide-react";
-import { PlatformStock, ActiveOrdersPanel, AutoOrderSettingsPanel } from "./";
+import {
+  PlatformStock,
+  ActiveOrdersPanel,
+  AutoOrderSettingsPanel,
+  AddInventoryItem,
+  LoadingIndicator,
+} from "./";
 
 const initialInventory: InventoryItem[] = [
   {
     id: "TOP-001",
     product: "Summer Crop Top",
     sku: "TOP-001",
-    platform: "TikTok",
+    platform: "tiktok",
     stock: 12,
     stockChange: -3,
     status: "low",
@@ -35,7 +42,7 @@ const initialInventory: InventoryItem[] = [
     id: "SHO-002",
     product: "Vintage Sneakers",
     sku: "SHO-002",
-    platform: "Instagram",
+    platform: "instagram",
     stock: 8,
     stockChange: -2,
     status: "critical",
@@ -51,7 +58,7 @@ const initialInventory: InventoryItem[] = [
     id: "JAC-003",
     product: "Denim Jacket",
     sku: "JAC-003",
-    platform: "Shopify",
+    platform: "shopify",
     stock: 45,
     stockChange: 5,
     status: "healthy",
@@ -101,9 +108,10 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
 export const InventoryView = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>(initialInventory);
-  const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>("all");
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>("All");
   const [showAutomationSettings, setShowAutomationSettings] = useState(false);
   const [isAutomationEnabled, setIsAutomationEnabled] = useState(true);
+  const [showAddItem, setShowAddItem] = useState(false);
   const [filteredInventory, setFilteredInventory] =
     useState<InventoryItem[]>(inventory);
   const [isActiveOrder, setShowActiveOrder] = useState(false);
@@ -118,6 +126,7 @@ export const InventoryView = () => {
     secondarySupplier: "SUP-2",
     selectionCriteria: "auto",
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -141,7 +150,7 @@ export const InventoryView = () => {
 
   // Update filtered inventory when platform selection changes
   useEffect(() => {
-    if (selectedPlatform === "all") {
+    if (selectedPlatform === "All") {
       setFilteredInventory(inventory);
     } else {
       // Filter and update inventory items based on selected platform
@@ -230,7 +239,30 @@ export const InventoryView = () => {
       return item;
     });
   };
+  const handleAddItem = async (newItem: Partial<InventoryItem>) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/inventory/items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newItem),
+      });
 
+      if (!response.ok) {
+        throw new Error("Failed to add item");
+      }
+      const savedItem = await response.json();
+      setInventory((prev) => [...prev, savedItem as InventoryItem]);
+      // toast.success("Item added successfully");
+    } catch (error) {
+      console.error("Failed to add inventory item:", error);
+      // toast.error("Failed to add item. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleOrderFulfillment = (
     order: Order,
     newStatus: OrderStatus,
@@ -359,7 +391,7 @@ export const InventoryView = () => {
   const metrics = {
     totalStock: filteredInventory.reduce(
       (sum, item) =>
-        selectedPlatform === "all"
+        selectedPlatform === "All"
           ? sum + item.stock
           : sum + item.platforms[selectedPlatform].stock,
       0
@@ -369,7 +401,7 @@ export const InventoryView = () => {
       (item) => item.status === "critical"
     ).length,
     outOfStock: filteredInventory.filter((item) =>
-      selectedPlatform === "all"
+      selectedPlatform === "All"
         ? item.stock === 0
         : item.platforms[selectedPlatform].stock === 0
     ).length,
@@ -418,7 +450,27 @@ export const InventoryView = () => {
               />
             )}
           </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              {/* Existing platform selector */}
+            </div>
+            <button
+              onClick={() => setShowAddItem(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Add Item</span>
+            </button>
+          </div>
         </div>
+        {isLoading && <LoadingIndicator />}
+        {/* Add Item Modal */}
+        {showAddItem && (
+          <AddInventoryItem
+            onAdd={handleAddItem}
+            onClose={() => setShowAddItem(false)}
+          />
+        )}
         {/* Metrics Cards */}
         <div className="grid grid-cols-4 gap-4">
           <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -501,7 +553,7 @@ export const InventoryView = () => {
                   Last Updated
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {selectedPlatform === "all"
+                  {selectedPlatform === "All"
                     ? "Platform Stock"
                     : "Platform Details"}
                 </th>
@@ -519,7 +571,7 @@ export const InventoryView = () => {
                     {item.sku}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                    {selectedPlatform === "all"
+                    {selectedPlatform === "All"
                       ? item.platform
                       : selectedPlatform.charAt(0).toUpperCase() +
                         selectedPlatform.slice(1)}
@@ -527,7 +579,7 @@ export const InventoryView = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="flex items-center justify-center space-x-2">
                       <span className="font-medium">
-                        {selectedPlatform === "all"
+                        {selectedPlatform === "All"
                           ? item.stock
                           : item.platforms[selectedPlatform].stock}
                       </span>
@@ -557,7 +609,7 @@ export const InventoryView = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {selectedPlatform === "all" ? (
+                    {selectedPlatform === "All" ? (
                       <div className="flex space-x-2">
                         <PlatformStock
                           stocks={Object.entries(item.platforms).map(

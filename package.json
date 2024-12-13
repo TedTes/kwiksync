@@ -46,7 +46,9 @@
     "react-router-dom": "^7.0.1",
     "recharts": "^2.14.1",
     "reflect-metadata": "^0.2.2",
+    "shadcn-ui": "^0.9.4",
     "style-loader": "^4.0.0",
+    "toast": "^0.5.4",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {

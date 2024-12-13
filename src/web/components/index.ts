@@ -6,3 +6,5 @@ export * from "./PlatformsView";
 export * from "./PlatformStock";
 export * from "./ActiveOrdersPanel";
 export * from "./AutoOrderSettingsPanel";
+export * from "./AddInventoryItem";
+export * from "./LoadingIndicator";
