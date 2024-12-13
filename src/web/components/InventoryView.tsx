@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
+// import { useToast } from "@/components/ui/use-toast";
+// import { Toast, Toaster } from "@/components/ui/toast";
 import {
   Package,
-  Link2,
-  TrendingUp,
   Settings,
-  Layers,
   AlertTriangle,
   ArrowDown,
   ArrowUp,
   Clock,
   Box,
   PlusCircle,
-  Building2,
+  Upload,
 } from "lucide-react";
 import {
   PlatformStock,
@@ -19,6 +18,7 @@ import {
   AutoOrderSettingsPanel,
   AddInventoryItem,
   LoadingIndicator,
+  BulkAddItems,
 } from "./";
 
 const initialInventory: InventoryItem[] = [
@@ -127,7 +127,8 @@ export const InventoryView = () => {
     selectionCriteria: "auto",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [showBulkAdd, setShowBulkAdd] = useState(false);
+  // const { toast } = useToast();
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -259,6 +260,83 @@ export const InventoryView = () => {
     } catch (error) {
       console.error("Failed to add inventory item:", error);
       // toast.error("Failed to add item. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleBulkAdd = async (items: Partial<InventoryItem>[]) => {
+    try {
+      setIsLoading(true);
+
+      // Process in batches of 50
+      const batchSize = 50;
+      const batches = [];
+
+      for (let i = 0; i < items.length; i += batchSize) {
+        batches.push(items.slice(i, i + batchSize));
+      }
+
+      let successCount = 0;
+      let failedItems: string[] = [];
+
+      // Process each batch
+      for (const batch of batches) {
+        try {
+          const response = await fetch("/api/v1/inventory/bulk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: batch }),
+          });
+
+          if (!response.ok) throw new Error("Batch failed");
+
+          const result = await response.json();
+          successCount += result.successCount;
+          failedItems = [...failedItems, ...result.failedItems];
+        } catch (error) {
+          console.error("Batch failed:", error);
+          failedItems = [...failedItems, ...batch.map((item) => item.sku!)];
+        }
+      }
+
+      // Show results
+      if (failedItems.length === 0) {
+        alert({
+          title: "Success",
+          description: `Successfully added ${successCount} items`,
+        });
+        //TODO:
+        // toast({
+        //   title: "Success",
+        //   description: `Successfully added ${successCount} items`,
+        // });
+      } else {
+        // toast({
+        //   title: "Partial Success",
+        //   description: `Added ${successCount} items. ${failedItems.length} items failed.`,
+        //   variant: "warning",
+        // });
+        //TODO:
+        alert({
+          title: "Partial Success",
+          description: `Added ${successCount} items. ${failedItems.length} items failed.`,
+          variant: "warning",
+        });
+      }
+
+      // Refresh inventory
+      // await fetchInventory();
+    } catch (error) {
+      // toast({
+      //   title: "Error",
+      //   description: "Failed to process bulk upload",
+      //   variant: "destructive",
+      // });
+      alert({
+        title: "Error",
+        description: "Failed to process bulk upload",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -418,7 +496,7 @@ export const InventoryView = () => {
             }
             className="border rounded-lg px-4 py-2 text-gray-600"
           >
-            <option value="all">All Platforms</option>
+            <option value="All">All Platforms</option>
             <option value="tiktok">TikTok</option>
             <option value="instagram">Instagram</option>
             <option value="shopify">Shopify</option>
@@ -450,15 +528,20 @@ export const InventoryView = () => {
               />
             )}
           </div>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              {/* Existing platform selector */}
-            </div>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setShowBulkAdd(true)}
+              className="flex items-center space-x-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50"
+            >
+              <Upload size={16} />
+              <span>Bulk Add</span>
+            </button>
+
             <button
               onClick={() => setShowAddItem(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              <PlusCircle className="w-4 h-4" />
+              <PlusCircle size={16} />
               <span>Add Item</span>
             </button>
           </div>
@@ -469,6 +552,12 @@ export const InventoryView = () => {
           <AddInventoryItem
             onAdd={handleAddItem}
             onClose={() => setShowAddItem(false)}
+          />
+        )}
+        {showBulkAdd && (
+          <BulkAddItems
+            onBulkAdd={handleBulkAdd}
+            onClose={() => setShowBulkAdd(false)}
           />
         )}
         {/* Metrics Cards */}

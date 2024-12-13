@@ -8,3 +8,4 @@ export * from "./ActiveOrdersPanel";
 export * from "./AutoOrderSettingsPanel";
 export * from "./AddInventoryItem";
 export * from "./LoadingIndicator";
+export * from "./BulkAddItems";
