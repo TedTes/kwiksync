@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "../images/overview.png";
-import "../images/inventory.png";
-import "../images/analytics.png";
-import "../images/platforms.png";
 
 import {
   ArrowRight,
@@ -32,9 +28,9 @@ export const LandingPage = () => {
     const handleScroll = () => {
       const totalScroll =
         document.documentElement.scrollHeight - window.innerHeight;
-      const currentProgress = (window.pageYOffset / totalScroll) * 100;
+      const currentProgress = (window.scrollY / totalScroll) * 100;
       setScrollProgress(currentProgress);
-      setIsVisible(window.pageYOffset > 300);
+      setIsVisible(window.scrollY > 300);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -45,28 +41,28 @@ export const LandingPage = () => {
     {
       id: "overview",
       title: "Business Overview",
-      image: `overview.png`,
+      image: "/images/overview.png",
       description:
         "Get a comprehensive view of your business with real-time metrics and performance tracking across all platforms.",
     },
     {
       id: "inventory",
       title: "Smart Inventory Management",
-      image: `inventory.png`,
+      image: `/images/inventory.png`,
       description:
         "Automate your inventory management with smart stock tracking and auto-ordering capabilities across TikTok, Instagram, and Shopify.",
     },
     {
       id: "analytics",
       title: "Performance Analytics",
-      image: `analytics.png`,
+      image: `/images/analytics.png`,
       description:
         "Track product performance with detailed analytics including views, engagement, and sales metrics for data-driven decisions.",
     },
     {
       id: "platforms",
       title: "Platform Integration",
-      image: `platforms.png`,
+      image: `/images/platforms.png`,
       description:
         "Seamlessly connect and manage your TikTok, Instagram, and Shopify stores with real-time synchronization.",
     },
@@ -148,7 +144,7 @@ export const LandingPage = () => {
             </div>
             <div className="rounded-xl shadow-xl overflow-hidden">
               <img
-                src="/overview.png"
+                src="/images/overview.png"
                 alt="KwikSync Dashboard"
                 className="w-full"
               />
@@ -212,7 +208,7 @@ export const LandingPage = () => {
               alt="Google"
               className="w-5 h-5"
             />
-            <span>Get Started with Google</span>
+            <span>Get Started with Email</span>
           </button>
         </div>
       </div>

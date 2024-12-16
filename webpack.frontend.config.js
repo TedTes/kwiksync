@@ -1,11 +1,12 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 module.exports = {
   entry: "./src/index.tsx",
   output: {
     filename: "bundle.js",
-    path: path.resolve(__dirname, "./dist/public"),
+    path: path.resolve(__dirname, "dist"),
+    assetModuleFilename: "images/[name][ext]",
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
@@ -32,30 +33,25 @@ module.exports = {
           },
         ],
       },
-      {
-        test: /\.(png|jpe?g|gif|svg)$/i, // Match image file extensions
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: "[path][name].[ext]", // Preserve file names and paths
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg)$/i,
-        type: "asset/resource",
-      },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/public/index.html",
     }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src/public"),
+          to: path.resolve(__dirname, "dist"),
+          globOptions: {
+            ignore: ["**/index.html"],
+          },
+        },
+      ],
+    }),
   ],
   devServer: {
-    static: path.resolve(__dirname, "./dist/public"), // Serve from dist
     historyApiFallback: true, // Support client-side routing
     port: 3001,
     devMiddleware: {
