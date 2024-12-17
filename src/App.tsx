@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { LandingPage, Dashboard } from "./web/pages";
+import { LandingPage, Dashboard, Login } from "./web/pages";
 import { ProtectedRoute } from "./web/components/ProtectedRoute";
 
 const App = () => {
@@ -17,6 +17,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/login" element={<Login />} />
         {/* Catch all redirect to dashboard */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

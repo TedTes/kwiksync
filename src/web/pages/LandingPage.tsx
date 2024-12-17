@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   ArrowRight,
   CheckCircle,
@@ -28,6 +30,7 @@ export const LandingPage = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
     "monthly"
   );
+  const navigate = useNavigate();
   useEffect(() => {
     const handleScroll = () => {
       const totalScroll =
@@ -44,7 +47,7 @@ export const LandingPage = () => {
     {
       id: "overview",
       title: "Comprehensive Business Insights",
-      image: "/images/overview.png",
+      image: "/images/overview3.jpg",
       description:
         "Gain real-time, actionable insights across all your sales channels with our advanced analytics dashboard.",
       icon: BarChart2,
@@ -117,8 +120,7 @@ export const LandingPage = () => {
     },
   ];
   const handleGoogleLogin = () => {
-    // Implement actual Google login logic
-    console.log("Initiating secure Google authentication");
+    navigate("/login");
   };
 
   return (
@@ -163,11 +165,6 @@ export const LandingPage = () => {
                 onClick={handleGoogleLogin}
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
-                <img
-                  src="/images/google-icon.svg"
-                  alt="Google"
-                  className="w-5 h-5"
-                />
                 <span>Sign In</span>
               </button>
             </div>
@@ -376,11 +373,6 @@ export const LandingPage = () => {
             onClick={handleGoogleLogin}
             className="flex items-center space-x-3 mx-auto px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition"
           >
-            <img
-              src="/images/google-icon.svg"
-              alt="Google"
-              className="w-6 h-6"
-            />
             <span className="text-lg font-semibold">Start Your Free Trial</span>
           </motion.button>
         </div>
