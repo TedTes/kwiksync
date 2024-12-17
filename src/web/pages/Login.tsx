@@ -2,21 +2,25 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Shield, Check, X, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { envVariables } from "config";
+import axios from "axios";
 export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { appServerURL } = envVariables;
   const navigate = useNavigate();
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+    setIsLoading(true);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address");
+      setIsLoading(false);
       return;
     }
 
@@ -26,14 +30,33 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       setSuccess(
         "A login link has been sent to your email. Please check your inbox."
       );
-    } catch (err) {
-      setError("Failed to send login link. Please try again.");
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message ||
+        "Failed to send login link. Please try again.";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const sendMagicLink = async (email: string) => {
-    console.log(`Sending magic link to ${email}`);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const response = await axios.post(
+      `${appServerURL}/api/v1/auth/magic-link`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    if (!response.data) {
+      const data = await response.data;
+      throw new Error(data.message || "Failed to send magic link");
+    }
+
+    return response.data;
   };
 
   const handleReturnToLanding = () => {
@@ -126,16 +149,25 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
                 placeholder="Enter your email address"
                 className="pl-10 block w-full py-3.5 px-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
                 required
-                disabled={!!success}
+                disabled={isLoading || !!success}
               />
             </div>
 
             {!success && (
               <button
                 type="submit"
-                className="w-full flex items-center justify-center py-3.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                disabled={isLoading}
+                className={`w-full flex items-center justify-center py-3.5 ${
+                  isLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+                }text-white rounded-lg transition`}
               >
-                Send Login Link <ArrowRight className="w-5 h-5 ml-2" />
+                {isLoading ? (
+                  "Sending..."
+                ) : (
+                  <>
+                    Send Login Link <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
               </button>
             )}
           </form>
