@@ -6,6 +6,7 @@ import {
   SupplierProduct,
   TrendingProduct,
   Notification,
+  LoginLinks,
 } from "../models";
 
 export const AppDataSource = new DataSource({
@@ -20,5 +21,6 @@ export const AppDataSource = new DataSource({
     SupplierProduct,
     TrendingProduct,
     Notification,
+    LoginLinks,
   ],
 });
