@@ -6,3 +6,4 @@ export * from "./trendingProduct.model";
 export * from "./user.model";
 export * from "./inventoryHistory.model";
 export * from "./notification.model";
+export * from "./login-links.model";
