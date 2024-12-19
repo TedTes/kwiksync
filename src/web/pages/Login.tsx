@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Shield, Check, X, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { envVariables } from "config";
+import { envVariables } from "../../config";
 import axios from "axios";
 export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [email, setEmail] = useState("");
