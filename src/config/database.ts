@@ -8,12 +8,10 @@ import {
   Notification,
   LoginLinks,
 } from "../models";
-
+import { envVariables } from "./env-variables";
 export const AppDataSource = new DataSource({
+  ...envVariables.postgressConfig,
   type: "postgres",
-  url: process.env.DATABASE_URL,
-  synchronize: true,
-  logging: true,
   entities: [
     Merchant,
     Product,
