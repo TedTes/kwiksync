@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "typeRoots": ["./src/web/types", "./node_modules/@types"],
+    "typeRoots": ["src/types", "./node_modules/@types"],
     "baseUrl": "src",
     "moduleResolution": "node",
     "jsx": "react-jsx",
@@ -14,6 +14,6 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/**.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
