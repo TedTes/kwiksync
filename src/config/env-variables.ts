@@ -9,8 +9,7 @@ export const envVariables = {
     username: process.env.POSTGRES_USER || "postgres",
     password: process.env.POSTGRES_PASSWORD || "password",
     database: process.env.POSTGRES_DB || "postgres",
-    synchronize: process.env.POSTGRES_SYNCHRONIZE || true,
-    logging: process.env.POSTGRES_LOGGING || true,
-    entities: ["src/models/*.ts"],
+    synchronize: process.env.POSTGRES_SYNCHRONIZE,
+    logging: process.env.POSTGRES_LOGGING,
   },
 };
