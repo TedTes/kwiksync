@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const webpack = require("webpack");
 module.exports = {
   entry: "./src/index.tsx",
   output: {
@@ -10,6 +11,10 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
+    alias: {
+      "typeorm/browser": "typeorm",
+      "react-native-sqlite-storage": false,
+    },
   },
   module: {
     rules: [
@@ -38,6 +43,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/public/index.html",
+    }),
+    new webpack.DefinePlugin({
+      "process.env.NODE_ENV": JSON.stringify("development"),
     }),
     new CopyWebpackPlugin({
       patterns: [
