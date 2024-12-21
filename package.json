@@ -11,9 +11,9 @@
     "start:backend": "nodemon --ignore /dist ./src/server.ts",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "build:frontend": "webpack --mode production --config webpack.frontend.config.js",
-    "build:backend": "tsc -p tsconfig.json",
+    "build:backend": "webpack --mode development --config webpack.backend.config.js",
     "build": "npm run build:frontend && npm run build:backend",
-    "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && npm run start:backend\""
+    "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && npm run server-bundle.js\""
   },
   "keywords": [],
   "author": "",
@@ -65,7 +65,6 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@types/react-router-dom": "^5.3.3",
     "autoprefixer": "^10.4.20",
     "copy-webpack-plugin": "^12.0.2",
     "file-loader": "^6.2.0",

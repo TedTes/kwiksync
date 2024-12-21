@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "./src/web",
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "module": "CommonJS",
     "target": "ESNext",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./src/web",
     "strict": true,
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/web/**/*"],
   "exclude": ["node_modules", "dist"]
 }
