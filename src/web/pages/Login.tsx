@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Shield, Check, X, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { envVariables } from "../../config";
 import axios from "axios";
 export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { appServerURL } = envVariables;
+  const appServerURL = "http://localhost:3000";
   const navigate = useNavigate();
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
