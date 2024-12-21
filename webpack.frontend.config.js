@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
 module.exports = {
-  entry: "./src/index.tsx",
+  entry: "./src/web/index.tsx",
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
@@ -12,6 +12,7 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
   },
+
   module: {
     rules: [
       {
@@ -38,7 +39,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/public/index.html",
+      template: "./src/web/public/index.html",
     }),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("development"),
@@ -46,7 +47,7 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "src/public"),
+          from: path.resolve(__dirname, "src/web/public"),
           to: path.resolve(__dirname, "dist"),
           globOptions: {
             ignore: ["**/index.html"],

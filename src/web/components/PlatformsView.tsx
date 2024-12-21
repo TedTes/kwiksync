@@ -10,7 +10,7 @@ import {
   AlertTriangle,
   X,
 } from "lucide-react";
-import "../../index.css";
+import "../index.css";
 
 export const PlatformsView = () => {
   const [activeTab, setActiveTab] = useState("overview");
