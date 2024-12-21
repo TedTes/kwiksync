@@ -2,18 +2,6 @@ import nodemailer from "nodemailer";
 import { CustomError, ErrorFactory } from "./errors";
 import { emailConfig } from "../config";
 const transporter = nodemailer.createTransport(emailConfig);
-interface EmailContent {
-  to: string;
-  subject: string;
-  html: string;
-  text?: string;
-  attachments?: EmailAttachment[];
-}
-interface EmailAttachment {
-  filename: string;
-  content: Buffer | string;
-  contentType?: string;
-}
 // Email templates
 export const EmailTemplates = {
   /**

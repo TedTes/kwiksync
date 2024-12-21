@@ -13,7 +13,7 @@
     "build:frontend": "webpack --mode production --config webpack.frontend.config.js",
     "build:backend": "tsc -p tsconfig.json",
     "build": "npm run build:frontend && npm run build:backend",
-    "dev": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
+    "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && npm run start:backend\""
   },
   "keywords": [],
   "author": "",
@@ -74,7 +74,6 @@
     "postcss-loader": "^8.1.1",
     "tailwindcss": "^3.4.16",
     "ts-loader": "^9.5.1",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.2",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4",
