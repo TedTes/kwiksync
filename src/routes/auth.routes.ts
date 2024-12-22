@@ -7,6 +7,7 @@ import {
   logoutUser,
   registerNewUser,
   refreshTokensHandler,
+  sendMagicLinkController,
 } from "../controllers";
 
 export const authRoutes = Router();
@@ -34,6 +35,18 @@ authRoutes.post(
     validateRequest,
   ],
   loginUser
+);
+authRoutes.post(
+  "/magic-link",
+  [
+    body("email")
+      .isEmail()
+      .normalizeEmail()
+      .withMessage("Valid email is required"),
+
+    validateRequest,
+  ],
+  sendMagicLinkController
 );
 authRoutes.post("/refresh-token", refreshTokensHandler);
 authRoutes.post("/logout", logoutUser);

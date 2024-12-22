@@ -71,38 +71,41 @@ export const sendMagicLinkController = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { email } = req.body;
 
     if (!email || typeof email !== "string") {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "Email is required",
       });
+      return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "Invalid email format",
       });
+      return;
     }
 
     // Check rate limit
     const rateLimitKey = `magic_link_${email}`;
     const isRateLimited = await rateLimit.check(rateLimitKey);
     if (isRateLimited) {
-      return res.status(429).json({
+      res.status(429).json({
         success: false,
         message: "Too many requests. Please try again later.",
       });
+      return;
     }
     await sendMagicLink(email);
 
     await rateLimit.increment(rateLimitKey);
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "Magic link sent successfully",
     });
