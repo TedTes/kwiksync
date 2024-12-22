@@ -13,7 +13,7 @@
     "build:frontend": "webpack --mode production --config webpack.frontend.config.js",
     "build:backend": "webpack --mode development --config webpack.backend.config.js",
     "build": "npm run build:frontend && npm run build:backend",
-    "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && npm run server-bundle.js\""
+    "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && nodemon ./dist/server-bundle.js\""
   },
   "keywords": [],
   "author": "",
@@ -50,6 +50,7 @@
     "style-loader": "^4.0.0",
     "toast": "^0.5.4",
     "typeorm": "^0.3.20",
+    "webpack-node-externals": "^3.0.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

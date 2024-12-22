@@ -1,6 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
-
+const nodeExternals = require("webpack-node-externals");
 module.exports = {
   target: "node",
   entry: "./src/server.ts",
@@ -11,12 +11,11 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js", ".json"],
   },
-  externals: {
-    sqlite3: "commonjs sqlite3",
-    "sql.js": "commonjs sql.js",
-    mssql: "commonjs mssql",
-    "react-native-sqlite-storage": "commonjs react-native-sqlite-storage",
-  },
+
+  externals: [
+    nodeExternals(), // Exclude all node_modules and Node.js built-ins
+  ],
+
   module: {
     rules: [
       {
@@ -29,12 +28,4 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new webpack.IgnorePlugin({
-      resourceRegExp:
-        /nock|node-gyp|mock-aws-s3|aws-sdk|nw-pre-gyp[\/\\]index\.html/,
-    }),
-  ],
-
-  //   mode: "production",
 };
