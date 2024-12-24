@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import { validateRequest } from "../middlewares";
 import passport from "passport";
 import {
@@ -8,6 +8,7 @@ import {
   registerNewUser,
   refreshTokensHandler,
   sendMagicLinkController,
+  verifyMagicLinkController,
 } from "../controllers";
 
 export const authRoutes = Router();
@@ -47,6 +48,23 @@ authRoutes.post(
     validateRequest,
   ],
   sendMagicLinkController
+);
+authRoutes.get(
+  "/verify",
+  [
+    query("token")
+      .isString()
+      .notEmpty()
+      .withMessage("Token is required")
+      .isLength({ min: 64, max: 64 })
+      .withMessage("Invalid token format"),
+    query("email")
+      .isEmail()
+      .normalizeEmail()
+      .withMessage("Valid email is required"),
+    validateRequest,
+  ],
+  verifyMagicLinkController
 );
 authRoutes.post("/refresh-token", refreshTokensHandler);
 authRoutes.post("/logout", logoutUser);

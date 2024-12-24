@@ -7,7 +7,7 @@ export const EmailTemplates = {
   /**
    * Magic link email template
    */
-  magicLink: (link: string, email: string): EmailContent => ({
+  magicLink: (email: string, link: string): EmailContent => ({
     to: email,
     subject: "Sign in to KwikSync",
     html: `
@@ -68,18 +68,16 @@ export const sendEmail = async (content: EmailContent): Promise<void> => {
     validateEmailContent(content);
 
     const mailOptions = {
-      from: emailConfig.from,
       to: content.to,
+      from: emailConfig.from,
       subject: content.subject,
-      html: content.html,
       text: content.text || stripHtml(content.html),
+      html: content.html,
       attachments: content.attachments,
     };
-
     const info = await transporter.sendMail(mailOptions);
-
     console.log("Email sent successfully:", {
-      messageId: info.messageId,
+      messageId: info,
       to: content.to,
       subject: content.subject,
     });
