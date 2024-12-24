@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { AppDataSource } from "./config";
+import cors from "cors";
 import {
   productRoutes,
   trendRoutes,
@@ -19,6 +20,7 @@ import {
 const app = express();
 
 app
+  .use(cors())
   .use(express.static(path.join(__dirname, "../dist")))
   .use(express.json())
   .get("/api/v1/health", (req, res) => {

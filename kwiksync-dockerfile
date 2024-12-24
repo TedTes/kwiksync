@@ -1,0 +1,32 @@
+FROM node:18-alpine
+
+ARG NODE_ENV=production
+
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /app
+
+
+COPY package*.json ./
+
+# Install dependencies (including devDependencies for development)
+RUN if [ "$NODE_ENV" = "production" ]; \
+    then npm ci --only=production; \
+    else npm ci; \
+    fi
+
+# Copy source code
+COPY . .
+
+# Build if production, otherwise prepare for development
+RUN if [ "$NODE_ENV" = "production" ]; \
+    then npm run build; \
+    fi
+
+EXPOSE 3000
+
+# Start command based on environment
+CMD if [ "$NODE_ENV" = "production" ]; \
+    then node ./dist/server-bundle.js; \
+    else npm run dev; \
+    fi

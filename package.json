@@ -8,10 +8,8 @@
   },
   "scripts": {
     "start:frontend": "webpack serve --mode development --config webpack.frontend.config.js",
-    "start:backend": "nodemon --ignore /dist ./src/server.ts",
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "build:frontend": "webpack --mode production --config webpack.frontend.config.js",
-    "build:backend": "webpack --mode development --config webpack.backend.config.js",
+    "build:backend": "webpack --mode production --config webpack.backend.config.js",
     "build": "npm run build:frontend && npm run build:backend",
     "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && nodemon ./dist/server-bundle.js\""
   },
@@ -27,6 +25,7 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "concurrently": "^9.1.0",
+    "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "css-loader": "^7.1.2",
     "dotenv": "^16.4.5",
@@ -55,6 +54,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
