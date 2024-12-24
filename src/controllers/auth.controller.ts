@@ -119,16 +119,9 @@ export const verifyMagicLinkController = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { token, email } = req.query;
-
-    if (!token || !email) {
-      return res.status(400).json({
-        success: false,
-        message: "Token and email are required",
-      });
-    }
 
     const result = await verifyMagicLink(token as string, email as string);
 
@@ -149,17 +142,19 @@ export const verifyMagicLinkController = async (
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         message: "Authentication successful",
         user: result.user,
       });
+      return;
     }
 
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       message: "Invalid or expired magic link",
     });
+    return;
   } catch (error) {
     console.error("Magic link verification error:", error);
     next(error);
