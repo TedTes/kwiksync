@@ -22,7 +22,6 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       setIsLoading(false);
       return;
     }
-
     try {
       await sendMagicLink(email);
 
@@ -42,11 +41,11 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const sendMagicLink = async (email: string) => {
     const response = await axios.post(
       `${appServerURL}/api/v1/auth/magic-link`,
+      { email },
       {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
       }
     );
 

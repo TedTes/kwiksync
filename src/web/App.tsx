@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { LandingPage, Dashboard, Login } from "./pages";
+import { LandingPage, Dashboard, Login, VerifyPage } from "./pages";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const App = () => {
@@ -9,6 +9,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/verify" element={<VerifyPage />} />
         <Route
           path="/dashboard/*"
           element={

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
-const VerifyPage = () => {
+import axios from "axios";
+const appServerURL = "http://localhost:3000";
+export const VerifyPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -16,14 +17,13 @@ const VerifyPage = () => {
           navigate("/login?error=missing_params");
           return;
         }
-
-        const response = await fetch(
-          `/api/v1/auth/verify?token=${token}&email=${email}`
+        const response = await axios.get(
+          `${appServerURL}/api/v1/auth/verify?token=${token}&email=${email}`
         );
-        const data = await response.json();
+        const data = await response.data;
 
         if (data.success) {
-          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("token", JSON.stringify(data.user));
           navigate("/dashboard");
         } else {
           navigate("/login?error=invalid_link");
@@ -52,5 +52,3 @@ const VerifyPage = () => {
 
   return null;
 };
-
-export default VerifyPage;
