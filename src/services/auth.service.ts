@@ -13,7 +13,7 @@ import {
 const userRepository = AppDataSource.getRepository(User);
 const loginLinksRepository = AppDataSource.getRepository(LoginLinks);
 
-const { magicLinkSecretKey, appServerURL } = envVariables;
+const { magicLinkSecretKey, webServerURL } = envVariables;
 export const registerUser = async (
   email: string,
   password: string,
@@ -120,7 +120,7 @@ export const sendMagicLink = async (email: string): Promise<void> => {
       .andWhere("expiresAt < :currentDate", { currentDate: new Date() })
       .execute();
 
-    const magicLink = `${appServerURL}/api/v1/auth/verify?token=${token}&email=${encodeURIComponent(
+    const magicLink = `${webServerURL}/api/v1/auth/verify?token=${token}&email=${encodeURIComponent(
       email
     )}`;
     const emailContent = EmailTemplates.magicLink(email, magicLink);
