@@ -19,22 +19,24 @@ import {
 const app = express();
 
 app
-  .use(express.static(path.join(__dirname, "../dist/public")))
+  .use(express.static(path.join(__dirname, "../dist")))
   .use(express.json())
-  .get("/api/health", (req, res) => {
+  .get("/api/v1/health", (req, res) => {
     res.json({ status: "OK" });
   })
-  .get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../dist/public/index.html"));
-  })
+
   .use(requestLogger)
-  .use("/auth", authRoutes)
-  .use("/api", webhookRoutes)
+  .use("/api/v1/auth", authRoutes)
+  .use("/api/v1/auth/verify", authRoutes)
+  .use("/api/v1", webhookRoutes)
   .use(authenticate)
 
-  .use("/products", productRoutes)
-  .use("/trends", trendRoutes)
-  .use("/analytics", analyticsRoutes)
+  .use("/api/v1/products", productRoutes)
+  .use("/api/v1/trends", trendRoutes)
+  .use("/api/v1/analytics", analyticsRoutes)
+  .get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../dist/index.html"));
+  })
   .use(errorHandler);
 
 AppDataSource.initialize()
