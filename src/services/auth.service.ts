@@ -120,7 +120,7 @@ export const sendMagicLink = async (email: string): Promise<void> => {
       .andWhere("expiresAt < :currentDate", { currentDate: new Date() })
       .execute();
 
-    const magicLink = `${appServerURL}/auth/v1/verify?token=${token}&email=${encodeURIComponent(
+    const magicLink = `${appServerURL}/api/v1/auth/verify?token=${token}&email=${encodeURIComponent(
       email
     )}`;
     const emailContent = EmailTemplates.magicLink(email, magicLink);
