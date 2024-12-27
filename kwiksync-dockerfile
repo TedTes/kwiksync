@@ -1,34 +1,30 @@
-FROM node:18-alpine
-
-ARG NODE_ENV=production
-
-ENV NODE_ENV=${NODE_ENV}
+# Stage 1: Build
+FROM node:18-alpine as builder
 
 WORKDIR /app
 
-
-COPY package*.json package-lock.json ./
-
+COPY package*.json ./
 RUN npm install
 
-# Install dependencies (including devDependencies for development)
-RUN if [ "$NODE_ENV" = "production" ]; \
-    then npm ci --only=production; \
-    else npm ci; \
-    fi
-
-# Copy source code
 COPY . .
 
-# Build if production, otherwise prepare for development
-RUN if [ "$NODE_ENV" = "production" ]; \
-    then npm run build; \
-    fi
+
+RUN npm run build
+
+# Stage 2: Runtime
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy only production dependencies
+COPY package*.json ./
+RUN npm install --only=production
+
+# Copy the built application from the builder stage
+COPY --from=builder /app/dist ./dist
+
 
 EXPOSE 3000
 
-# Start command based on environment
-CMD if [ "$NODE_ENV" = "production" ]; \
-    then node ./dist/server-bundle.js; \
-    else npm run dev; \
-    fi
+
+CMD ["node", "./dist/server-bundle.js"]

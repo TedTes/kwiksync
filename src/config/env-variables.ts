@@ -8,9 +8,9 @@ export const envVariables = {
     host: process.env.POSTGRES_HOST || "localhost",
     port: process.env.POSTGRES_PORT || "5432",
     username: process.env.POSTGRES_USER || "postgres",
-    password: process.env.POSTGRES_PASSWORD || "password",
-    database: process.env.POSTGRES_DB || "postgres",
-    synchronize: isDevelopment ? "true" : process.env.POSTGRES_SYNCHRONIZE,
+    password: process.env.POSTGRES_PASSWORD || "test",
+    database: process.env.POSTGRES_DB || "kwiksync",
+    synchronize: process.env.NODE_ENV !== "production",
     logging: isDevelopment ? "true" : process.env.POSTGRES_LOGGING,
   },
 };

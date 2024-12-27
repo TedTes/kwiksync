@@ -29,14 +29,13 @@ app
 
   .use(requestLogger)
   .use("/api/v1/auth", authRoutes)
-  .use("/api/v1/auth/verify", authRoutes)
   .use("/api/v1", webhookRoutes)
   .use(authenticate)
 
   .use("/api/v1/products", productRoutes)
   .use("/api/v1/trends", trendRoutes)
   .use("/api/v1/analytics", analyticsRoutes)
-  .get("/", (req, res) => {
+  .get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../dist/index.html"));
   })
   .use(errorHandler);

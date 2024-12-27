@@ -41,7 +41,6 @@ export const AppDataSource = new DataSource({
   username,
   password,
   database,
-  synchronize: parseBooleanEnvVar(synchronize, true),
   logging: parseBooleanEnvVar(logging, true),
   // entities: ["src/models/*.ts"],
   type: "postgres",
