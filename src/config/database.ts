@@ -10,15 +10,7 @@ import {
 } from "../models";
 import { envVariables } from "./env-variables";
 const {
-  postgressConfig: {
-    host,
-    port,
-    username,
-    password,
-    database,
-    synchronize,
-    logging,
-  },
+  postgressConfig: { url, synchronize, logging },
 } = envVariables;
 
 const parseBooleanEnvVar = (
@@ -36,11 +28,7 @@ const parsePort = (value: string | undefined, defaultValue: number): number => {
 };
 
 export const AppDataSource = new DataSource({
-  host,
-  port: parsePort(port, 5432),
-  username,
-  password,
-  database,
+  url,
   logging: parseBooleanEnvVar(logging, true),
   // entities: ["src/models/*.ts"],
   type: "postgres",
@@ -53,4 +41,7 @@ export const AppDataSource = new DataSource({
     Notification,
     LoginLinks,
   ],
+  migrations: ["src/migrations/*.ts"],
+  migrationsRun: true, // Automatically run pending migrations,
+  synchronize: false,
 });

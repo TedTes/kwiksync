@@ -7,11 +7,15 @@
     "test": "tests"
   },
   "scripts": {
+    "migration:generate": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate -d src/config/database.ts",
+    "migration:run": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:run -d src/config/database.ts",
+    "migration:revert": "npx typeorm migration:revert",
     "start:frontend": "webpack serve --mode development --config webpack.frontend.config.js",
     "build:frontend": "webpack --mode production --config webpack.frontend.config.js",
     "build:backend": "webpack --mode production --config webpack.backend.config.js",
     "build": "npm run build:frontend && npm run build:backend",
-    "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && nodemon ./dist/server-bundle.js\""
+    "dev": "concurrently \"npm run start:frontend\" \"npm run build:backend && nodemon ./dist/server-bundle.js\"",
+    "start": "node ./dist/server-bundle.js"
   },
   "keywords": [],
   "author": "",
