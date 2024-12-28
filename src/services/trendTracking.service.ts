@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/database";
+import { AppDataSource } from "../config";
 import { TrendingProduct, Product } from "../models";
 import { fetchProductEngagement } from "../integration/tiktokApi";
 import { sendTrendingNotification } from "./notification.service";

@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/database";
+import { AppDataSource } from "../config";
 import { Sales } from "../models/sales.model";
 
 const salesRepository = AppDataSource.getRepository(Sales);

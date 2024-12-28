@@ -1,5 +1,5 @@
 import { fetchTikTokInventory } from "../integration/tiktokApi";
-import { AppDataSource } from "../config/database";
+import { AppDataSource } from "../config";
 import { Product } from "../models/product.model";
 import { fetchProductById, restockProductById, createProduct } from "./";
 const productRepository = AppDataSource.getRepository(Product);

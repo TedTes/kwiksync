@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/database";
+import { AppDataSource } from "../config";
 import { Notification } from "../models/notification.model";
 
 const notificationRepository = AppDataSource.getRepository(Notification);

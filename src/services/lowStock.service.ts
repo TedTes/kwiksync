@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/database";
+import { AppDataSource } from "../config";
 import { Product } from "../models/product.model";
 import { sendLowStockAlert } from "./";
 

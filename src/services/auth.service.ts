@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/database";
+import { AppDataSource } from "../config";
 import { User, LoginLinks } from "../models";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -92,12 +92,16 @@ export const logout = async (userId: string) => {
 
 export const sendMagicLink = async (email: string): Promise<void> => {
   try {
+    console.log("heyyyyy1111");
+    console.log(userRepository);
     const token = randomBytes(32).toString("hex");
     const timestamp = Date.now();
     const hashedToken = createHash("sha256")
       .update(`${token}${magicLinkSecretKey}`)
       .digest("hex");
     const existingUser = await userRepository.findOneBy({ email });
+    console.log("heyyyyy");
+    console.log(existingUser);
     if (!existingUser) {
       const newUser = userRepository.create({
         email,
@@ -120,7 +124,7 @@ export const sendMagicLink = async (email: string): Promise<void> => {
       .andWhere("expiresAt < :currentDate", { currentDate: new Date() })
       .execute();
 
-    const magicLink = `${webServerURL}/api/v1/auth/verify?token=${token}&email=${encodeURIComponent(
+    const magicLink = `${webServerURL}/verify?token=${token}&email=${encodeURIComponent(
       email
     )}`;
     const emailContent = EmailTemplates.magicLink(email, magicLink);
@@ -139,40 +143,50 @@ export const verifyMagicLink = async (token: string, email: string) => {
     .update(`${token}${magicLinkSecretKey}`)
     .digest("hex");
 
-  const magicLink = await loginLinksRepository.findOne({
-    where: {
-      email,
-      token: hashedToken,
-    },
-  });
+  // const magicLink = await loginLinksRepository.findOne({
+  //   where: {
+  //     email,
+  //     token: hashedToken,
+  //   },
+  // });
 
-  if (!magicLink) {
-    throw ErrorFactory.validation(
-      "INVALID_TOKEN",
-      "Invalid or expired magic link"
-    );
-  }
+  // if (!magicLink) {
+  //   throw ErrorFactory.validation(
+  //     "INVALID_TOKEN",
+  //     "Invalid or expired magic link"
+  //   );
+  // }
 
-  const user = await userRepository.findOneBy({ email });
+  // const user = await userRepository.findOneBy({ email });
 
-  if (!user) {
-    throw ErrorFactory.notFound("User not found");
-  }
+  // if (!user) {
+  //   throw ErrorFactory.notFound("User not found");
+  // }
 
-  await loginLinksRepository.update({ id: magicLink.id }, { used: true });
-  const { accessToken, refreshToken } = generateTokens(user);
-  userRepository.update(user.id, {
-    lastLoginAt: new Date(),
-    refreshToken: refreshToken,
-  });
+  // await loginLinksRepository.update({ id: magicLink.id }, { used: true });
+  // const { accessToken, refreshToken } = generateTokens(user);
+  // userRepository.update(user.id, {
+  //   lastLoginAt: new Date(),
+  //   refreshToken: refreshToken,
+  // });
+  // return {
+  //   success: true,
+  //   accessToken,
+  //   refreshToken,
+  //   user: {
+  //     id: user.id,
+  //     email: user.email,
+  //     role: user.role,
+  //   },
+  // };
   return {
     success: true,
-    accessToken,
-    refreshToken,
+    accessToken: "test",
+    refreshToken: "test2",
     user: {
-      id: user.id,
-      email: user.email,
-      role: user.role,
+      id: "user.id",
+      email: "user.email",
+      role: "user.role",
     },
   };
 };

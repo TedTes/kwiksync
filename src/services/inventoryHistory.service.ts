@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/database";
+import { AppDataSource } from "../config";
 import { InventoryHistory, Product } from "../models";
 
 const inventoryHistoryRepository =
