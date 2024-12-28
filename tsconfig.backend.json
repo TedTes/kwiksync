@@ -2,6 +2,7 @@
   // "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "CommonJS",
+    "target": "ESNext",
     "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
@@ -13,5 +14,5 @@
     "experimentalDecorators": true
   },
   "include": ["src/**/*"],
-  "exclude": ["src/web/**/*", "node_modules", "dist"]
+  "exclude": ["src/web/**/*", "node_modules", "dist", "src/migrations/**/*"]
 }

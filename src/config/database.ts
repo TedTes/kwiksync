@@ -7,6 +7,7 @@ import {
   TrendingProduct,
   Notification,
   LoginLinks,
+  User,
 } from "../models";
 import { envVariables } from "./env-variables";
 const {
@@ -40,6 +41,7 @@ export const AppDataSource = new DataSource({
     TrendingProduct,
     Notification,
     LoginLinks,
+    User,
   ],
   migrations: ["src/migrations/*.ts"],
   migrationsRun: true, // Automatically run pending migrations,

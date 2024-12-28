@@ -23,7 +23,7 @@ export class User {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   refreshToken!: string | null;
 
   @UpdateDateColumn()

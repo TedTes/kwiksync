@@ -30,11 +30,11 @@ app
   .use(requestLogger)
   .use("/api/v1/auth", authRoutes)
   .use("/api/v1", webhookRoutes)
-  .use(authenticate)
 
-  .use("/api/v1/products", productRoutes)
-  .use("/api/v1/trends", trendRoutes)
-  .use("/api/v1/analytics", analyticsRoutes)
+  .use("/api/v1/products", authenticate, productRoutes)
+  .use("/api/v1/trends", authenticate, trendRoutes)
+  .use("/api/v1/analytics", authenticate, analyticsRoutes)
+
   .get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../dist/index.html"));
   })
