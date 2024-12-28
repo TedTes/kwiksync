@@ -14,6 +14,7 @@ module.exports = {
 
   externals: [
     nodeExternals(), // Exclude all node_modules and Node.js built-ins
+    { "./config/database.ts": "commonjs ./config/database.ts" },
   ],
 
   module: {
