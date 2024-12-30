@@ -10,7 +10,7 @@ import { Product } from "./product.model";
 @Entity()
 export class InventoryHistory {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @ManyToOne(() => Product, (product) => product.id, { onDelete: "CASCADE" })
   product!: Product;

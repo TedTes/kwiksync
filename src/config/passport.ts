@@ -45,7 +45,8 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const user = await userRepository.findOneBy({ id });
+    const parsedId = parseInt(id);
+    const user = await userRepository.findOneBy({ id: parsedId });
     done(null, user);
   } catch (error) {
     done(error, null);

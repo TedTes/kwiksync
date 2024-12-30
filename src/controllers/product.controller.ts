@@ -16,7 +16,8 @@ export const getAllProducts = async (req: Request, res: Response) => {
 };
 
 export const getProductById = async (req: Request, res: Response) => {
-  const product = await fetchProductById(req.params.id);
+  const parsedId = parseInt(req.params.id);
+  const product = await fetchProductById(parsedId);
   res.json(product);
 };
 
@@ -51,7 +52,7 @@ export const editProduct = async (
   next: NextFunction
 ) => {
   try {
-    const productId = req.params.id;
+    const productId = parseInt(req.params.id);
     const merchantId = (req as any).user.id;
     const updates = req.body;
 
@@ -71,7 +72,7 @@ export const updateRestockingRules = async (
   next: NextFunction
 ) => {
   try {
-    const productId = req.params.id;
+    const productId = parseInt(req.params.id);
     const merchantId = (req as any).user.id;
     const { restockThreshold, restockAmount } = req.body;
 

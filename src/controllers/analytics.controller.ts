@@ -11,7 +11,7 @@ export const getInventoryHistory = async (
   next: NextFunction
 ) => {
   try {
-    const productId = req.params.productId;
+    const productId = parseInt(req.params.productId);
     const history = await fetchInventoryHistory(productId);
 
     res.status(200).json({ productId, history });
@@ -25,7 +25,7 @@ export const logInventoryChangeController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const productId = req.params.productId;
+  const productId = parseInt(req.params.productId);
   const quantity = parseInt(req.params.quantity, 10);
 
   await logInventoryChange(productId, quantity);

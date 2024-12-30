@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { fetchTrendsByProductId, createTrend } from "../services";
 
 export const getTrendsByProductId = async (req: Request, res: Response) => {
-  const trends = await fetchTrendsByProductId(req.params.productId);
+  const parsedProductId = parseInt(req.params.productId);
+  const trends = await fetchTrendsByProductId(parsedProductId);
   res.json(trends);
 };
 

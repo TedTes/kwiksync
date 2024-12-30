@@ -13,7 +13,7 @@ export const assignSupplier = async (
   next: NextFunction
 ) => {
   try {
-    const productId = req.params.productId;
+    const productId = parseInt(req.params.productId);
     const { supplierId } = req.body;
     const merchantId = (req as any).user.id;
 
@@ -61,7 +61,7 @@ export const updateSupplier = async (
   next: NextFunction
 ) => {
   try {
-    const supplierId = req.params.id;
+    const supplierId = parseInt(req.params.id);
     const updates = req.body;
 
     const updatedSupplier = await editSupplier(supplierId, updates);
@@ -81,7 +81,7 @@ export const removeSupplier = async (
   next: NextFunction
 ) => {
   try {
-    const supplierId = req.params.id;
+    const supplierId = parseInt(req.params.id);
 
     await deleteSupplier(supplierId);
 
