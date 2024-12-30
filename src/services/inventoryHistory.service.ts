@@ -5,7 +5,7 @@ const inventoryHistoryRepository =
   AppDataSource.getRepository(InventoryHistory);
 const productRepository = AppDataSource.getRepository(Product);
 export const logInventoryChange = async (
-  productId: string,
+  productId: number,
   quantity: number
 ) => {
   const product = await productRepository.findOneBy({ id: productId });
@@ -20,7 +20,7 @@ export const logInventoryChange = async (
   );
 };
 
-export const fetchInventoryHistory = async (productId: string) => {
+export const fetchInventoryHistory = async (productId: number) => {
   return inventoryHistoryRepository.find({
     where: { product: { id: productId } },
     order: { timestamp: "DESC" },

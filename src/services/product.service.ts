@@ -5,7 +5,7 @@ const productRepository = AppDataSource.getRepository(Product);
 
 export const fetchAllProducts = async () => await productRepository.find();
 
-export const fetchProductById = async (id: string) =>
+export const fetchProductById = async (id: number) =>
   await productRepository.findOneBy({ id });
 
 export const createProduct = async (product: Partial<Product>) => {
@@ -16,8 +16,8 @@ export const createProduct = async (product: Partial<Product>) => {
 export const removeProduct = async (id: string) => productRepository.delete(id);
 
 export const setRestockingRules = async (
-  productId: string,
-  merchantId: string,
+  productId: number,
+  merchantId: number,
   restockThreshold: number,
   restockAmount: number
 ) => {
@@ -35,13 +35,13 @@ export const setRestockingRules = async (
   return productRepository.save(product);
 };
 
-export const restockProductById = async (id: string, quantity: number) => {
+export const restockProductById = async (id: number, quantity: number) => {
   const product = await fetchProductById(id);
   if (!product) throw new Error(`Product with ID ${id} not found`);
   product.quantity = quantity;
 };
 
-export const fetchMerchantProducts = async (merchantId: string) => {
+export const fetchMerchantProducts = async (merchantId: number) => {
   return productRepository.find({
     where: { merchant: { id: merchantId } },
     order: { createdAt: "DESC" },
@@ -49,8 +49,8 @@ export const fetchMerchantProducts = async (merchantId: string) => {
 };
 
 export const updateProduct = async (
-  productId: string,
-  merchantId: string,
+  productId: number,
+  merchantId: number,
   updates: Partial<Product>
 ) => {
   const product = await productRepository.findOne({

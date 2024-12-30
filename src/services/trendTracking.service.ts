@@ -45,11 +45,10 @@ export const trackTrends = async () => {
         await trendingProductRepository.save(trendingProduct);
       } else {
         trendingProduct = trendingProductRepository.create({
-          productId: product.id,
-          merchantId: product.merchantId,
           likes,
           views,
           shares,
+          trendScore: 4,
           isTrending,
         });
         await trendingProductRepository.save(trendingProduct);
@@ -63,3 +62,27 @@ export const trackTrends = async () => {
     console.error("Error tracking trends:", error);
   }
 };
+
+// @ManyToOne(() => Product, (product) => product.id, { onDelete: "CASCADE" })
+// product!: Product;
+
+// @Column({ default: 0 })
+// likes!: number;
+
+// @Column({ default: 0 })
+// shares!: number;
+
+// @Column({ default: 0 })
+// views!: number;
+
+// @Column({ nullable: true })
+// trendScore!: number;
+
+// @Column()
+// isTrending!: boolean;
+
+// @CreateDateColumn()
+// createdAt!: Date;
+
+// @UpdateDateColumn()
+// updatedAt!: Date;

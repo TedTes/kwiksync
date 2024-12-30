@@ -80,7 +80,7 @@ export const refreshTokens = async (currRefreshToken: string) => {
   }
 };
 
-export const logout = async (userId: string) => {
+export const logout = async (userId: number) => {
   const user = await userRepository.findOneBy({ id: userId });
   if (!user) throw new Error("User not found");
 

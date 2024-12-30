@@ -25,7 +25,7 @@ export const sendLowStockAlert = async (product: Product) => {
     await transporter.sendMail(emailOptions);
 
     // Save In-App Notification
-    await saveNotification(product.merchantId, message);
+    await saveNotification(product.merchant.id, message);
 
     console.log(`Low-stock email sent for product: ${product.name}`);
   } catch (error) {
@@ -37,7 +37,7 @@ export const sendLowStockAlert = async (product: Product) => {
 };
 
 export const sendTrendingNotification = async (
-  merchantId: string,
+  merchantId: number,
   productName: string
 ) => {
   try {

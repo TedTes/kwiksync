@@ -6,9 +6,9 @@ const productRepository = AppDataSource.getRepository(Product);
 const supplierRepository = AppDataSource.getRepository(Supplier);
 
 export const linkProductToSupplier = async (
-  productId: string,
-  supplierId: string,
-  merchantId: string
+  productId: number,
+  supplierId: number,
+  merchantId: number
 ) => {
   const product = await productRepository.findOne({
     where: { id: productId, merchant: { id: merchantId } },
@@ -37,7 +37,7 @@ export const createSupplier = async (
 };
 
 export const editSupplier = async (
-  supplierId: string,
+  supplierId: number,
   updates: Partial<Supplier>
 ) => {
   const supplier = await supplierRepository.findOneBy({ id: supplierId });
@@ -49,7 +49,7 @@ export const editSupplier = async (
   return supplierRepository.save(supplier);
 };
 
-export const deleteSupplier = async (supplierId: string) => {
+export const deleteSupplier = async (supplierId: number) => {
   const supplier = await supplierRepository.findOneBy({ id: supplierId });
   if (!supplier) {
     throw new Error("Supplier not found");
@@ -58,7 +58,7 @@ export const deleteSupplier = async (supplierId: string) => {
   await supplierRepository.remove(supplier);
 };
 
-export const fetchMerchantSuppliers = async (merchantId: string) => {
+export const fetchMerchantSuppliers = async (merchantId: number) => {
   return supplierRepository
     .createQueryBuilder("supplier")
     .innerJoinAndSelect(

@@ -14,5 +14,5 @@ export const createUser = async (user: Partial<User>) => {
 };
 
 export const getAllUsers = async () => userRepository.find();
-export const getUserById = async (id: string) =>
+export const getUserById = async (id: number) =>
   userRepository.findOneBy({ id });
