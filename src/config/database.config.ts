@@ -38,7 +38,7 @@ export const getDbConfig = (isMigration = false): DataSourceOptions => ({
     LoginLinks,
     User,
   ],
-  migrations: ["dist/migrations/*.js"],
+  migrations: ["dist/migrations/migrations/*.js"],
   migrationsRun: true,
   synchronize: false,
 });
