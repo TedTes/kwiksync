@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.backend.json",
+  "compilerOptions": {
+    "outDir": "./dist/migrations"
+  },
+  "include": [
+    "src/config/database.ts",
+    "src/models/**/*",
+    "src/migrations/**/*.ts"
+  ]
+}
