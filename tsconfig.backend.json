@@ -1,18 +1,13 @@
 {
-  // "extends": "./tsconfig.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "target": "ESNext",
-    "moduleResolution": "node",
+    "target": "es6",
+    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
-    "strict": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "baseUrl": "./src"
   },
   "include": ["src/**/*"],
-  "exclude": ["src/web/**/*", "node_modules", "dist", "src/migrations/**/*"]
+  "exclude": ["src/web/**/*", "node_modules", "dist"]
 }

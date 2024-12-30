@@ -1,0 +1,8 @@
+{
+  "watch": ["src"],
+  "ext": ".ts,.js",
+  "ignore": ["src/web/**/*"],
+  "env": {
+    "TS_NODE_PROJECT": "tsconfig.backend.json"
+  }
+}

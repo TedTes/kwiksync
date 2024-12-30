@@ -24,7 +24,9 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: "ts-loader",
-          options: { configFile: "tsconfig.backend.json" },
+          options: {
+            configFile: path.resolve(__dirname, "tsconfig.backend.json"),
+          },
         },
       },
     ],

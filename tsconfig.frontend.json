@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./src/web",
+    "jsx": "react-jsx",
+    "module": "CommonJS",
+    "target": "ESNext",
+    "outDir": "./dist",
+    "rootDir": "./src/web"
+  },
+  "include": ["src/web/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
