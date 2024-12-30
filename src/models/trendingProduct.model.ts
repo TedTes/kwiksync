@@ -12,16 +12,10 @@ import { Product } from "./product.model";
 @Entity()
 export class TrendingProduct {
   @PrimaryGeneratedColumn()
-  id!: string;
-
-  @Column()
-  productId!: string;
+  id!: number;
 
   @ManyToOne(() => Product, (product) => product.id, { onDelete: "CASCADE" })
   product!: Product;
-
-  @Column()
-  merchantId!: string;
 
   @Column({ default: 0 })
   likes!: number;

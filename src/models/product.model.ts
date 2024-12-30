@@ -11,10 +11,7 @@ import { Merchant, Supplier } from "./";
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
-  id!: string;
-
-  @Column()
-  merchantId!: string;
+  id!: number;
 
   @ManyToOne(() => Merchant, (merchant) => merchant.id, { onDelete: "CASCADE" })
   merchant!: Merchant;
@@ -39,9 +36,6 @@ export class Product {
     onDelete: "SET NULL",
   })
   supplier!: Supplier;
-
-  @Column({ nullable: true })
-  supplierId!: number;
 
   @CreateDateColumn()
   createdAt!: Date;

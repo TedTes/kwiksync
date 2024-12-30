@@ -10,7 +10,7 @@ import { Product } from "./product.model";
 @Entity()
 export class Supplier {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @Column()
   name!: string;

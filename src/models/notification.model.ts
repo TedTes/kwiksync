@@ -9,10 +9,10 @@ import {
 @Entity()
 export class Notification {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @Column()
-  merchantId!: string;
+  merchantId!: number;
 
   @Column()
   message!: string;

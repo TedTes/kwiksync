@@ -10,7 +10,7 @@ import { Product } from "./product.model";
 @Entity()
 export class LoginLinks {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @Column()
   email!: string;
