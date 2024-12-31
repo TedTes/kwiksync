@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { Product } from "./product.model";
 
-@Entity()
+@Entity("login_links")
 export class LoginLinks {
   @PrimaryGeneratedColumn()
   id!: number;

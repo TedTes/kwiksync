@@ -9,7 +9,7 @@
   "scripts": {
     "migration:generate": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate -d src/config/database.ts",
     "migration:run": "tsc --p tsconfig.migrations.json &&  node node_modules/typeorm/cli.js migration:run -d dist/migrations/config/database.js",
-    "migration:revert": "npx typeorm migration:revert",
+    "migration:revert": "npx typeorm migration:revert -d dist/migrations/config/database.js",
     "migration:show": "typeorm-ts-node-commonjs migration:show -d src/config/database.ts",
     "start:frontend": "webpack serve --mode development --config webpack.frontend.config.js",
     "build:frontend": "webpack --mode production --config webpack.frontend.config.js",

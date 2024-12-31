@@ -92,34 +92,32 @@ export const logout = async (userId: number) => {
 
 export const sendMagicLink = async (email: string): Promise<void> => {
   try {
-    console.log("heyyyyy1111");
-    console.log(userRepository);
     const token = randomBytes(32).toString("hex");
     const timestamp = Date.now();
     const hashedToken = createHash("sha256")
       .update(`${token}${magicLinkSecretKey}`)
       .digest("hex");
     const existingUser = await userRepository.findOneBy({ email });
-    console.log("heyyyyy");
-    console.log(existingUser);
     if (!existingUser) {
-      const newUser = userRepository.create({
+      const newUser = await userRepository.create({
         email,
         role: "USER",
         createdAt: new Date(),
       });
+      await userRepository.save(newUser);
     }
-    loginLinksRepository.create({
+    const newLoginSession = await loginLinksRepository.create({
       email,
       token: hashedToken,
       expiresAt: new Date(timestamp + 30 * 60 * 1000), //30 minutes
       used: false,
     });
+    await loginLinksRepository.save(newLoginSession);
 
     await loginLinksRepository
       .createQueryBuilder()
       .delete()
-      .from("LoginLinks")
+      .from("login_links")
       .where("email = :email", { email })
       .andWhere("expiresAt < :currentDate", { currentDate: new Date() })
       .execute();

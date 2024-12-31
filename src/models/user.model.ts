@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-@Entity()
+@Entity("user")
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -14,7 +14,7 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column()
+  @Column({ nullable: true })
   password!: string;
 
   @Column({ default: "merchant" })
@@ -29,6 +29,6 @@ export class User {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @Column()
+  @Column({ nullable: true })
   lastLoginAt!: Date;
 }

@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "jsx": "react-jsx",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "target": "ES2021",
+    "target": "ESNext",
     "module": "CommonJS",
     "allowSyntheticDefaultImports": true,
     "strict": true,
