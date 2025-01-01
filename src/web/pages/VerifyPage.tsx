@@ -14,7 +14,9 @@ export const VerifyPage = () => {
         const email = searchParams.get("email");
 
         if (!token || !email) {
-          navigate("/login?error=missing_params");
+          navigate(
+            "/login?error=missing authentication token or email, please try again"
+          );
           return;
         }
         const response = await axios.get(
@@ -26,7 +28,7 @@ export const VerifyPage = () => {
           localStorage.setItem("token", JSON.stringify(data.user));
           navigate("/dashboard");
         } else {
-          navigate("/login?error=invalid_link");
+          navigate("/login?error=The link is invalid or expired");
         }
       } catch (error) {
         console.error("Verification error:", error);

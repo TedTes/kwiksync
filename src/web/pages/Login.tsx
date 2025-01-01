@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Shield, Check, X, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [email, setEmail] = useState("");
@@ -10,7 +10,14 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const appServerURL = "http://localhost:3000";
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (error) {
+      setError(error);
+    }
+  }, []);
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
