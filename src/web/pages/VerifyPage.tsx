@@ -10,6 +10,11 @@ export const VerifyPage = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
+        const existingUser = localStorage.getItem("user");
+        if (existingUser) {
+          navigate("/dashboard");
+          return;
+        }
         const token = searchParams.get("token");
         const email = searchParams.get("email");
 
@@ -25,7 +30,7 @@ export const VerifyPage = () => {
         const data = await response.data;
 
         if (data.success) {
-          localStorage.setItem("token", JSON.stringify(data.user));
+          localStorage.setItem("user", JSON.stringify(data.user));
           navigate("/dashboard");
         } else {
           navigate("/login?error=The link is invalid or expired");

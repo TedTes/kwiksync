@@ -137,45 +137,61 @@ export const sendMagicLink = async (email: string): Promise<void> => {
 };
 
 export const verifyMagicLink = async (token: string, email: string) => {
-  const hashedToken = createHash("sha256")
-    .update(`${token}${magicLinkSecretKey}`)
-    .digest("hex");
+  try {
+    const hashedToken = createHash("sha256")
+      .update(`${token}${magicLinkSecretKey}`)
+      .digest("hex");
 
-  const magicLink = await loginLinksRepository.findOne({
-    where: {
-      email,
-      token: hashedToken,
-    },
-  });
+    const magicLink = await loginLinksRepository.findOne({
+      where: {
+        email,
+        token: hashedToken,
+        used: false,
+      },
+    });
 
-  if (!magicLink) {
-    throw ErrorFactory.validation(
-      "INVALID_TOKEN",
-      "Invalid or expired magic link"
-    );
+    if (!magicLink) {
+      throw ErrorFactory.validation(
+        "INVALID_TOKEN",
+        "Invalid or expired magic link"
+      );
+    } else if (magicLink.expiresAt < new Date()) {
+      await loginLinksRepository
+        .createQueryBuilder()
+        .delete()
+        .from("login_links")
+        .where("email = :email", { email })
+        .andWhere("expiresAt < :currentDate", { currentDate: new Date() });
+      throw ErrorFactory.validation("INVALID_TOKEN");
+    }
+
+    const user = await userRepository.findOneBy({ email });
+
+    if (!user) {
+      throw ErrorFactory.notFound("User not found");
+    }
+
+    await loginLinksRepository.update({ id: magicLink.id }, { used: true });
+    const { accessToken, refreshToken } = generateTokens(user);
+    await userRepository.update(user.id, {
+      lastLoginAt: new Date(),
+      refreshToken: refreshToken,
+    });
+
+    return {
+      isSuccess: true,
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  } catch (error) {
+    console.error("Verify magic link error:", error);
+    return {
+      isSuccess: false,
+    };
   }
-
-  const user = await userRepository.findOneBy({ email });
-
-  if (!user) {
-    throw ErrorFactory.notFound("User not found");
-  }
-
-  await loginLinksRepository.update({ id: magicLink.id }, { used: true });
-  const { accessToken, refreshToken } = generateTokens(user);
-  await userRepository.update(user.id, {
-    lastLoginAt: new Date(),
-    refreshToken: refreshToken,
-  });
-
-  return {
-    success: true,
-    accessToken,
-    refreshToken,
-    user: {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    },
-  };
 };

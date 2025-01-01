@@ -125,7 +125,7 @@ export const verifyMagicLinkController = async (
 
     const result = await verifyMagicLink(token as string, email as string);
 
-    if (result.success) {
+    if (result.isSuccess) {
       const { accessToken, refreshToken } = result;
 
       res.cookie("accessToken", accessToken, {
@@ -151,7 +151,7 @@ export const verifyMagicLinkController = async (
     }
 
     res.status(400).json({
-      success: false,
+      success: result.isSuccess,
       message: "Invalid or expired magic link",
     });
     return;

@@ -16,6 +16,8 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     const error = searchParams.get("error");
     if (error) {
       setError(error);
+    } else if (localStorage.getItem("user")) {
+      navigate("/dashboard");
     }
   }, []);
   const handleEmailSubmit = async (e: React.FormEvent) => {
