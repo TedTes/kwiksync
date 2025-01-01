@@ -9,26 +9,35 @@ import {
 @Entity("user")
 export class User {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
+
+  @Column({ type: "varchar", length: 255, nullable: true })
+  name: string;
 
   @Column({ unique: true })
-  email!: string;
+  email: string;
 
   @Column({ nullable: true })
-  password!: string;
+  password: string;
 
   @Column({ default: "merchant" })
-  role!: string;
+  role: string;
 
   @CreateDateColumn()
-  createdAt!: Date;
+  createdAt: Date;
 
   @Column({ type: "text", nullable: true })
-  refreshToken!: string | null;
+  refreshToken: string | null;
 
   @UpdateDateColumn()
-  updatedAt!: Date;
+  updatedAt: Date;
 
   @Column({ nullable: true })
-  lastLoginAt!: Date;
+  lastLoginAt: Date;
+
+  @Column({ type: "varchar", length: 255, nullable: true })
+  picture: string;
+
+  @Column({ nullable: true })
+  googleId: string;
 }

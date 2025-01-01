@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class UserPasswordColumnNullable1735608913379 implements MigrationInterface {
-    name = 'UserPasswordColumnNullable1735608913379'
+export class UpdateUserTableColumns1735765937524 implements MigrationInterface {
+    name = 'UpdateUserTableColumns1735765937524'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "user" ALTER COLUMN "password" DROP NOT NULL`);
