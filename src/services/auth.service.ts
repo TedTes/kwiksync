@@ -141,50 +141,41 @@ export const verifyMagicLink = async (token: string, email: string) => {
     .update(`${token}${magicLinkSecretKey}`)
     .digest("hex");
 
-  // const magicLink = await loginLinksRepository.findOne({
-  //   where: {
-  //     email,
-  //     token: hashedToken,
-  //   },
-  // });
+  const magicLink = await loginLinksRepository.findOne({
+    where: {
+      email,
+      token: hashedToken,
+    },
+  });
 
-  // if (!magicLink) {
-  //   throw ErrorFactory.validation(
-  //     "INVALID_TOKEN",
-  //     "Invalid or expired magic link"
-  //   );
-  // }
+  if (!magicLink) {
+    throw ErrorFactory.validation(
+      "INVALID_TOKEN",
+      "Invalid or expired magic link"
+    );
+  }
 
-  // const user = await userRepository.findOneBy({ email });
+  const user = await userRepository.findOneBy({ email });
 
-  // if (!user) {
-  //   throw ErrorFactory.notFound("User not found");
-  // }
+  if (!user) {
+    throw ErrorFactory.notFound("User not found");
+  }
 
-  // await loginLinksRepository.update({ id: magicLink.id }, { used: true });
-  // const { accessToken, refreshToken } = generateTokens(user);
-  // userRepository.update(user.id, {
-  //   lastLoginAt: new Date(),
-  //   refreshToken: refreshToken,
-  // });
-  // return {
-  //   success: true,
-  //   accessToken,
-  //   refreshToken,
-  //   user: {
-  //     id: user.id,
-  //     email: user.email,
-  //     role: user.role,
-  //   },
-  // };
+  await loginLinksRepository.update({ id: magicLink.id }, { used: true });
+  const { accessToken, refreshToken } = generateTokens(user);
+  await userRepository.update(user.id, {
+    lastLoginAt: new Date(),
+    refreshToken: refreshToken,
+  });
+
   return {
     success: true,
-    accessToken: "test",
-    refreshToken: "test2",
+    accessToken,
+    refreshToken,
     user: {
-      id: "user.id",
-      email: "user.email",
-      role: "user.role",
+      id: user.id,
+      email: user.email,
+      role: user.role,
     },
   };
 };
