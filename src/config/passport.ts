@@ -10,11 +10,13 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      callbackURL: "http://localhost:3000/auth/google/callback", ///??????
+      callbackURL: "http://localhost:3000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const email = profile.emails?.[0].value;
+        const name = profile.displayName;
+        const picture = profile.photos?.[0]?.value;
 
         if (!email) {
           return done(new Error("No email found in Google profile"), undefined);
@@ -25,20 +27,28 @@ passport.use(
         if (!user) {
           user = userRepository.create({
             email,
+            name,
+            picture,
             password: "",
-            role: "merchant", // Default role
+            role: "merchant",
+            googleId: profile.id,
           });
           await userRepository.save(user);
         }
 
-        return done(null, user);
+        return done(null, {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          name: user.name,
+          picture: user.picture,
+        });
       } catch (error) {
         return done(error, undefined);
       }
     }
   )
 );
-
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
 });

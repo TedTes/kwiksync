@@ -1,7 +1,8 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { body, query } from "express-validator";
 import { validateRequest } from "../middlewares";
 import passport from "passport";
+import { User } from "../models";
 import {
   loginUser,
   logoutUser,
@@ -10,7 +11,7 @@ import {
   sendMagicLinkController,
   verifyMagicLinkController,
 } from "../controllers";
-
+import { generateTokens } from "../utils";
 export const authRoutes = Router();
 
 authRoutes.post(
@@ -77,8 +78,49 @@ authRoutes.get(
 
 authRoutes.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    res.redirect("/dashboard");
+  passport.authenticate("google", { session: false }),
+  (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id, email, role } = req.user as User;
+      // Generate tokens
+      const { accessToken, refreshToken } = generateTokens({
+        id,
+        email,
+        role,
+      } as User);
+
+      // Set HTTP-only cookies
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+
+      // Send success to frontend popup
+      res.send(`
+        <script>
+          window.opener.postMessage({ 
+            success: true, 
+            email: "${email}",
+
+          }, "${process.env.FRONTEND_URL}");
+        </script>
+      `);
+    } catch (error) {
+      res.send(`
+        <script>
+          window.opener.postMessage({ 
+            success: false, 
+            error: "Login failed"
+          }, "${process.env.FRONTEND_URL}");
+        </script>
+      `);
+    }
   }
 );

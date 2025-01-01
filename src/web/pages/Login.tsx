@@ -46,7 +46,43 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       setIsLoading(false);
     }
   };
+  const handleGoogleLogin = async () => {
+    try {
+      // Open Google OAuth in new window
+      const width = 500;
+      const height = 600;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
 
+      const authWindow = window.open(
+        `${appServerURL}/api/v1/auth/google`,
+        "Google Login",
+        `width=${width},height=${height},left=${left},top=${top}`
+      );
+
+      // Listen for message from OAuth popup
+      const handleMessage = async (event: MessageEvent) => {
+        if (event.origin !== appServerURL) return;
+
+        if (event.data.success) {
+          localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("userEmail", event.data.email);
+
+          authWindow?.close();
+          window.removeEventListener("message", handleMessage);
+          navigate("/dashboard");
+        } else {
+          console.error("Google login failed:", event.data.error);
+          navigate("/login?error=google_login_failed");
+        }
+      };
+
+      window.addEventListener("message", handleMessage);
+    } catch (error) {
+      console.error("Google login error:", error);
+      navigate("/login?error=google_login_failed");
+    }
+  };
   const sendMagicLink = async (email: string) => {
     const response = await axios.post(
       `${appServerURL}/api/v1/auth/magic-link`,
@@ -187,6 +223,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             </div>
 
             <motion.button
+              onClick={handleGoogleLogin}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full flex items-center justify-center py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"

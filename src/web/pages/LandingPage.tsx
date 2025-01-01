@@ -32,6 +32,7 @@ export const LandingPage = () => {
   );
   const navigate = useNavigate();
   useEffect(() => {
+    if (localStorage.getItem("user")) navigate("/login");
     const handleScroll = () => {
       const totalScroll =
         document.documentElement.scrollHeight - window.innerHeight;
@@ -119,7 +120,7 @@ export const LandingPage = () => {
       ],
     },
   ];
-  const handleGoogleLogin = () => {
+  const handleLogin = () => {
     navigate("/login");
   };
 
@@ -162,7 +163,7 @@ export const LandingPage = () => {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={handleGoogleLogin}
+                onClick={handleLogin}
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
                 <span>Sign In</span>
@@ -187,7 +188,7 @@ export const LandingPage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleGoogleLogin}
+                onClick={handleLogin}
                 className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
                 <span>Start Free Trial</span>
@@ -370,7 +371,7 @@ export const LandingPage = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={handleGoogleLogin}
+            onClick={handleLogin}
             className="flex items-center space-x-3 mx-auto px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition"
           >
             <span className="text-lg font-semibold">Start Your Free Trial</span>
