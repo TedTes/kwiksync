@@ -3,8 +3,6 @@
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "target": "ESNext",
-    "module": "CommonJS",
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "skipLibCheck": true,
@@ -13,6 +11,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
-    "strictPropertyInitialization": false
-  }
+    "strictPropertyInitialization": false,
+    "types": ["node"],
+    "sourceMap": false
+  },
+  "exclude": ["node_modules", "dist"]
 }
