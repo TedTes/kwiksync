@@ -25,14 +25,18 @@ passport.use(
         let user = await userRepository.findOneBy({ email });
 
         if (!user) {
-          user = userRepository.create({
+          user = await userRepository.create({
             email,
             name,
             picture,
             password: "",
+            refreshToken: accessToken,
             role: "merchant",
             googleId: profile.id,
           });
+          await userRepository.save(user);
+        } else if (!user.refreshToken) {
+          user.refreshToken = accessToken;
           await userRepository.save(user);
         }
 
