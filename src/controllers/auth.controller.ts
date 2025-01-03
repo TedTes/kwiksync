@@ -42,8 +42,8 @@ export const logoutUser = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = (req as any).user.id;
-    const data = await logout(userId);
+    const email = (req as any).email;
+    const data = await logout(email);
     res.status(200).json(data);
   } catch (err) {
     next(err);
