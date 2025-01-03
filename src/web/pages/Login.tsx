@@ -65,14 +65,11 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         if (event.origin !== appServerURL) return;
 
         if (event.data.success) {
-          localStorage.setItem("isAuthenticated", "true");
-          localStorage.setItem("userEmail", event.data.email);
-
+          localStorage.setItem("user", event.data.result);
           authWindow?.close();
-          window.removeEventListener("message", handleMessage);
+          window?.removeEventListener("message", handleMessage);
           navigate("/dashboard");
         } else {
-          console.error("Google login failed:", event.data.error);
           navigate("/login?error=google_login_failed");
         }
       };

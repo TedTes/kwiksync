@@ -3,6 +3,7 @@ import express from "express";
 import path from "path";
 import { initializeDatabase } from "./config";
 import cors from "cors";
+import passport from "passport";
 import {
   productRoutes,
   trendRoutes,
@@ -17,7 +18,7 @@ import {
   startLowStockCheckScheduler,
   startTrendTrackingScheduler,
 } from "./schedulers";
-
+require("./config/passport");
 const startServer = async () => {
   try {
     await initializeDatabase();

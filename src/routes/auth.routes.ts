@@ -12,7 +12,10 @@ import {
   verifyMagicLinkController,
 } from "../controllers";
 import { generateTokens } from "../utils";
+import { envVariables } from "../config";
 export const authRoutes = Router();
+
+const allowedOrigin = `${envVariables.webServerURL}/dashboard`;
 
 authRoutes.post(
   "/register",
@@ -101,26 +104,25 @@ authRoutes.get(
         secure: true,
         sameSite: "strict",
       });
-
-      // Send success to frontend popup
       res.send(`
-        <script>
-          window.opener.postMessage({ 
-            success: true, 
-            email: "${email}",
-
-          }, "${process.env.FRONTEND_URL}");
-        </script>
-      `);
+      <script>
+        window.opener.postMessage({
+          success: true,
+          result: "{email:${email},role:${role}}",
+        }, "${allowedOrigin}");
+        window.close();
+      </script>
+    `);
     } catch (error) {
+      console.error("error", error);
       res.send(`
-        <script>
-          window.opener.postMessage({ 
-            success: false, 
-            error: "Login failed"
-          }, "${process.env.FRONTEND_URL}");
-        </script>
-      `);
+      <script>
+        window.opener.postMessage({
+          success: false,
+        });
+        window.close();
+      </script>
+    `);
     }
   }
 );
