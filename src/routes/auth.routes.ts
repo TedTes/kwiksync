@@ -104,11 +104,13 @@ authRoutes.get(
         secure: true,
         sameSite: "strict",
       });
+
+      const data = { email, role };
       res.send(`
       <script>
         window.opener.postMessage({
           success: true,
-          result: "{email:${email},role:${role}}",
+          result: ${JSON.stringify(data)},
         }, "${allowedOrigin}");
         window.close();
       </script>
