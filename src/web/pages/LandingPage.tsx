@@ -30,6 +30,7 @@ export const LandingPage = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
     "monthly"
   );
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     if (localStorage.getItem("user")) navigate("/login");
@@ -43,6 +44,46 @@ export const LandingPage = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const VideoModal = ({
+    isOpen,
+    onClose,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+  }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="relative w-full max-w-4xl bg-white rounded-xl overflow-hidden">
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-full bg-white text-gray-600 hover:bg-gray-100 z-10"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Video iframe or placeholder */}
+          <div className="aspect-video">
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube.com/embed/your-video-id"
+              title="Product Demo"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handleWatchDemo = () => {
+    setIsVideoModalOpen(true);
+  };
 
   const featureTabs: FeatureTab[] = [
     {
@@ -197,6 +238,7 @@ export const LandingPage = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={handleWatchDemo}
                 className="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition"
               >
                 Watch Demo
@@ -378,6 +420,10 @@ export const LandingPage = () => {
           </motion.button>
         </div>
       </section>
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+      />
     </div>
   );
 };
