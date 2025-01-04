@@ -9,6 +9,7 @@ import {
   BarChart2,
   Check,
   X,
+  RefreshCw,
 } from "lucide-react";
 
 interface FeatureTab {
@@ -385,7 +386,135 @@ export const LandingPage = () => {
               </motion.div>
             ))}
           </div>
+          {/* Demo Section */}
+          <section id="demo" className="py-20 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                  See KwikSync in Action
+                </h2>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                  Watch how KwikSync streamlines your e-commerce operations and
+                  boosts efficiency.
+                </p>
+              </div>
 
+              {/* Video Container */}
+              <div className="relative max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl mb-16">
+                <div
+                  className="aspect-video bg-gray-900 relative cursor-pointer group"
+                  onClick={() => setIsVideoModalOpen(true)}
+                >
+                  <img
+                    src="/images/demo-thumbnail.jpg"
+                    alt="Demo Video Thumbnail"
+                    className="w-full h-full object-cover opacity-90 group-hover:opacity-75 transition"
+                  />
+                  {/* Play Button */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className="w-20 h-20 bg-blue-600/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
+                    >
+                      <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-1" />
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature Cards */}
+              <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {/* Quick Setup Card */}
+                <motion.div
+                  whileHover={{ y: -8 }}
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+                >
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                    <Zap className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Lightning-Fast Setup
+                  </h3>
+                  <p className="text-gray-600">
+                    Get your store connected and synced in under 5 minutes with
+                    our guided setup process.
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <span className="text-blue-600 font-medium">
+                      Learn more →
+                    </span>
+                  </div>
+                </motion.div>
+
+                {/* Real-time Sync Card */}
+                <motion.div
+                  whileHover={{ y: -8 }}
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+                >
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                    <RefreshCw className="w-6 h-6 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Real-time Syncing
+                  </h3>
+                  <p className="text-gray-600">
+                    Watch your inventory automatically sync across all platforms
+                    in real-time.
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2 py-1 bg-green-100 text-green-600 text-sm rounded">
+                        Live Demo
+                      </span>
+                      <span className="text-green-600 font-medium">
+                        Try it now →
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Analytics Card */}
+                <motion.div
+                  whileHover={{ y: -8 }}
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+                >
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                    <BarChart2 className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Smart Analytics
+                  </h3>
+                  <p className="text-gray-600">
+                    Make data-driven decisions with real-time insights and
+                    predictive analytics.
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2 py-1 bg-purple-100 text-purple-600 text-sm rounded">
+                        Beta
+                      </span>
+                      <span className="text-purple-600 font-medium">
+                        Preview →
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Bottom CTA */}
+              <div className="text-center mt-12">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsVideoModalOpen(true)}
+                  className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                >
+                  <span>Watch Full Demo</span>
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
+              </div>
+            </div>
+          </section>
           {/* Custom Solution */}
           <div className="mt-16 text-center bg-gray-100 rounded-xl shadow-lg p-12">
             <h3 className="text-3xl font-bold mb-4">Need a Custom Solution?</h3>
