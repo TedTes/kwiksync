@@ -10,6 +10,9 @@ import {
   Check,
   X,
   RefreshCw,
+  LayoutDashboard,
+  Play,
+  Users,
 } from "lucide-react";
 
 interface FeatureTab {
@@ -45,6 +48,24 @@ export const LandingPage = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  const [videoUrl, setVideoUrl] = useState(
+    "https://www.youtube.com/embed/YOUR_VIDEO_ID"
+  );
+
+  // Function to handle video sections
+  const handleWatchSection = (section: string) => {
+    switch (section) {
+      case "quickTour":
+        setVideoUrl("https://www.youtube.com/embed/YOUR_VIDEO_ID?start=0"); // Starts at 0 seconds
+        break;
+      case "features":
+        setVideoUrl("https://www.youtube.com/embed/YOUR_VIDEO_ID?start=120"); // Starts at 2 minutes
+        break;
+      default:
+        setVideoUrl("https://www.youtube.com/embed/YOUR_VIDEO_ID");
+    }
+    setIsVideoModalOpen(true);
+  };
 
   const VideoModal = ({
     isOpen,
@@ -58,30 +79,22 @@ export const LandingPage = () => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div className="relative w-full max-w-4xl bg-white rounded-xl overflow-hidden">
-          {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white text-gray-600 hover:bg-gray-100 z-10"
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/50 hover:bg-white/80 transition-colors"
           >
-            <X size={24} />
+            <X size={24} className="text-gray-700" />
           </button>
-
-          {/* Video iframe or placeholder */}
-          <div className="aspect-video">
-            <iframe
-              className="w-full h-full"
-              src="https://www.youtube.com/embed/your-video-id"
-              title="Product Demo"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
+          <iframe
+            className="w-full aspect-video"
+            src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
         </div>
       </div>
     );
   };
-
   const handleWatchDemo = () => {
     setIsVideoModalOpen(true);
   };
@@ -422,79 +435,80 @@ export const LandingPage = () => {
                 </div>
               </div>
 
-              {/* Feature Cards */}
+              {/* Feature Preview Cards */}
               <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                {/* Quick Setup Card */}
+                {/* Quick Product Tour */}
                 <motion.div
                   whileHover={{ y: -8 }}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+                  onClick={() => {
+                    // Jump to specific demo section
+                    setIsVideoModalOpen(true);
+                  }}
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all cursor-pointer"
                 >
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <Zap className="w-6 h-6 text-blue-600" />
+                    <Play className="w-6 h-6 text-blue-600" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">
-                    Lightning-Fast Setup
+                    Quick Product Tour
                   </h3>
                   <p className="text-gray-600">
-                    Get your store connected and synced in under 5 minutes with
-                    our guided setup process.
+                    Watch a 2-minute overview of how KwikSync works with your
+                    stores.
                   </p>
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <span className="text-blue-600 font-medium">
-                      Learn more →
+                      Watch 2 min tour →
                     </span>
                   </div>
                 </motion.div>
 
-                {/* Real-time Sync Card */}
+                {/* Sample Dashboard */}
                 <motion.div
                   whileHover={{ y: -8 }}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+                  onClick={() => handleWatchSection("quickTour")}
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all cursor-pointer"
                 >
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                    <RefreshCw className="w-6 h-6 text-green-600" />
+                    <LayoutDashboard className="w-6 h-6 text-green-600" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">
-                    Real-time Syncing
+                    Sample Dashboard
                   </h3>
                   <p className="text-gray-600">
-                    Watch your inventory automatically sync across all platforms
-                    in real-time.
+                    Explore our interface with sample data - no login required.
                   </p>
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <div className="flex items-center space-x-2">
                       <span className="px-2 py-1 bg-green-100 text-green-600 text-sm rounded">
-                        Live Demo
+                        Interactive
                       </span>
                       <span className="text-green-600 font-medium">
-                        Try it now →
+                        View demo →
                       </span>
                     </div>
                   </div>
                 </motion.div>
 
-                {/* Analytics Card */}
+                {/* Success Stories */}
                 <motion.div
                   whileHover={{ y: -8 }}
-                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
+                  onClick={() => window.open("/case-studies", "_blank")}
+                  className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all cursor-pointer"
                 >
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                    <BarChart2 className="w-6 h-6 text-purple-600" />
+                    <Users className="w-6 h-6 text-purple-600" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">
-                    Smart Analytics
+                    Success Stories
                   </h3>
                   <p className="text-gray-600">
-                    Make data-driven decisions with real-time insights and
-                    predictive analytics.
+                    See how other businesses increased sales using KwikSync.
                   </p>
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <div className="flex items-center space-x-2">
-                      <span className="px-2 py-1 bg-purple-100 text-purple-600 text-sm rounded">
-                        Beta
-                      </span>
                       <span className="text-purple-600 font-medium">
-                        Preview →
+                        Read case studies →
                       </span>
                     </div>
                   </div>
