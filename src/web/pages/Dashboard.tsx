@@ -30,7 +30,8 @@ export const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -75,8 +76,48 @@ export const Dashboard = () => {
     }
   };
 
-  const handleUpdatePhoto = () => {
-    console.log("Updating photo...");
+  const handleUpdatePhoto = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload an image file");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size should be less than 5MB");
+        return;
+      }
+
+      setIsUploadingPhoto(true);
+
+      const formData = new FormData();
+      formData.append("photo", file);
+
+      const response = await axios.post(
+        `${webAppServer}/api/v1/users/photo`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data?.photoUrl) {
+        // TODO: Update user's photo URL in local storage or state
+        console.log("Photo updated successfully");
+      }
+    } catch (error) {
+      console.error("Error uploading photo:", error);
+      alert("Failed to upload photo. Please try again.");
+    } finally {
+      setIsUploadingPhoto(false);
+    }
   };
 
   const handleSync = () => {
@@ -188,13 +229,29 @@ export const Dashboard = () => {
                         <span>Sync Now</span>
                       </button>
 
-                      <button
-                        onClick={handleUpdatePhoto}
-                        className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                      >
-                        <User size={16} className="text-gray-400" />
-                        <span>Update Photo</span>
-                      </button>
+                      <>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleUpdatePhoto}
+                        />
+
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={isUploadingPhoto}
+                          className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                        >
+                          <User size={16} className="text-gray-400" />
+                          <span>
+                            {isUploadingPhoto ? "Uploading..." : "Update Photo"}
+                          </span>
+                          {isUploadingPhoto && (
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                          )}
+                        </button>
+                      </>
 
                       <div className="border-t border-gray-100 my-1"></div>
 
