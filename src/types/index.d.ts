@@ -21,6 +21,13 @@ declare global {
     };
     from: string;
   }
+
+  interface s3FileObj {
+    bucket: string;
+    key: string;
+    body: Buffer | Uint8Array | string;
+    mimeType: string;
+  }
 }
 
 export {};

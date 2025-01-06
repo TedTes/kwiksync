@@ -8,3 +8,4 @@ export * from "./trendTracking.service";
 export * from "./inventoryHistory.service";
 export * from "./salesReport.service";
 export * from "./supplier.service";
+export * from "./uploadFile.service";
