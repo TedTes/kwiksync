@@ -10,6 +10,7 @@ import {
   Notification,
   LoginLinks,
   User,
+  Sales,
 } from "../models";
 
 const {
@@ -37,6 +38,7 @@ export const getDbConfig = (isMigration = false): DataSourceOptions => ({
     Notification,
     LoginLinks,
     User,
+    Sales,
   ],
   migrations: ["dist/migrations/migrations/*.js"],
   migrationsRun: false,
