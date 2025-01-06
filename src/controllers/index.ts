@@ -3,3 +3,4 @@ export * from "./trendingProduct.controller";
 export * from "./auth.controller";
 export * from "./analytics.controller";
 export * from "./uploadFile.controller";
+export * from "./sales.controller";
