@@ -28,6 +28,16 @@ declare global {
     body: Buffer | Uint8Array | string;
     mimeType: string;
   }
+
+  interface WeeklyRevenue {
+    day: string;
+    revenue: number;
+  }
+
+  interface QueryResult {
+    day: string;
+    revenue: string;
+  }
 }
 
 export {};
