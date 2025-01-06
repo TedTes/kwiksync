@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Package, ShoppingCart, AlertTriangle, TrendingUp } from "lucide-react";
 import {
   LineChart,
@@ -10,44 +10,54 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
+import axios from "axios";
+const webServerURLApi = "http://localhost:3000/api/v1/sales";
 export const OverviewView = () => {
-  const weeklyData = [
-    { day: "Mon", revenue: 2400 },
-    { day: "Tue", revenue: 1398 },
-    { day: "Wed", revenue: 3800 },
-    { day: "Thu", revenue: 3908 },
-    { day: "Fri", revenue: 4800 },
-    { day: "Sat", revenue: 3800 },
-    { day: "Sun", revenue: 4300 },
-  ];
+  const [weeklyData, setWeeklyData] = useState<IWeeklyData[]>([]);
+  const [platformData, setPlatformData] = useState<IPlatformData[]>([]);
+  const [recentActivity, setRecentActivity] = useState<IRecentActivity[]>([]);
 
-  const platformData = [
-    { name: "TikTok", revenue: 1245.5, growth: 12.5, trend: "up", cvr: 2.8 },
-    {
-      name: "Instagram",
-      revenue: 2345.75,
-      growth: -5.2,
-      trend: "down",
-      cvr: 3.2,
-    },
-    { name: "Shopify", revenue: 3456.8, growth: 8.7, trend: "up", cvr: 4.1 },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const results = await Promise.allSettled([
+          axios.get(`${webServerURLApi}/weekly-revenue`),
+          axios.get(`${webServerURLApi}/platform-stat`),
+          axios.get(`${webServerURLApi}/recent-activity`),
+        ]);
 
-  const recentActivity = [
-    {
-      product: "Summer Crop Top",
-      platform: "TikTok",
-      change: -3,
-      stock: 12,
-    },
-    {
-      product: "Vintage Sneakers",
-      platform: "Instagram",
-      change: -2,
-      stock: 8,
-    },
-  ];
+        const [weeklyRes, platformRes, activityRes] = results;
+
+        if (
+          weeklyRes.status === "fulfilled" &&
+          Array.isArray(weeklyRes.value.data)
+        )
+          setWeeklyData(weeklyRes.value.data);
+        else if (weeklyRes.status === "rejected")
+          console.error("Error fetching weekly revenue:", weeklyRes.reason);
+
+        if (
+          platformRes.status === "fulfilled" &&
+          Array.isArray(platformRes.value.data)
+        )
+          setPlatformData(platformRes.value.data);
+        else if (platformRes.status === "rejected")
+          console.error("Error fetching platform stat:", platformRes.reason);
+
+        if (
+          activityRes.status === "fulfilled" &&
+          Array.isArray(activityRes.value.data)
+        )
+          setRecentActivity(activityRes.value.data);
+        else if (activityRes.status === "rejected")
+          console.error("Error fetching recent activity:", activityRes.reason);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-6">

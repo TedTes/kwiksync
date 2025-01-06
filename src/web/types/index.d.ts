@@ -1,3 +1,5 @@
+import { Decimal128, IntegerType } from "typeorm";
+
 declare global {
   interface Metrics {
     views: number;
@@ -132,7 +134,24 @@ declare global {
     quantity: number;
     sku: string;
   }
+  interface IPlatformData {
+    name: string;
+    revenue: number;
+    growth: number;
+    trend: string;
+    cvr: number;
+  }
 
+  interface IWeeklyData {
+    day: weekDays;
+    revenue: number;
+  }
+  interface IRecentActivity {
+    product: string;
+    platform: PlatformType;
+    change: number;
+    stock: number;
+  }
   type OrderStatus =
     | "pending"
     | "confirmed"
@@ -140,6 +159,7 @@ declare global {
     | "delivered"
     | "cancelled"
     | "delayed";
+  type weekDays = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
 }
 declare module "*.png" {
   const value: string;
