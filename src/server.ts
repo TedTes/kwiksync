@@ -36,8 +36,7 @@ const startServer = async () => {
 
       .use(requestLogger)
       .use("/api/v1/auth", authRoutes)
-      .use("/api/v1", webhookRoutes)
-
+      .use("/api/v1/hooks", webhookRoutes)
       .use("/api/v1/products", authenticate, productRoutes)
       .use("/api/v1/trends", authenticate, trendRoutes)
       .use("/api/v1/analytics", authenticate, analyticsRoutes)

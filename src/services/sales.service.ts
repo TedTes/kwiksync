@@ -26,3 +26,18 @@ export const fetchWeeklyRevenue = async () => {
     throw new Error("Failed to fetch weekly revenue");
   }
 };
+
+export const fetchSalesReport = async (startDate: string, endDate: string) => {
+  return salesRepository
+    .createQueryBuilder("sales")
+    .select("sales.productId", "productId")
+    .addSelect("SUM(sales.quantitySold)", "totalQuantity")
+    .addSelect("SUM(sales.totalRevenue)", "totalRevenue")
+    .where("sales.saleDate BETWEEN :startDate AND :endDate", {
+      startDate,
+      endDate,
+    })
+    .groupBy("sales.productId")
+    .orderBy("totalRevenue", "DESC")
+    .getRawMany();
+};
