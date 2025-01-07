@@ -3,6 +3,8 @@ import {
   fetchInventoryHistory,
   logInventoryChange,
   fetchSalesReport,
+  fetchWeeklyRevenue,
+  fetchRecentActivity,
 } from "../services";
 
 export const getInventoryHistory = async (
@@ -52,5 +54,29 @@ export const getSalesReport = async (
     res.status(200).json({ report });
   } catch (error) {
     next(error);
+  }
+};
+export const getWeeklyRevenue = async (req: Request, res: Response) => {
+  try {
+    const weeklyRevenue = await fetchWeeklyRevenue();
+    res.json(weeklyRevenue);
+  } catch (error) {
+    console.error("Error in weekly revenue controller:", error);
+    res.status(500).json({ error: "Failed to fetch weekly revenue" });
+  }
+};
+
+export const getRecentActivity = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const activity = await fetchRecentActivity();
+    res.json(activity);
+  } catch (error) {
+    console.error("Recent activity controller error:", error);
+    res.status(500).json({
+      error: "Failed to fetch recent activity",
+    });
   }
 };

@@ -5,6 +5,7 @@ import {
   getSalesReport,
   getPlatformPerformance,
   getWeeklyRevenue,
+  getRecentActivity,
 } from "../controllers";
 
 export const analyticsRoutes = Router();
@@ -14,5 +15,6 @@ analyticsRoutes
   .get("/sales", getSalesReport)
   .post("/inventory/:productId/:quantity", logInventoryChangeController)
   .get("/platform-performance", getPlatformPerformance)
-  .get("/weekly-revenue", getWeeklyRevenue);
+  .get("/weekly-revenue", getWeeklyRevenue)
+  .get("/recent-activity", getRecentActivity);
 //.get("/platform-trends",getPlatformTrends)
