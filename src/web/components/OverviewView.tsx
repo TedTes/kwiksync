@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axios from "axios";
-const webServerURLApi = "http://localhost:3000/api/v1/sales";
+const webServerURLApi = "http://localhost:3000/api/v1";
 export const OverviewView = () => {
   const [weeklyData, setWeeklyData] = useState<IWeeklyData[]>([]);
   const [platformData, setPlatformData] = useState<IPlatformData[]>([]);
@@ -21,8 +21,8 @@ export const OverviewView = () => {
     const fetchData = async () => {
       try {
         const results = await Promise.allSettled([
-          axios.get(`${webServerURLApi}/weekly-revenue`),
-          axios.get(`${webServerURLApi}/platform-stat`),
+          axios.get(`${webServerURLApi}/analytics/weekly-revenue`),
+          axios.get(`${webServerURLApi}/analytics/platform-performance`),
           axios.get(`${webServerURLApi}/recent-activity`),
         ]);
 
