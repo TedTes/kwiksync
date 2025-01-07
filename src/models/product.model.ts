@@ -4,19 +4,15 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   ManyToMany,
   JoinTable,
 } from "typeorm";
-import { Merchant, Supplier, Platform } from "./";
+import { Platform } from "./";
 
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
   id!: number;
-
-  @ManyToOne(() => Merchant, (merchant) => merchant.id, { onDelete: "CASCADE" })
-  merchant!: Merchant;
 
   @Column()
   name!: string;
@@ -32,12 +28,6 @@ export class Product {
 
   @Column({ nullable: true })
   restockAmount!: number;
-
-  @ManyToOne(() => Supplier, (supplier) => supplier.products, {
-    nullable: true,
-    onDelete: "SET NULL",
-  })
-  supplier!: Supplier;
 
   @CreateDateColumn()
   createdAt!: Date;
