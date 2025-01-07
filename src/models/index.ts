@@ -8,3 +8,4 @@ export * from "./inventoryHistory.model";
 export * from "./notification.model";
 export * from "./login-links.model";
 export * from "./sales.model";
+export * from "./platform.model";

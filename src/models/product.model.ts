@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
-import { Merchant, Supplier } from "./";
+import { Merchant, Supplier, Platform } from "./";
 
 @Entity()
 export class Product {
@@ -42,4 +44,18 @@ export class Product {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @ManyToMany(() => Platform)
+  @JoinTable({
+    name: "product_platforms", // Name of the join table
+    joinColumn: {
+      name: "productId",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "platformId",
+      referencedColumnName: "id",
+    },
+  })
+  platforms!: Platform[];
 }
