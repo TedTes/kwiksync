@@ -4,3 +4,4 @@ export * from "./auth.routes";
 export * from "./webhook.routes";
 export * from "./analytics.routes";
 export * from "./user.routes";
+export * from "./sales.routes";
