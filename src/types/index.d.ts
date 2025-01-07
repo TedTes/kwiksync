@@ -38,6 +38,14 @@ declare global {
     day: string;
     revenue: string;
   }
+
+  interface PlatformMetrics {
+    name: string;
+    revenue: number;
+    growth: number;
+    trend: "up" | "down";
+    cvr: number;
+  }
 }
 
 export {};
