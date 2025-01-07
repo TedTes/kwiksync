@@ -12,6 +12,7 @@ import {
   User,
   Sales,
   Platform,
+  MerchantProduct,
 } from "../models";
 
 const {
@@ -41,6 +42,7 @@ export const getDbConfig = (isMigration = false): DataSourceOptions => ({
     User,
     Sales,
     Platform,
+    MerchantProduct,
   ],
   migrations: ["dist/migrations/migrations/*.js"],
   migrationsRun: false,
