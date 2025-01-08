@@ -20,32 +20,21 @@ export class Product {
   @Column({ nullable: true })
   description!: string;
 
+  @Column({ type: "decimal", precision: 10, scale: 2, nullable: false })
+  basePrice!: number;
+
   @Column({ default: 0 })
   quantity!: number;
 
-  @Column({ default: 10 })
-  restockThreshold!: number;
+  @Column({ default: 0 })
+  sku!: string;
 
-  @Column({ nullable: true })
-  restockAmount!: number;
+  @Column({ type: "jsonb", nullable: true })
+  metadata?: Record<string, any>;
 
   @CreateDateColumn()
   createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;
-
-  @ManyToMany(() => Platform)
-  @JoinTable({
-    name: "product_platforms", // Name of the join table
-    joinColumn: {
-      name: "productId",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "platformId",
-      referencedColumnName: "id",
-    },
-  })
-  platforms!: Platform[];
 }
