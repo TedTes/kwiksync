@@ -7,7 +7,6 @@ import {
   ManyToMany,
   JoinTable,
 } from "typeorm";
-import { Platform } from "./";
 
 @Entity()
 export class Product {
@@ -22,9 +21,6 @@ export class Product {
 
   @Column({ type: "decimal", precision: 10, scale: 2, nullable: false })
   basePrice!: number;
-
-  @Column({ default: 0 })
-  quantity!: number;
 
   @Column({ default: 0 })
   sku!: string;

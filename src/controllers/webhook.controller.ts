@@ -22,7 +22,7 @@ export const tiktokWebhookHandler = async (
 
     const product = await fetchProductById(productId);
 
-    if (product) {
+    if (product && product.id) {
       await restockProductById(product.id, stock);
       console.log(`Updated product stock for ID: ${productId}`);
     } else {
@@ -31,7 +31,7 @@ export const tiktokWebhookHandler = async (
       );
       await createProduct({
         id: productId,
-        quantity: stock,
+        //quantity: stock,
       });
     }
 
