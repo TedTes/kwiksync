@@ -9,5 +9,4 @@ export * from "./inventoryHistory.service";
 export * from "./supplier.service";
 export * from "./uploadFile.service";
 export * from "./sales.service";
-export * from "./platform.service";
 export * from "./analytics.service";
