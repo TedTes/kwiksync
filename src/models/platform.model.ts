@@ -15,9 +15,6 @@ export class Platform {
   @Column({ unique: true })
   name!: string;
 
-  @ManyToMany(() => Product)
-  products!: Product[];
-
   @CreateDateColumn()
   createdAt!: Date;
 }

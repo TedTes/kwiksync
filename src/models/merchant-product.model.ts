@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   ManyToOne,
 } from "typeorm";
-import { Merchant, Product } from "./";
+import { Merchant, Product } from ".";
 @Entity()
 export class MerchantProduct {
   @PrimaryGeneratedColumn()
