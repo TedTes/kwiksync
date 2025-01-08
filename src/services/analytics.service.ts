@@ -37,17 +37,12 @@ export const fetchRecentActivity = async (): Promise<RecentActivity[]> => {
             p.name as product,
             plt.name as platform,
             s."quantitySold" as change,
-            s."saleDate",
-            (
-              SELECT SUM(remaining."quantitySold")
-              FROM sales remaining
-              WHERE remaining."productId" = p.id
-              AND remaining."saleDate" <= s."saleDate"
-            ) as current_stock
+            pi.quantity as stock
           FROM sales s
           INNER JOIN product p ON s."productId" = p.id
-          INNER JOIN product_platforms pp ON p.id = pp."productId"
+          INNER JOIN product_platform pp ON p.id = pp."productId"
           INNER JOIN platform plt ON pp."platformId" = plt.id
+          INNER JOIN product_inventory pi ON p.id = pi."productId"
           WHERE s."saleDate" >= NOW() - INTERVAL '24 hours'
           ORDER BY s."saleDate" DESC
           LIMIT 10
@@ -65,5 +60,56 @@ export const fetchRecentActivity = async (): Promise<RecentActivity[]> => {
   } catch (error) {
     console.error("Recent activity fetch error:", error);
     throw new Error("Failed to fetch recent activity");
+  }
+};
+
+export const getPlatformMetrics = async (): Promise<PlatformMetrics[]> => {
+  const salesRepository = AppDataSource.getRepository(Sales);
+
+  try {
+    const platformMetrics = await salesRepository.query(`
+      WITH current_period AS (
+        SELECT 
+          p.name,
+          SUM(s."totalRevenue") as revenue,
+          COUNT(DISTINCT s.id) as orders,
+          COUNT(DISTINCT s."productId") as products
+        FROM sales s
+        INNER JOIN product_platforms pp ON s."productId" = pp."productId"
+        INNER JOIN platform p ON pp."platformId" = p.id
+        WHERE s."saleDate" >= NOW() - INTERVAL '30 days'
+        GROUP BY p.name
+      ),
+      previous_period AS (
+        SELECT 
+          p.name,
+          SUM(s."totalRevenue") as revenue
+        FROM sales s
+        INNER JOIN product_platforms pp ON s."productId" = pp."productId"
+        INNER JOIN platform p ON pp."platformId" = p.id
+        WHERE s."saleDate" BETWEEN NOW() - INTERVAL '60 days' AND NOW() - INTERVAL '30 days'
+        GROUP BY p.name
+      )
+      SELECT 
+        cp.name,
+        ROUND(cp.revenue::numeric, 2) as revenue,
+        ROUND(((cp.revenue - COALESCE(pp.revenue, 0)) / NULLIF(pp.revenue, 0) * 100)::numeric, 1) as growth,
+        CASE WHEN cp.revenue > COALESCE(pp.revenue, 0) THEN 'up' ELSE 'down' END as trend,
+        ROUND((cp.orders::numeric / NULLIF(cp.products, 0) * 100), 1) as cvr
+      FROM current_period cp
+      LEFT JOIN previous_period pp ON cp.name = pp.name
+      ORDER BY cp.revenue DESC
+    `);
+
+    return platformMetrics.map((metric: PlatformMetrics) => ({
+      name: metric.name,
+      revenue: Number(metric.revenue),
+      growth: Number(metric.growth),
+      trend: metric.trend as "up" | "down",
+      cvr: Number(metric.cvr),
+    }));
+  } catch (error) {
+    console.error("Platform metrics calculation error:", error);
+    throw new Error("Failed to calculate platform metrics");
   }
 };

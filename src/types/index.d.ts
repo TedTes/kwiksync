@@ -46,6 +46,12 @@ declare global {
     trend: "up" | "down";
     cvr: number;
   }
+  interface RecentActivity {
+    product: string;
+    platform: string;
+    change: number;
+    stock: number;
+  }
 }
 
 export {};
