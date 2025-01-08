@@ -1,12 +1,29 @@
 import { AppDataSource } from "../config";
-import { Product } from "../models/product.model";
-
+import { MerchantProduct, Product, ProductInventory } from "../models";
+import { ProductRepository } from "../repositories";
 const productRepository = AppDataSource.getRepository(Product);
 
 export const fetchAllProducts = async () => await productRepository.find();
 
-export const fetchProductById = async (id: number) =>
-  await productRepository.findOneBy({ id });
+export const fetchProductById = async (
+  id: number
+): Promise<Partial<ProductInventory & Product> | undefined> => {
+  try {
+    const productInventoryRepository =
+      AppDataSource.getRepository(ProductInventory);
+    const productInventory = await productInventoryRepository.findOne({
+      where: { product: { id } },
+      relations: ["product"],
+    });
+    if (!productInventory) {
+      throw "product not found!";
+    }
+    return productInventory;
+  } catch (error) {
+    console.log("error occured in fetchProductById", error);
+    return undefined;
+  }
+};
 
 export const createProduct = async (product: Partial<Product>) => {
   const newProduct = productRepository.create(product);
@@ -21,18 +38,10 @@ export const setRestockingRules = async (
   restockThreshold: number,
   restockAmount: number
 ) => {
-  const product = await productRepository.findOne({
-    where: { id: productId, merchant: { id: merchantId } },
+  return await ProductRepository.updateRestockRules(productId, merchantId, {
+    restockThreshold,
+    restockAmount,
   });
-
-  if (!product) {
-    throw new Error("Product not found or access denied");
-  }
-
-  product.restockThreshold = restockThreshold;
-  product.restockAmount = restockAmount;
-
-  return productRepository.save(product);
 };
 
 export const restockProductById = async (id: number, quantity: number) => {
@@ -42,9 +51,10 @@ export const restockProductById = async (id: number, quantity: number) => {
 };
 
 export const fetchMerchantProducts = async (merchantId: number) => {
-  return productRepository.find({
+  const merchantProduct = AppDataSource.getRepository(MerchantProduct);
+  return merchantProduct.find({
     where: { merchant: { id: merchantId } },
-    order: { createdAt: "DESC" },
+    order: { listedDate: "DESC" },
   });
 };
 
@@ -53,16 +63,10 @@ export const updateProduct = async (
   merchantId: number,
   updates: Partial<Product>
 ) => {
-  const product = await productRepository.findOne({
-    where: { id: productId, merchant: { id: merchantId } },
-  });
-
-  if (!product) {
-    throw new Error("Product not found or access denied");
+  if (Object.keys(updates).length === 0) {
+    throw new Error("No update fields provided");
   }
-
-  Object.assign(product, updates);
-  return productRepository.save(product);
+  return await ProductRepository.updateProduct(productId, merchantId, updates);
 };
 
 export const fetchLowStockProducts = async (merchantId: string) => {

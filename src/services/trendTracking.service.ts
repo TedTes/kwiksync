@@ -2,7 +2,7 @@ import { AppDataSource } from "../config";
 import { TrendingProduct, Product } from "../models";
 import { fetchProductEngagement } from "../integration/tiktokApi";
 import { sendTrendingNotification } from "./notification.service";
-
+import { getMerchantByProductId } from "../repositories";
 const productRepository = AppDataSource.getRepository(Product);
 const trendingProductRepository = AppDataSource.getRepository(TrendingProduct);
 
@@ -55,34 +55,11 @@ export const trackTrends = async () => {
       }
 
       if (isTrending) {
-        await sendTrendingNotification(product.merchant.id, product.name);
+        const { merchantId } = await getMerchantByProductId(productId);
+        await sendTrendingNotification(merchantId, product.name);
       }
     }
   } catch (error) {
     console.error("Error tracking trends:", error);
   }
 };
-
-// @ManyToOne(() => Product, (product) => product.id, { onDelete: "CASCADE" })
-// product!: Product;
-
-// @Column({ default: 0 })
-// likes!: number;
-
-// @Column({ default: 0 })
-// shares!: number;
-
-// @Column({ default: 0 })
-// views!: number;
-
-// @Column({ nullable: true })
-// trendScore!: number;
-
-// @Column()
-// isTrending!: boolean;
-
-// @CreateDateColumn()
-// createdAt!: Date;
-
-// @UpdateDateColumn()
-// updatedAt!: Date;

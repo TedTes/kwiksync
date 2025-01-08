@@ -1,8 +1,5 @@
 import { fetchTikTokInventory } from "../integration/tiktokApi";
-import { AppDataSource } from "../config";
-import { Product } from "../models/product.model";
 import { fetchProductById, restockProductById, createProduct } from "./";
-const productRepository = AppDataSource.getRepository(Product);
 
 export const syncTikTokInventory = async () => {
   try {
@@ -23,7 +20,6 @@ export const syncTikTokInventory = async () => {
         await createProduct({
           name: tiktokProduct.name,
           description: tiktokProduct.description,
-          quantity: tiktokProduct.stock,
           id: tiktokProduct.id,
         });
 

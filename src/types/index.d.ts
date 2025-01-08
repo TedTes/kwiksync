@@ -52,6 +52,25 @@ declare global {
     change: number;
     stock: number;
   }
+
+  interface SupplierProduct {
+    productId: number;
+    supplierId: number;
+    price?: number;
+    startDate?: Date;
+  }
+  interface RestockRules {
+    restockThreshold: number;
+    restockAmount: number;
+  }
+
+  interface ProductUpdate {
+    name?: string;
+    description?: string;
+    quantity?: number;
+    restockThreshold?: number;
+    restockAmount?: number;
+  }
 }
 
 export {};

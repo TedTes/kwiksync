@@ -1,6 +1,8 @@
 import nodemailer from "nodemailer";
-import { Product } from "../models/product.model";
+import { AppDataSource } from "../config";
+import { Product, MerchantProduct, SupplierProduct } from "../models";
 import { saveNotification } from "./";
+
 // Configure email transporter
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || "smtp.mailtrap.io",
@@ -13,21 +15,42 @@ const transporter = nodemailer.createTransport({
 
 export const sendLowStockAlert = async (product: Product) => {
   try {
-    const message = `Low Stock Alert: Your product "${product.name}" is below the stock threshold. Current stock: ${product.quantity}`;
-    // TODO: email notification
+    const merchantProductRepo = AppDataSource.getRepository(MerchantProduct);
+    const merchantProductObj = await merchantProductRepo.findOne({
+      where: { product: { id: product.id } },
+      relations: ["merchant"],
+    });
+
+    if (!merchantProductObj || !merchantProductObj.merchant) {
+      console.warn(
+        `No associated merchant found for product ID: ${product.id}. Notification skipped.`
+      );
+      return;
+    }
+    const merchantEmail = merchantProductObj.merchant.email;
+    const merchantId = merchantProductObj.merchant.id;
+    const message = `Low Stock Alert: Your product "${product.name}" is below the stock threshold.`;
+
     const emailOptions = {
       from: '"KwikSync Alerts" <alerts@kwiksync.com>',
-      to: "merchant@example.com", // TODO: the merchant's email
+      to: merchantEmail,
       subject: `Low Stock Alert: ${product.name}`,
-      text: `Your product "${product.name}" is below the stock threshold. Current stock: ${product.quantity}`,
+      text: `Your product "${product.name}" is below the stock threshold.`,
     };
-
-    await transporter.sendMail(emailOptions);
-
+    try {
+      await transporter.sendMail(emailOptions);
+      console.log(
+        `Low-stock email sent to ${merchantEmail} for product: ${product.name}`
+      );
+    } catch (emailError) {
+      console.error(
+        `Failed to send low-stock email to ${merchantEmail} for product: ${product.name}`,
+        emailError
+      );
+    }
     // Save In-App Notification
-    await saveNotification(product.merchant.id, message);
-
-    console.log(`Low-stock email sent for product: ${product.name}`);
+    await saveNotification(merchantId, message);
+    console.log(`In-app notification saved for merchant ID: ${merchantId}`);
   } catch (error) {
     console.error(
       `Error sending low-stock alert for product ${product.name}:`,
@@ -59,16 +82,25 @@ export const sendTrendingNotification = async (
 };
 
 export const notifySupplier = async (product: Product) => {
-  if (!product.supplier || !product.supplier.email) {
-    console.warn(`No supplier linked for product ${product.id}`);
+  const supplierProductRepo = AppDataSource.getRepository(SupplierProduct);
+  const supplierProductObj = await supplierProductRepo.findOne({
+    where: { product: { id: product.id } },
+    relations: ["supplier"],
+  });
+
+  if (!supplierProductObj || !supplierProductObj.supplier) {
+    console.warn(
+      `No associated supplier found for product ID: ${product.id}. Notification skipped.`
+    );
     return;
   }
-
+  const supplierEmail = supplierProductObj.supplier.email;
+  const supplierId = supplierProductObj.supplier.id;
   const emailOptions = {
     from: '"KwikSync Alerts" <alerts@kwiksync.com>',
-    to: product.supplier.email,
+    to: supplierEmail,
     subject: `Restocking Alert: ${product.name}`,
-    text: `The stock for your product "${product.name}" is running low. Current quantity: ${product.quantity}. Please restock.`,
+    text: `The stock for your product "${product.name}" is running low. `,
   };
 
   try {
