@@ -11,7 +11,7 @@ import {
   analyticsRoutes,
   userRoutes,
   salesRoutes,
-  merchantRoutes,
+  metricRoutes,
 } from "./routes";
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
@@ -39,10 +39,10 @@ const startServer = async () => {
       .use("/api/v1/hooks", webhookRoutes)
       .use("/api/v1/products", authenticate, productRoutes)
       .use("/api/v1/trends", authenticate, trendRoutes)
-      .use("/api/v1/analytics", authenticate, analyticsRoutes)
+      .use("/api/v1/analytics", analyticsRoutes)
       .use("/api/v1/users", authenticate, userRoutes)
       .use("/api/v1/sales", authenticate, salesRoutes)
-      .use("/api/v1/merchant", authenticate, merchantRoutes)
+      .use("/api/v1/metrics", metricRoutes)
       .get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
       })

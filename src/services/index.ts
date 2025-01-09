@@ -10,4 +10,4 @@ export * from "./supplier.service";
 export * from "./uploadFile.service";
 export * from "./sales.service";
 export * from "./analytics.service";
-export * from "./merchant.service";
+export * from "./metrics.service";
