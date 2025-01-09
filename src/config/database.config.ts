@@ -18,21 +18,13 @@ import {
 } from "../models";
 
 const {
-  postgressConfig: { url, synchronize, logging },
+  postgressConfig: { url },
 } = envVariables;
-
-const parseBooleanEnvVar = (
-  value: string | undefined,
-  defaultValue: boolean
-): boolean => {
-  if (value === undefined) return defaultValue;
-  return value.toLowerCase() === "true";
-};
 
 export const getDbConfig = (isMigration = false): DataSourceOptions => ({
   type: "postgres",
   url,
-  logging: parseBooleanEnvVar(logging, true),
+  logging: ["error", "schema"],
   entities: [
     Merchant,
     Product,

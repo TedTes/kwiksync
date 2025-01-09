@@ -37,7 +37,8 @@ export const fetchRecentActivity = async (): Promise<RecentActivity[]> => {
             p.name as product,
             plt.name as platform,
             s."quantitySold" as change,
-            pi.quantity as stock
+            pi.quantity as current_stock,
+            s."saleDate" as sale_date
           FROM sales s
           INNER JOIN product p ON s."productId" = p.id
           INNER JOIN product_platform pp ON p.id = pp."productId"
@@ -53,9 +54,8 @@ export const fetchRecentActivity = async (): Promise<RecentActivity[]> => {
           -change as change,  -- Make negative since it's a sale
           current_stock as stock
         FROM recent_sales
-        ORDER BY "saleDate" DESC
+        ORDER BY "sale_date" DESC
       `);
-
     return recentChanges;
   } catch (error) {
     console.error("Recent activity fetch error:", error);
@@ -75,7 +75,7 @@ export const getPlatformMetrics = async (): Promise<PlatformMetrics[]> => {
           COUNT(DISTINCT s.id) as orders,
           COUNT(DISTINCT s."productId") as products
         FROM sales s
-        INNER JOIN product_platforms pp ON s."productId" = pp."productId"
+        INNER JOIN product_platform pp ON s."productId" = pp."productId"
         INNER JOIN platform p ON pp."platformId" = p.id
         WHERE s."saleDate" >= NOW() - INTERVAL '30 days'
         GROUP BY p.name
@@ -85,7 +85,7 @@ export const getPlatformMetrics = async (): Promise<PlatformMetrics[]> => {
           p.name,
           SUM(s."totalRevenue") as revenue
         FROM sales s
-        INNER JOIN product_platforms pp ON s."productId" = pp."productId"
+        INNER JOIN product_platform pp ON s."productId" = pp."productId"
         INNER JOIN platform p ON pp."platformId" = p.id
         WHERE s."saleDate" BETWEEN NOW() - INTERVAL '60 days' AND NOW() - INTERVAL '30 days'
         GROUP BY p.name
