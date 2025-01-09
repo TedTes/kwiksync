@@ -11,46 +11,46 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axios from "axios";
-const webServerURLApi = "http://localhost:3000/api/v1/analytics";
+const webServerURLApi = "http://localhost:3000/api/v1";
 export const OverviewView = () => {
   const [weeklyData, setWeeklyData] = useState<IWeeklyData[]>([]);
   const [platformData, setPlatformData] = useState<IPlatformData[]>([]);
   const [recentActivity, setRecentActivity] = useState<IRecentActivity[]>([]);
-
+  const [metrics, setMetrics] = useState<MerchantMetrics[]>([]);
   useEffect(() => {
     const fetchData = async () => {
+      const user = localStorage.getItem("user");
+      const userId = user && JSON.parse(user).id;
       try {
         const results = await Promise.allSettled([
-          axios.get(`${webServerURLApi}/weekly-revenue`),
-          axios.get(`${webServerURLApi}/platform-performance`),
-          axios.get(`${webServerURLApi}/recent-activity`),
+          axios.get(`${webServerURLApi}/analytics/weekly-revenue`),
+          axios.get(`${webServerURLApi}/analytics/platform-performance`),
+          axios.get(`${webServerURLApi}/analytics/recent-activity`),
+          axios.get(`${webServerURLApi}/metrics?id=${userId}`),
         ]);
-
-        const [weeklyRes, platformRes, activityRes] = results;
-
-        if (
-          weeklyRes.status === "fulfilled" &&
-          Array.isArray(weeklyRes.value.data)
-        )
-          setWeeklyData(weeklyRes.value.data);
-        else if (weeklyRes.status === "rejected")
-          console.error("Error fetching weekly revenue:", weeklyRes.reason);
-
-        if (
-          platformRes.status === "fulfilled" &&
-          Array.isArray(platformRes.value.data)
-        )
-          setPlatformData(platformRes.value.data);
-        else if (platformRes.status === "rejected")
-          console.error("Error fetching platform stat:", platformRes.reason);
-
-        if (
-          activityRes.status === "fulfilled" &&
-          Array.isArray(activityRes.value.data)
-        )
-          setRecentActivity(activityRes.value.data);
-        else if (activityRes.status === "rejected")
-          console.error("Error fetching recent activity:", activityRes.reason);
+        results.forEach((result, index) => {
+          if (
+            result.status === "fulfilled" &&
+            Array.isArray(result.value.data)
+          ) {
+            switch (index) {
+              case 0:
+                setWeeklyData(result.value.data);
+                break;
+              case 1:
+                setPlatformData(result.value.data);
+                break;
+              case 2:
+                setRecentActivity(result.value.data);
+                break;
+              case 3:
+                setMetrics(result.value.data);
+                break;
+            }
+          } else if (result.status === "rejected") {
+            console.error("Error", result.reason);
+          }
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -68,28 +68,32 @@ export const OverviewView = () => {
             <Package className="mr-2" />
             <h3 className="font-semibold">Total Products</h3>
           </div>
-          <p className="text-2xl font-bold">102</p>
+          <p className="text-2xl font-bold">
+            ${metrics[0]?.totalProducts || 0}
+          </p>
         </div>
         <div className="bg-green-50 p-4 rounded-xl">
           <div className="flex items-center text-green-600 mb-2">
             <ShoppingCart className="mr-2" />
             <h3 className="font-semibold">Total Revenue</h3>
           </div>
-          <p className="text-2xl font-bold">$7047.05</p>
+          <p className="text-2xl font-bold">${metrics[0]?.totalRevenue || 0}</p>
         </div>
         <div className="bg-yellow-50 p-4 rounded-xl">
           <div className="flex items-center text-yellow-600 mb-2">
             <AlertTriangle className="mr-2" />
             <h3 className="font-semibold">Sync Issues</h3>
           </div>
-          <p className="text-2xl font-bold">3</p>
+          <p className="text-2xl font-bold">${metrics[0]?.syncIssues || 0}</p>
         </div>
         <div className="bg-purple-50 p-4 rounded-xl">
           <div className="flex items-center text-purple-600 mb-2">
             <TrendingUp className="mr-2" />
             <h3 className="font-semibold">Platforms</h3>
           </div>
-          <p className="text-2xl font-bold">3</p>
+          <p className="text-2xl font-bold">
+            ${metrics[0]?.platformCount || 0}
+          </p>
         </div>
       </div>
 

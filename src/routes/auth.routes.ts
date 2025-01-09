@@ -105,7 +105,7 @@ authRoutes.get(
         sameSite: "strict",
       });
 
-      const data = { email, role };
+      const data = { id, email, role };
       res.send(`
       <script>
         window.opener.postMessage({

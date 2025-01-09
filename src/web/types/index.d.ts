@@ -152,6 +152,12 @@ declare global {
     change: number;
     stock: number;
   }
+  interface MerchantMetrics {
+    totalProducts: number;
+    totalRevenue: number;
+    syncIssues: number;
+    platformCount: number;
+  }
   type OrderStatus =
     | "pending"
     | "confirmed"
