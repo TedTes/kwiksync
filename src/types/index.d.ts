@@ -71,6 +71,12 @@ declare global {
     restockThreshold?: number;
     restockAmount?: number;
   }
+  interface MerchantMetrics {
+    totalProducts: number;
+    totalRevenue: number;
+    syncIssues: number;
+    platformCount: number;
+  }
 }
 
 export {};

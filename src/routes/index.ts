@@ -5,3 +5,4 @@ export * from "./webhook.routes";
 export * from "./analytics.routes";
 export * from "./user.routes";
 export * from "./sales.routes";
+export * from "./merchant.routes";

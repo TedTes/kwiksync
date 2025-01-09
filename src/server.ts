@@ -3,7 +3,6 @@ import express from "express";
 import path from "path";
 import { initializeDatabase } from "./config";
 import cors from "cors";
-import passport from "passport";
 import {
   productRoutes,
   trendRoutes,
@@ -12,6 +11,7 @@ import {
   analyticsRoutes,
   userRoutes,
   salesRoutes,
+  merchantRoutes,
 } from "./routes";
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
@@ -42,6 +42,7 @@ const startServer = async () => {
       .use("/api/v1/analytics", authenticate, analyticsRoutes)
       .use("/api/v1/users", authenticate, userRoutes)
       .use("/api/v1/sales", authenticate, salesRoutes)
+      .use("/api/v1/merchant", authenticate, merchantRoutes)
       .get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
       })
