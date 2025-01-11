@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 // import { useToast } from "@/components/ui/use-toast";
 // import { Toast, Toaster } from "@/components/ui/toast";
+import axios from "axios";
 import {
   Package,
   Settings,
@@ -20,6 +21,8 @@ import {
   LoadingIndicator,
   BulkAddItems,
 } from "./";
+
+const webServerURLApi = "http://localhost:3000/api/v1";
 
 const initialInventory: InventoryItem[] = [
   {
@@ -166,7 +169,23 @@ export const InventoryView = () => {
       }));
       setFilteredInventory(updated);
     }
-  }, [selectedPlatform, inventory]);
+  }, [selectedPlatform]);
+
+  useEffect(() => {
+    async function fetchInventory() {
+      try {
+        const user = localStorage.getItem("user");
+        const id = JSON.parse(user!).id;
+        const result = await axios.get(`${webServerURLApi}/inventory?id=${id}`);
+
+        if (result && result.data && Array.isArray(result.data))
+          setInventory((prev) => [...prev, ...result.data]);
+      } catch (error) {
+        console.log(`error fetching inventory data:${error}`);
+      }
+    }
+    fetchInventory();
+  }, []);
   // Monitor inventory status
   useEffect(() => {
     if (!settings.active) return;
@@ -184,7 +203,7 @@ export const InventoryView = () => {
     }, 5000); // Check every 5 seconds
 
     return () => clearInterval(monitorInterval);
-  }, [inventory, settings, orders]);
+  }, [settings, orders]);
 
   const updateInventoryFromOrder = (
     inventory: InventoryItem[],
