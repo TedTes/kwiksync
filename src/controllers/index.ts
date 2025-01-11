@@ -6,3 +6,4 @@ export * from "./uploadFile.controller";
 export * from "./sales.controller";
 export * from "./platform.controller";
 export * from "./metrics.controller";
+export * from "./inventory.controller";
