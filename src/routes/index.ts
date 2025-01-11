@@ -6,3 +6,4 @@ export * from "./analytics.routes";
 export * from "./user.routes";
 export * from "./sales.routes";
 export * from "./metric.routes";
+export * from "./inventory.routes";
