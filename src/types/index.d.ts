@@ -52,7 +52,22 @@ declare global {
     change: number;
     stock: number;
   }
-
+  interface InventoryItem {
+    id: string;
+    product: string;
+    sku: string;
+    platform: PlatformType;
+    stock: number;
+    stockChange: number;
+    status: StatusType;
+    lastUpdated: string;
+    price: number;
+    platforms: {
+      tiktok: PlatformData;
+      instagram: PlatformData;
+      shopify: PlatformData;
+    };
+  }
   interface SupplierProduct {
     productId: number;
     supplierId: number;

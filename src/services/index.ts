@@ -11,3 +11,4 @@ export * from "./uploadFile.service";
 export * from "./sales.service";
 export * from "./analytics.service";
 export * from "./metrics.service";
+export * from "./inventory.service";
