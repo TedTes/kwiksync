@@ -1,5 +1,3 @@
-export const trendRoutes = Router();
-
 import { Router } from "express";
 import { getTrendingProducts } from "../controllers/trending.controller";
 

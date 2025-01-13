@@ -18,13 +18,13 @@ export class TrendingRepository {
           -- Previous period for trending
           LAG(SUM(tp.views)) OVER (
             PARTITION BY tp."productId", tp."platformId" 
-            ORDER BY DATE_TRUNC('day', tp.date)
+            ORDER BY DATE_TRUNC('day', tp."updatedAt")
           ) as prev_views
         FROM trending_product tp
         INNER JOIN merchant_product mp ON tp."productId" = mp."productId"
         WHERE mp."merchantId" = $1
-        AND tp.date >= NOW() - INTERVAL '7 days'
-        GROUP BY tp."productId", tp."platformId"
+        AND tp."updatedAt" >= NOW() - INTERVAL '7 days'
+        GROUP BY tp."productId", tp."platformId",tp."updatedAt"
       )
       SELECT 
         p.id,
