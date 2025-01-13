@@ -158,6 +158,28 @@ declare global {
     syncIssues: number;
     platformCount: number;
   }
+  interface TrendingChanges {
+    views_change: number;
+    likes_change: number;
+    sales_change: number;
+  }
+
+  interface DailyPerformance {
+    date: string;
+    views: number;
+    sales: number;
+    revenue: number;
+  }
+  interface TrendingProduct {
+    id: number;
+    name: string;
+    sku: string;
+    platform: string;
+    rank: Rank;
+    metrics: Metrics;
+    trending: TrendingChanges;
+    performance: DailyPerformance[];
+  }
   type OrderStatus =
     | "pending"
     | "confirmed"

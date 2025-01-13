@@ -181,8 +181,6 @@ export const InventoryView = () => {
         if (!user) throw new Error("No user found");
         const { id } = JSON.parse(user!);
         const result = await axios.get(`${webServerURLApi}/inventory?id=${id}`);
-        console.log("from this ");
-        console.log(result);
         if (mounted && result?.data && Array.isArray(result.data)) {
           setInventory(result.data);
           setFilteredInventory(result.data);

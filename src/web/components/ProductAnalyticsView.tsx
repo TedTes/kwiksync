@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Search, Eye, Heart, Share2, ShoppingCart, Medal } from "lucide-react";
-
+import axios from "axios";
 const rankColors: Record<number, string> = {
   1: "text-yellow-500",
   2: "text-gray-400",
@@ -19,76 +19,38 @@ type SortByType = "engagement" | "views" | "sales";
 export const ProductAnalytics = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("week");
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [products, setProducts] = useState<TrendingProduct[]>([]);
   const [sortBy, setSortBy] = useState<SortByType>("engagement");
+  const webServerURLApi = "http://localhost:3000/api/v1";
 
-  const products = [
-    {
-      id: 1,
-      name: "Summer Crop Top",
-      sku: "TOP-001",
-      platform: "TikTok",
-      rank: {
-        engagement: 1,
-        views: 1,
-        sales: 2,
-      },
-      metrics: {
-        views: 25600,
-        likes: 3200,
-        shares: 450,
-        revenue: 1245.5,
-        units_sold: 28,
-        conversion_rate: 2.8,
-      },
-      trending: {
-        views_change: 15,
-        likes_change: 12,
-        sales_change: 8,
-      },
-      performance: [
-        { date: "Mon", views: 3500, sales: 4, revenue: 180 },
-        { date: "Tue", views: 4200, sales: 5, revenue: 225 },
-        { date: "Wed", views: 3800, sales: 4, revenue: 180 },
-        { date: "Thu", views: 4500, sales: 6, revenue: 270 },
-        { date: "Fri", views: 5100, sales: 7, revenue: 315 },
-        { date: "Sat", views: 4800, sales: 6, revenue: 270 },
-      ],
-    },
-    {
-      id: 2,
-      name: "Vintage Sneakers",
-      sku: "SHO-002",
-      platform: "Instagram",
-      rank: {
-        engagement: 2,
-        views: 2,
-        sales: 1,
-      },
-      metrics: {
-        views: 18400,
-        likes: 2800,
-        shares: 320,
-        revenue: 2345.75,
-        units_sold: 35,
-        conversion_rate: 3.2,
-      },
-      trending: {
-        views_change: -5,
-        likes_change: -2,
-        sales_change: -3,
-      },
-      performance: [
-        { date: "Mon", views: 2800, sales: 5, revenue: 335 },
-        { date: "Tue", views: 2600, sales: 4, revenue: 268 },
-        { date: "Wed", views: 3100, sales: 6, revenue: 402 },
-        { date: "Thu", views: 2900, sales: 5, revenue: 335 },
-        { date: "Fri", views: 3400, sales: 7, revenue: 469 },
-        { date: "Sat", views: 3200, sales: 6, revenue: 402 },
-      ],
-    },
-  ];
-
+  useEffect(() => {
+    let mounted = true;
+    async function fetchProducts() {
+      try {
+        const user = localStorage.getItem("user");
+        if (!user) throw new Error("No user found");
+        const { id } = JSON.parse(user);
+        const response = await axios.get(
+          `${webServerURLApi}/trending/products?id=${id}`
+        );
+        console.log(response);
+        if (
+          mounted &&
+          response &&
+          response.data &&
+          Array.isArray(response.data)
+        ) {
+          setProducts(response.data);
+        }
+      } catch (error: any) {
+        console.log(`Error loading trending products: ${error}`);
+      }
+    }
+    fetchProducts();
+    return () => {
+      mounted = false;
+    };
+  }, []);
   const ProductCard: React.FC<ProductCardProps> = ({ product }) => (
     <div className="bg-white rounded-xl p-6 mb-6">
       <div className="flex justify-between items-start mb-6">
