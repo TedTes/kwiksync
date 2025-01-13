@@ -92,6 +92,51 @@ declare global {
     syncIssues: number;
     platformCount: number;
   }
+
+  interface Rank {
+    engagement: number;
+    views: number;
+    sales: number;
+  }
+
+  interface Metrics {
+    views: number;
+    likes: number;
+    shares: number;
+    revenue: number;
+    units_sold: number;
+    conversion_rate: number;
+  }
+
+  interface TrendingChanges {
+    views_change: number;
+    likes_change: number;
+    sales_change: number;
+  }
+
+  interface DailyPerformance {
+    date: string;
+    views: number;
+    sales: number;
+    revenue: number;
+  }
+
+  interface TrendingProduct {
+    id: number;
+    name: string;
+    sku: string;
+    platform: string;
+    rank: Rank;
+    metrics: Metrics;
+    trending: TrendingChanges;
+    performance: DailyPerformance[];
+  }
+
+  interface RouteConfig {
+    path: string;
+    router: Router;
+    middleware?: any[];
+  }
 }
 
 export {};
