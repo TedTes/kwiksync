@@ -13,6 +13,7 @@ import {
   salesRoutes,
   metricRoutes,
   inventoryRoutes,
+  trendingRoutes,
 } from "./routes";
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
@@ -45,6 +46,7 @@ const startServer = async () => {
       .use("/api/v1/sales", authenticate, salesRoutes)
       .use("/api/v1/metrics", metricRoutes)
       .use("/api/v1/inventory", inventoryRoutes)
+      .use("/api/v1/trending", trendingRoutes)
       .get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
       })

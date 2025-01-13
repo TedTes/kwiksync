@@ -1,5 +1,5 @@
 export * from "./product.routes";
-export * from "./trend.routes";
+export * from "./trending.routes";
 export * from "./auth.routes";
 export * from "./webhook.routes";
 export * from "./analytics.routes";
