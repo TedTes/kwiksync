@@ -110,13 +110,14 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 };
 
 export const InventoryView = () => {
-  const [inventory, setInventory] = useState<InventoryItem[]>(initialInventory);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>("All");
   const [showAutomationSettings, setShowAutomationSettings] = useState(false);
   const [isAutomationEnabled, setIsAutomationEnabled] = useState(true);
   const [showAddItem, setShowAddItem] = useState(false);
-  const [filteredInventory, setFilteredInventory] =
-    useState<InventoryItem[]>(inventory);
+  const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>(
+    []
+  );
   const [isActiveOrder, setShowActiveOrder] = useState(false);
   const [showOrderPanel, setShowOrderPanel] = useState(false);
 
@@ -135,6 +136,7 @@ export const InventoryView = () => {
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (!showAutomationSettings) return;
     if (showAutomationSettings) {
       const handleClickOutside = (event: MouseEvent) => {
         if (
@@ -160,26 +162,31 @@ export const InventoryView = () => {
       // Filter and update inventory items based on selected platform
       const updated = inventory.map((item) => ({
         ...item,
-        stock: item.platforms[selectedPlatform].stock,
+        stock: item.platforms[selectedPlatform].stock || 0,
         status: getItemStatus(
-          item.platforms[selectedPlatform].stock,
+          item.platforms[selectedPlatform]?.stock || 0,
           settings
         ) as StatusType,
-        stockChange: item.platforms[selectedPlatform].sales, // Using sales as stock change for demo
+        stockChange: item.platforms[selectedPlatform]?.sales || 0, // Using sales as stock change for demo
       }));
       setFilteredInventory(updated);
     }
-  }, [selectedPlatform]);
+  }, [selectedPlatform, inventory, settings]);
 
   useEffect(() => {
+    let mounted = true;
     async function fetchInventory() {
       try {
         const user = localStorage.getItem("user");
-        const id = JSON.parse(user!).id;
+        if (!user) throw new Error("No user found");
+        const { id } = JSON.parse(user!);
         const result = await axios.get(`${webServerURLApi}/inventory?id=${id}`);
-
-        if (result && result.data && Array.isArray(result.data))
-          setInventory((prev) => [...prev, ...result.data]);
+        console.log("from this ");
+        console.log(result);
+        if (mounted && result?.data && Array.isArray(result.data)) {
+          setInventory(result.data);
+          setFilteredInventory(result.data);
+        }
       } catch (error) {
         console.log(`error fetching inventory data:${error}`);
       }
@@ -189,21 +196,29 @@ export const InventoryView = () => {
   // Monitor inventory status
   useEffect(() => {
     if (!settings.active) return;
-
+    let mounted = true;
     const monitorInterval = setInterval(() => {
+      if (!mounted) return;
       inventory.forEach((item) => {
         // Update item status based on stock levels
         // const newStatus = getItemStatus(item.stock, settings);
 
         // Create order if needed
-        if (shouldCreateOrder(item, settings, orders)) {
-          createOrder(item);
+        try {
+          if (shouldCreateOrder(item, settings, orders)) {
+            createOrder(item);
+          }
+        } catch (error) {
+          console.error(`Error monitoring item ${item.id}:`, error);
         }
       });
     }, 5000); // Check every 5 seconds
 
-    return () => clearInterval(monitorInterval);
-  }, [settings, orders]);
+    return () => {
+      mounted = false;
+      clearInterval(monitorInterval);
+    };
+  }, [settings, orders, inventory]);
 
   const updateInventoryFromOrder = (
     inventory: InventoryItem[],
