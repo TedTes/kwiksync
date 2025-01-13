@@ -7,7 +7,7 @@ import {
   ManyToOne,
 } from "typeorm";
 
-import { Product } from "./product.model";
+import { Product, Platform } from "./";
 
 @Entity()
 export class TrendingProduct {
@@ -17,14 +17,23 @@ export class TrendingProduct {
   @ManyToOne(() => Product, (product) => product.id, { onDelete: "CASCADE" })
   product!: Product;
 
-  @Column({ default: 0 })
+  @ManyToOne(() => Platform)
+  platform!: Platform;
+
+  @Column({ type: "int", default: 0 })
   likes!: number;
 
-  @Column({ default: 0 })
+  @Column({ type: "int", default: 0 })
   shares!: number;
 
-  @Column({ default: 0 })
+  @Column({ type: "int", default: 0 })
   views!: number;
+
+  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  revenue!: number;
+
+  @Column({ type: "int", default: 0 })
+  unitsSold!: number;
 
   @Column({ nullable: true })
   trendScore!: number;
