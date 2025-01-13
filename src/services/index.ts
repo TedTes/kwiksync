@@ -1,5 +1,5 @@
 export * from "./product.service";
-export * from "./trendingProduct.service";
+export * from "./trending.service";
 export * from "./user.service";
 export * from "./lowStock.service";
 export * from "./notification.service";
