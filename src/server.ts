@@ -5,7 +5,6 @@ import { initializeDatabase } from "./config";
 import cors from "cors";
 import {
   productRoutes,
-  trendRoutes,
   authRoutes,
   webhookRoutes,
   analyticsRoutes,
@@ -40,7 +39,6 @@ const startServer = async () => {
       .use("/api/v1/auth", authRoutes)
       .use("/api/v1/hooks", webhookRoutes)
       .use("/api/v1/products", authenticate, productRoutes)
-      .use("/api/v1/trends", authenticate, trendRoutes)
       .use("/api/v1/analytics", analyticsRoutes)
       .use("/api/v1/users", authenticate, userRoutes)
       .use("/api/v1/sales", authenticate, salesRoutes)
