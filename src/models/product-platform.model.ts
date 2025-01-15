@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  UpdateDateColumn,
 } from "typeorm";
 import { Platform, Product } from ".";
 @Entity()
@@ -25,6 +26,9 @@ export class ProductPlatform {
 
   @Column({ default: true })
   isActive!: boolean;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
   @CreateDateColumn()
   listedAt!: Date;
