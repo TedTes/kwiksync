@@ -35,11 +35,11 @@ export class PlatformConnectionRepository {
         category_stats AS (
           SELECT 
             p."platformId",
-            jsonb_agg(DISTINCT pc.name) as categories
+            jsonb_agg(DISTINCT prod.category) as categories
           FROM platform_stats p
           INNER JOIN product_platform pp ON p."platformId" = pp."platformId"
           INNER JOIN product prod ON pp."productId" = prod.id
-          INNER JOIN product_categories pc ON prod.id = pc."productId"
+          WHERE prod.category IS NOT NULL
           GROUP BY p."platformId"
         ),
         performance_metrics AS (
