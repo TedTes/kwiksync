@@ -190,6 +190,9 @@ export const InventoryView = () => {
       }
     }
     fetchInventory();
+    return () => {
+      mounted = false;
+    };
   }, []);
   // Monitor inventory status
   useEffect(() => {

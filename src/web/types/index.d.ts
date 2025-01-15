@@ -180,6 +180,24 @@ declare global {
     trending: TrendingChanges;
     performance: DailyPerformance[];
   }
+  interface PerformanceMetrics {
+    conversionRate: number;
+    averageOrderValue: number;
+    totalSales: number;
+  }
+
+  interface PlatformConnection {
+    name: string;
+    status: "connected" | "disconnected";
+    products: number;
+    lastSync: string;
+    syncIssues: number;
+    revenue: number;
+    lowStockItems: number;
+    syncHealth: number;
+    productCategories: string[];
+    performanceMetrics: PerformanceMetrics;
+  }
   type OrderStatus =
     | "pending"
     | "confirmed"

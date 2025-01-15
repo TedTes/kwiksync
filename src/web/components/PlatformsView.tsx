@@ -1,73 +1,39 @@
-import React, { useState } from "react";
-import {
-  Package,
-  Link2,
-  TrendingUp,
-  ShoppingCart,
-  Layers,
-  Zap,
-  RefreshCw,
-  AlertTriangle,
-  X,
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ShoppingCart, Zap, AlertTriangle, X } from "lucide-react";
 import "../index.css";
-
+import axios from "axios";
+const webServerURLApi = "http://localhost:3000/api/v1";
 export const PlatformsView = () => {
-  const [activeTab, setActiveTab] = useState("overview");
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
     null
   );
+  const [platformStat, setPlatformStat] = useState<PlatformConnection[]>([]);
 
-  const platformConnections = [
-    {
-      name: "TikTok",
-      status: "connected",
-      products: 24,
-      lastSync: "2 mins ago",
-      syncIssues: 1,
-      revenue: 1245.5,
-      lowStockItems: 3,
-      syncHealth: 0.85, // 85% sync health
-      productCategories: ["Fashion", "Accessories"],
-      performanceMetrics: {
-        conversionRate: 2.5,
-        averageOrderValue: 45.2,
-        totalSales: 5678.9,
-      },
-    },
-    {
-      name: "Instagram",
-      status: "connected",
-      products: 36,
-      lastSync: "5 mins ago",
-      syncIssues: 0,
-      revenue: 2345.75,
-      lowStockItems: 2,
-      syncHealth: 1, // 100% sync health
-      productCategories: ["Beauty", "Lifestyle"],
-      performanceMetrics: {
-        conversionRate: 3.2,
-        averageOrderValue: 62.5,
-        totalSales: 7845.6,
-      },
-    },
-    {
-      name: "Shopify",
-      status: "connected",
-      products: 42,
-      lastSync: "1 min ago",
-      syncIssues: 2,
-      revenue: 3456.8,
-      lowStockItems: 5,
-      syncHealth: 0.75, // 75% sync health
-      productCategories: ["Electronics", "Home Goods"],
-      performanceMetrics: {
-        conversionRate: 2.8,
-        averageOrderValue: 55.3,
-        totalSales: 6543.21,
-      },
-    },
-  ];
+  useEffect(() => {
+    let mounted = true;
+    async function fetchPlatformStat() {
+      try {
+        const user = localStorage.getItem("user");
+        if (!user) throw "Error : user not found!";
+        const { id } = JSON.parse(user);
+
+        const response = await axios.get(
+          `${webServerURLApi}/platform/stat?${id}`
+        );
+        console.log("from response ");
+        console.log(response);
+        if (mounted && response && Array.isArray(response.data)) {
+          setPlatformStat(response.data);
+        }
+      } catch (error: any) {
+        console.log("Error fetching platform status", error);
+      }
+    }
+    fetchPlatformStat();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Platform Details Modal Component
   const PlatformDetailsModal = ({
@@ -155,7 +121,7 @@ export const PlatformsView = () => {
       <div className="container mx-auto max-w-6xl px-4">
         <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
           <div className="space-y-4">
-            {platformConnections.map((platform) => (
+            {platformStat.map((platform) => (
               <div
                 key={platform.name}
                 className={`
