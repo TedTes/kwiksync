@@ -19,6 +19,9 @@ export class Product {
   @Column({ nullable: true })
   description!: string;
 
+  @Column({ nullable: false, default: "Uncategorized" })
+  category: string;
+
   @Column({ type: "decimal", precision: 10, scale: 2, nullable: false })
   basePrice!: number;
 
