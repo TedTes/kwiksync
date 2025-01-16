@@ -20,16 +20,11 @@ import {
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
 import {
-  startInventorySyncScheduler,
-  startLowStockCheckScheduler,
-  startTrendTrackingScheduler,
+  InventorySyncScheduler,
+  LowStockScheduler,
+  TrendTrackingScheduler,
 } from "./schedulers";
-import cron from "node-cron";
 require("./config/passport");
-
-let inventorySyncJob: cron.ScheduledTask;
-let lowStockCheckJob: cron.ScheduledTask;
-let trendTrackingJob: cron.ScheduledTask;
 
 class ServerManager {
   private static serverInstance: Server;
@@ -78,9 +73,10 @@ const startServer = async () => {
       })
       .use(errorHandler);
 
-    inventorySyncJob = startInventorySyncScheduler();
-    lowStockCheckJob = startLowStockCheckScheduler();
-    trendTrackingJob = startTrendTrackingScheduler();
+    InventorySyncScheduler.startScheduler();
+    LowStockScheduler.startLowStockCheckScheduler();
+    TrendTrackingScheduler.startScheduler();
+
     const PORT = process.env.PORT || 3000;
     const serverInstance = app.listen(PORT, () =>
       console.log(`Server running on ${PORT}`)
@@ -112,16 +108,17 @@ const shutdown = async () => {
   let exitCode = 0;
   try {
     console.log("Stopping schedulers...");
-    inventorySyncJob?.stop();
-    lowStockCheckJob?.stop();
-    trendTrackingJob?.stop();
+    InventorySyncScheduler.stopScheduler();
+    LowStockScheduler.stopLowStockCheckScheduler();
+    LowStockScheduler.stopLowStockNotificationScheduler();
+    TrendTrackingScheduler.stopScheduler();
 
     console.log("Closing database connection...");
     await AppDataSource.destroy();
 
     if (ServerManager.getServer()) {
       console.log("Closing server...");
-      ServerManager.shutdown();
+      await ServerManager.shutdown();
     }
   } catch (error) {
     console.error("Error during shutdown:", error);
