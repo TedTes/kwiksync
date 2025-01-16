@@ -2,6 +2,8 @@ import "reflect-metadata";
 import express from "express";
 import path from "path";
 import { initializeDatabase } from "./config";
+import { AppDataSource } from "./config";
+import { Server } from "http";
 import cors from "cors";
 import {
   productRoutes,
@@ -22,7 +24,31 @@ import {
   startLowStockCheckScheduler,
   startTrendTrackingScheduler,
 } from "./schedulers";
+import cron from "node-cron";
 require("./config/passport");
+
+let inventorySyncJob: cron.ScheduledTask;
+let lowStockCheckJob: cron.ScheduledTask;
+let trendTrackingJob: cron.ScheduledTask;
+
+class ServerManager {
+  private static serverInstance: Server;
+  static startServer(serverInstance: Server) {
+    this.serverInstance = serverInstance;
+  }
+  static getServer() {
+    return this.serverInstance;
+  }
+
+  static async shutdown() {
+    if (this.serverInstance) {
+      await new Promise((resolve) => {
+        this.serverInstance.close(resolve);
+      });
+    }
+  }
+}
+
 const startServer = async () => {
   try {
     await initializeDatabase();
@@ -52,11 +78,14 @@ const startServer = async () => {
       })
       .use(errorHandler);
 
-    startInventorySyncScheduler();
-    startLowStockCheckScheduler();
-    startTrendTrackingScheduler();
+    inventorySyncJob = startInventorySyncScheduler();
+    lowStockCheckJob = startLowStockCheckScheduler();
+    trendTrackingJob = startTrendTrackingScheduler();
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+    const serverInstance = app.listen(PORT, () =>
+      console.log(`Server running on ${PORT}`)
+    );
+    ServerManager.startServer(serverInstance);
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1);
@@ -79,12 +108,28 @@ process.on("uncaughtException", (error) => {
 });
 
 const shutdown = async () => {
-  console.log("Shutting down server...");
-  // TODO:
-  // Close database connections
-  // Stop schedulers
-  // Close server
-  process.exit(0);
+  console.log("Shutting down server gracefully...");
+  let exitCode = 0;
+  try {
+    console.log("Stopping schedulers...");
+    inventorySyncJob?.stop();
+    lowStockCheckJob?.stop();
+    trendTrackingJob?.stop();
+
+    console.log("Closing database connection...");
+    await AppDataSource.destroy();
+
+    if (ServerManager.getServer()) {
+      console.log("Closing server...");
+      ServerManager.shutdown();
+    }
+  } catch (error) {
+    console.error("Error during shutdown:", error);
+    exitCode = 1;
+  } finally {
+    console.log("Shutdown complete");
+    process.exit(exitCode);
+  }
 };
 
 process.on("SIGTERM", shutdown);
