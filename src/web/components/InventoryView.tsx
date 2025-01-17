@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-// import { useToast } from "@/components/ui/use-toast";
-// import { Toast, Toaster } from "@/components/ui/toast";
+import { useToast } from "./";
 import axios from "axios";
 import {
   Package,
@@ -132,7 +131,7 @@ export const InventoryView = () => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showBulkAdd, setShowBulkAdd] = useState(false);
-  // const { toast } = useToast();
+  const { addToast } = useToast();
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -291,10 +290,10 @@ export const InventoryView = () => {
       }
       const savedItem = await response.json();
       setInventory((prev) => [...prev, savedItem as InventoryItem]);
-      // toast.success("Item added successfully");
+      addToast("Item added successfully", "success");
     } catch (error) {
       console.error("Failed to add inventory item:", error);
-      // toast.error("Failed to add item. Please try again.");
+      addToast("Failed to add item. Please try again.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -341,37 +340,18 @@ export const InventoryView = () => {
           description: `Successfully added ${successCount} items`,
         });
         //TODO:
-        // toast({
-        //   title: "Success",
-        //   description: `Successfully added ${successCount} items`,
-        // });
+        addToast(`Successfully added ${successCount} items`, "success");
       } else {
-        // toast({
-        //   title: "Partial Success",
-        //   description: `Added ${successCount} items. ${failedItems.length} items failed.`,
-        //   variant: "warning",
-        // });
-        //TODO:
-        alert({
-          title: "Partial Success",
-          description: `Added ${successCount} items. ${failedItems.length} items failed.`,
-          variant: "warning",
-        });
+        addToast(
+          `Added ${successCount} items. ${failedItems.length} items failed.`,
+          "warning"
+        );
       }
 
       // Refresh inventory
       // await fetchInventory();
     } catch (error) {
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to process bulk upload",
-      //   variant: "destructive",
-      // });
-      alert({
-        title: "Error",
-        description: "Failed to process bulk upload",
-        variant: "destructive",
-      });
+      addToast("Failed to process bulk upload", "error");
     } finally {
       setIsLoading(false);
     }

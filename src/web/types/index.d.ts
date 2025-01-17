@@ -206,6 +206,19 @@ declare global {
     | "cancelled"
     | "delayed";
   type weekDays = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
+
+  interface ToastProviderProps {
+    children: ReactNode;
+  }
+  type ToastType = "success" | "error" | "warning" | "info";
+  interface Toast {
+    id: number;
+    message: string;
+    type: ToastType;
+  }
+  interface ToastContextType {
+    addToast: (message: string, type: ToastType, duration?: number) => void;
+  }
 }
 declare module "*.png" {
   const value: string;
