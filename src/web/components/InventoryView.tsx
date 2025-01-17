@@ -22,75 +22,6 @@ import {
 } from "./";
 import { config } from "../config";
 
-const initialInventory: InventoryItem[] = [
-  {
-    id: "TOP-001",
-    product: "Summer Crop Top",
-    sku: "TOP-001",
-    platform: "tiktok",
-    stock: 12,
-    stockChange: -3,
-    status: "low",
-    lastUpdated: "2 mins ago",
-    price: 29.99,
-    platforms: {
-      tiktok: { stock: 12, sales: 24, status: "active" },
-      instagram: { stock: 10, sales: 15, status: "active" },
-      shopify: { stock: 8, sales: 18, status: "active" },
-    },
-  },
-  {
-    id: "SHO-002",
-    product: "Vintage Sneakers",
-    sku: "SHO-002",
-    platform: "instagram",
-    stock: 8,
-    stockChange: -2,
-    status: "critical",
-    lastUpdated: "7 mins ago",
-    price: 89.99,
-    platforms: {
-      tiktok: { stock: 8, sales: 12, status: "active" },
-      instagram: { stock: 6, sales: 20, status: "active" },
-      shopify: { stock: 5, sales: 15, status: "active" },
-    },
-  },
-  {
-    id: "JAC-003",
-    product: "Denim Jacket",
-    sku: "JAC-003",
-    platform: "shopify",
-    stock: 45,
-    stockChange: 5,
-    status: "healthy",
-    lastUpdated: "12 mins ago",
-    price: 129.99,
-    platforms: {
-      tiktok: { stock: 45, sales: 30, status: "active" },
-      instagram: { stock: 42, sales: 25, status: "active" },
-      shopify: { stock: 40, sales: 35, status: "active" },
-    },
-  },
-];
-const suppliers: Record<string, SupplierInfo> = {
-  "SUP-1": {
-    id: "SUP-1",
-    name: "Fashion Wholesale Co",
-    price: 12.99,
-    leadTime: 5,
-    reliability: 0.95,
-    minOrderQuantity: 100,
-  },
-  "SUP-2": {
-    id: "SUP-2",
-    name: "Textile Direct",
-    price: 14.99,
-    leadTime: 7,
-    reliability: 0.98,
-    minOrderQuantity: 50,
-  },
-};
-
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const styles = {
     low: "bg-yellow-100 text-yellow-800",
@@ -130,6 +61,7 @@ export const InventoryView = () => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showBulkAdd, setShowBulkAdd] = useState(false);
+  const [suppliers, setSuppliers] = useState<SupplierInfo[]>([]);
   const { addToast } = useToast();
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -338,7 +270,6 @@ export const InventoryView = () => {
           title: "Success",
           description: `Successfully added ${successCount} items`,
         });
-        //TODO:
         addToast(`Successfully added ${successCount} items`, "success");
       } else {
         addToast(
@@ -415,37 +346,50 @@ export const InventoryView = () => {
   };
 
   const selectSupplier = (item: InventoryItem): SupplierInfo => {
-    const primary = suppliers[settings.primarySupplier];
-    const secondary = suppliers[settings.secondarySupplier];
+    try {
+      const primary = suppliers.find(
+        (supplier) => supplier.id === settings.primarySupplier
+      );
+      const secondary = suppliers.find(
+        (supplier) => supplier.id === settings.secondarySupplier
+      );
+      if (!primary || !secondary) throw "supplier not found";
+      if (settings.selectionCriteria === "auto") {
+        // Weighted scoring system
+        const scoreSupplier = (supplier: SupplierInfo) => {
+          if (supplier) {
+            return (
+              supplier.reliability * 0.4 +
+              (1 - supplier.price / 20) * 0.3 +
+              (1 - supplier.leadTime / 10) * 0.3
+            );
+          }
+          return 0;
+        };
 
-    if (settings.selectionCriteria === "auto") {
-      // Weighted scoring system
-      const scoreSupplier = (supplier: SupplierInfo) => {
-        return (
-          supplier.reliability * 0.4 +
-          (1 - supplier.price / 20) * 0.3 +
-          (1 - supplier.leadTime / 10) * 0.3
-        );
-      };
+        const primaryScore = scoreSupplier(primary);
+        const secondaryScore = scoreSupplier(secondary);
 
-      const primaryScore = scoreSupplier(primary);
-      const secondaryScore = scoreSupplier(secondary);
+        return primaryScore >= secondaryScore ? primary : secondary;
+      }
 
-      return primaryScore >= secondaryScore ? primary : secondary;
-    }
-
-    // Direct criteria selection
-    switch (settings.selectionCriteria) {
-      case "price":
-        return primary.price <= secondary.price ? primary : secondary;
-      case "leadTime":
-        return primary.leadTime <= secondary.leadTime ? primary : secondary;
-      case "reliability":
-        return primary.reliability >= secondary.reliability
-          ? primary
-          : secondary;
-      default:
-        return primary;
+      // Direct criteria selection
+      switch (settings.selectionCriteria) {
+        case "price":
+          return primary.price <= secondary.price ? primary : secondary;
+        case "leadTime":
+          return primary.leadTime <= secondary.leadTime ? primary : secondary;
+        case "reliability":
+          return primary.reliability >= secondary.reliability
+            ? primary
+            : secondary;
+        default:
+          return primary;
+      }
+    } catch (error) {
+      console.log(error);
+      addToast("supplier not selected or missing", "error");
+      throw error;
     }
   };
   const createOrder = (item: InventoryItem) => {
