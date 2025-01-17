@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { Search, Eye, Heart, Share2, ShoppingCart, Medal } from "lucide-react";
 import axios from "axios";
+import { config } from "../config";
 const rankColors: Record<number, string> = {
   1: "text-yellow-500",
   2: "text-gray-400",
@@ -21,7 +22,6 @@ export const ProductAnalytics = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<TrendingProduct[]>([]);
   const [sortBy, setSortBy] = useState<SortByType>("engagement");
-  const webServerURLApi = "http://localhost:3000/api/v1";
 
   useEffect(() => {
     let mounted = true;
@@ -31,7 +31,7 @@ export const ProductAnalytics = () => {
         if (!user) throw new Error("No user found");
         const { id } = JSON.parse(user);
         const response = await axios.get(
-          `${webServerURLApi}/trending/products?id=${id}`
+          `${config.apiUrl}/trending/products?id=${id}`
         );
         console.log(response);
         if (

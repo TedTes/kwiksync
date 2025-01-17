@@ -20,8 +20,7 @@ import {
   LoadingIndicator,
   BulkAddItems,
 } from "./";
-
-const webServerURLApi = "http://localhost:3000/api/v1";
+import { config } from "../config";
 
 const initialInventory: InventoryItem[] = [
   {
@@ -179,7 +178,7 @@ export const InventoryView = () => {
         const user = localStorage.getItem("user");
         if (!user) throw new Error("No user found");
         const { id } = JSON.parse(user!);
-        const result = await axios.get(`${webServerURLApi}/inventory?id=${id}`);
+        const result = await axios.get(`${config.apiUrl}/inventory?id=${id}`);
         if (mounted && result?.data && Array.isArray(result.data)) {
           setInventory(result.data);
           setFilteredInventory(result.data);

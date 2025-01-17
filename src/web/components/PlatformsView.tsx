@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ShoppingCart, Zap, AlertTriangle, X } from "lucide-react";
 import "../index.css";
 import axios from "axios";
-const webServerURLApi = "http://localhost:3000/api/v1";
+import { config } from "../config";
 export const PlatformsView = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
     null
@@ -18,7 +18,7 @@ export const PlatformsView = () => {
         const { id } = JSON.parse(user);
 
         const response = await axios.get(
-          `${webServerURLApi}/platform/stat?id=${id}`
+          `${config.apiUrl}/platform/stat?id=${id}`
         );
         if (mounted && response && Array.isArray(response.data)) {
           setPlatformStat(response.data);
