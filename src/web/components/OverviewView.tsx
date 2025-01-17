@@ -59,6 +59,13 @@ export const OverviewView = () => {
     fetchData();
   }, []);
 
+  const EmptyState = ({ message }: { message: string }) => (
+    <div className="flex flex-col items-center justify-center p-8 text-gray-500 bg-gray-50 rounded-lg">
+      <Package className="w-12 h-12 mb-3 text-gray-400" />{" "}
+      <p className="text-base font-medium">{message}</p>
+      {/* <p className="text-sm mt-1">No data available at the moment</p> */}
+    </div>
+  );
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
@@ -101,14 +108,18 @@ export const OverviewView = () => {
       <div className="bg-white rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">Weekly Revenue Trend</h3>
         <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={weeklyData}>
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="revenue" stroke="#4F46E5" dot />
-            </LineChart>
-          </ResponsiveContainer>
+          {weeklyData.length ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={weeklyData}>
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="revenue" stroke="#4F46E5" dot />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <EmptyState message="No Weekly data available" />
+          )}
         </div>
       </div>
 
@@ -117,29 +128,33 @@ export const OverviewView = () => {
         <div className="bg-white rounded-xl p-6">
           <h3 className="text-lg font-semibold mb-4">Platform Performance</h3>
           <div className="space-y-4">
-            {platformData.map((platform) => (
-              <div key={platform.name} className="p-4 bg-gray-50 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{platform.name}</p>
-                    <p className="text-gray-600">${platform.revenue}</p>
-                  </div>
-                  <div className="text-right">
-                    <p
-                      className={
-                        platform.trend === "up"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }
-                    >
-                      {platform.trend === "up" ? "↑" : "↓"}{" "}
-                      {Math.abs(platform.growth)}%
-                    </p>
-                    <p className="text-gray-600">{platform.cvr}% CVR</p>
+            {platformData.length ? (
+              platformData.map((platform) => (
+                <div key={platform.name} className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">{platform.name}</p>
+                      <p className="text-gray-600">${platform.revenue}</p>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={
+                          platform.trend === "up"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
+                        {platform.trend === "up" ? "↑" : "↓"}{" "}
+                        {Math.abs(platform.growth)}%
+                      </p>
+                      <p className="text-gray-600">{platform.cvr}% CVR</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <EmptyState message="No platform data available" />
+            )}
           </div>
         </div>
 
@@ -148,12 +163,16 @@ export const OverviewView = () => {
           <h3 className="text-lg font-semibold mb-4">Conversion Rates</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={platformData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="cvr" fill="#4F46E5" />
-              </BarChart>
+              {platformData.length ? (
+                <BarChart data={platformData}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="cvr" fill="#4F46E5" />
+                </BarChart>
+              ) : (
+                <EmptyState message="No conversion rate available" />
+              )}
             </ResponsiveContainer>
           </div>
         </div>
@@ -163,24 +182,28 @@ export const OverviewView = () => {
       <div className="bg-white rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
         <div className="space-y-4">
-          {recentActivity.map((activity, index) => (
-            <div key={index} className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex justify-between">
-                <div>
-                  <p className="font-medium">{activity.product}</p>
-                  <p className="text-sm text-gray-600">
-                    Platform: {activity.platform}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-red-600">{activity.change} units</p>
-                  <p className="text-sm text-gray-600">
-                    Stock: {activity.stock}
-                  </p>
+          {recentActivity.length ? (
+            recentActivity.map((activity, index) => (
+              <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex justify-between">
+                  <div>
+                    <p className="font-medium">{activity.product}</p>
+                    <p className="text-sm text-gray-600">
+                      Platform: {activity.platform}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-red-600">{activity.change} units</p>
+                    <p className="text-sm text-gray-600">
+                      Stock: {activity.stock}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <EmptyState message="No Recent activity available" />
+          )}
         </div>
       </div>
     </div>
