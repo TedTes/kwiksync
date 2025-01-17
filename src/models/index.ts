@@ -4,7 +4,6 @@ export * from "./supplier.model";
 export * from "./supplier-product.model";
 export * from "./trending-product.model";
 export * from "./user.model";
-export * from "./inventory-history.model";
 export * from "./notification.model";
 export * from "./login-links.model";
 export * from "./sales.model";
