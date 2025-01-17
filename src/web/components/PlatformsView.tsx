@@ -18,10 +18,8 @@ export const PlatformsView = () => {
         const { id } = JSON.parse(user);
 
         const response = await axios.get(
-          `${webServerURLApi}/platform/stat?${id}`
+          `${webServerURLApi}/platform/stat?id=${id}`
         );
-        console.log("from response ");
-        console.log(response);
         if (mounted && response && Array.isArray(response.data)) {
           setPlatformStat(response.data);
         }
@@ -68,7 +66,9 @@ export const PlatformsView = () => {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span>Sync Health</span>
-                      <span>{(platform.syncHealth * 100).toFixed(0)}%</span>
+                      <span>
+                        {(Number(platform.syncHealth) * 100).toFixed(0)}%
+                      </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div
@@ -102,7 +102,7 @@ export const PlatformsView = () => {
                   </p>
                   <p>
                     Total Sales: $
-                    {platform.performanceMetrics.totalSales.toFixed(2)}
+                    {Number(platform.performanceMetrics.totalSales).toFixed(2)}
                   </p>
                   <p>
                     Product Categories: {platform.productCategories.join(", ")}
@@ -172,7 +172,7 @@ export const PlatformsView = () => {
                     )}
                     <div className="flex items-center text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
                       <ShoppingCart size={14} className="mr-1" />$
-                      {platform.revenue.toFixed(2)}
+                      {Number(platform.revenue).toFixed(2)}
                     </div>
                   </div>
                 </div>
