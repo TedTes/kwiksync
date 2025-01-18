@@ -154,6 +154,25 @@ declare global {
     router: Router;
     middleware?: any[];
   }
+
+  //COOKIES
+  interface CookieOptions {
+    httpOnly?: boolean;
+    secure?: boolean;
+    sameSite?: "strict" | "lax" | "none";
+    expires?: Date;
+    maxAge?: number;
+  }
+  interface Cookies {
+    accessToken: {
+      name: string;
+      options: CookieOptions;
+    };
+    refreshToken: {
+      name: string;
+      options: CookieOptions;
+    };
+  }
 }
 
 export {};
