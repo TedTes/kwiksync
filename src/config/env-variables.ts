@@ -6,6 +6,14 @@ export const configAWS = {
   region: process.env.REGION,
   s3BucketName: process.env.S3_BUCKET,
 };
+export const smtpServerCreds = {
+  smtpPassword: process.env.SMTP_PASS,
+  smtpUser: process.env.SMTP_USER,
+  smtpHost: process.env.SMTP_HOST,
+  smtpPort: process.env.SMTP_PORT,
+  smtpSecure: process.env.SMTP_SECURE,
+  emailFrom: process.env.EMAIL_FROM,
+};
 export const configCDN = { cdnBaseURL: process.env.CDN_BASE_URL };
 export const webServerURL = process.env.APP_SERVER_URL;
 export const JWTkeys = {

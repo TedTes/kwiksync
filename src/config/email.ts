@@ -1,10 +1,13 @@
+import { smtpServerCreds } from ".";
+const { smtpPassword, smtpUser, smtpHost, smtpPort, smtpSecure, emailFrom } =
+  smtpServerCreds;
 export const emailConfig: EmailConfig = {
-  host: process.env.SMTP_HOST || "smtp.sendgrid.net",
-  port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: process.env.SMTP_SECURE === "true",
+  host: smtpHost!,
+  port: parseInt(smtpPort!),
+  secure: !!smtpSecure!,
   auth: {
-    user: process.env.SMTP_USER || "apikey",
-    pass: process.env.SMTP_PASS || "",
+    user: smtpUser!,
+    pass: smtpPassword!,
   },
-  from: process.env.EMAIL_FROM || "tedtfu@gmail.com",
+  from: emailFrom!,
 };
