@@ -1,5 +1,5 @@
 import { DataSourceOptions } from "typeorm";
-import { envVariables } from "./env-variables";
+import { postgressConfig } from "./env-variables";
 
 import {
   Merchant,
@@ -17,13 +17,9 @@ import {
   ProductPlatform,
 } from "../models";
 
-const {
-  postgressConfig: { url },
-} = envVariables;
-
 export const getDbConfig = (isMigration = false): DataSourceOptions => ({
   type: "postgres",
-  url,
+  url: postgressConfig.url,
   logging: ["error", "schema"],
   entities: [
     Merchant,

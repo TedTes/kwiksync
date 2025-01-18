@@ -3,17 +3,17 @@ import { User, LoginLinks } from "../models";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { createHash, randomBytes } from "crypto";
-import { envVariables } from "../config";
+import { webServerURL, magicLinkSecretKey, JWTkeys } from "../config";
 import {
   EmailTemplates,
   generateTokens,
   ErrorFactory,
   sendEmail,
 } from "../utils";
+const { refreshTokenKey } = JWTkeys;
 const userRepository = AppDataSource.getRepository(User);
 const loginLinksRepository = AppDataSource.getRepository(LoginLinks);
 
-const { magicLinkSecretKey, webServerURL } = envVariables;
 export const registerUser = async (
   email: string,
   password: string,
@@ -51,14 +51,12 @@ export const login = async (email: string, password: string) => {
   user.refreshToken = hashedRefreshToken;
   await userRepository.save(user);
 
-  return { accessToken, refreshToken };
+  return { accessToken, hashedRefreshToken };
 };
 
 export const refreshTokens = async (currRefreshToken: string) => {
-  const secret = process.env.JWT_REFRESH_SECRET || "refresh_secret";
-
   try {
-    const decoded: any = jwt.verify(currRefreshToken, secret);
+    const decoded: any = jwt.verify(currRefreshToken, refreshTokenKey!);
 
     const user = await userRepository.findOneBy({ id: decoded.id });
     if (!user) throw new Error("User not found");
@@ -74,7 +72,7 @@ export const refreshTokens = async (currRefreshToken: string) => {
     user.refreshToken = hashedRefreshToken;
     await userRepository.save(user);
 
-    return { accessToken, refreshToken };
+    return { accessToken, hashedRefreshToken };
   } catch (err) {
     throw new Error("Invalid or expired refresh token");
   }

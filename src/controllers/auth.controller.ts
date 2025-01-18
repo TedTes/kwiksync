@@ -6,7 +6,7 @@ import {
   refreshTokens,
   sendMagicLink,
   verifyMagicLink,
-} from "../services/auth.service";
+} from "../services";
 import { rateLimit, setCookie } from "../utils";
 
 export const registerNewUser = async (

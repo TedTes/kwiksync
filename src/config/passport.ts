@@ -2,14 +2,14 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { AppDataSource } from "../config";
 import { User } from "../models";
-import { envVariables } from "./env-variables";
+import { googleAuth20 } from "./env-variables";
 const userRepository = AppDataSource.getRepository(User);
-const { googleClientId, googleClientSecret, googleCallbackURL } = envVariables;
+const { googleClientId, googleClientSecret, googleCallbackURL } = googleAuth20;
 passport.use(
   new GoogleStrategy(
     {
-      clientID: googleClientId,
-      clientSecret: googleClientSecret,
+      clientID: googleClientId!,
+      clientSecret: googleClientSecret!,
       callbackURL: googleCallbackURL,
     },
     async (accessToken, refreshToken, profile, done) => {

@@ -1,8 +1,6 @@
 import { S3Client as S3, PutObjectCommand } from "@aws-sdk/client-s3";
-import { envVariables } from "../config";
-const {
-  configAWS: { AWSaccessKeyId, AWSsecretAccessKey, region },
-} = envVariables;
+import { configAWS } from "../config";
+const { AWSaccessKeyId, AWSsecretAccessKey, region } = configAWS;
 
 class S3Client {
   private s3;

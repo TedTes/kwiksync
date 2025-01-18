@@ -1,10 +1,6 @@
 import { s3Client } from "../utils";
 import { v4 as uuidv4 } from "uuid";
-import { envVariables } from "../config";
-const {
-  configAWS: { s3BucketName },
-  configCDN: cdnBaseURL,
-} = envVariables;
+import { configAWS, configCDN } from "../config";
 
 export const upload = async (file: Express.Multer.File): Promise<string> => {
   try {
@@ -18,7 +14,7 @@ export const upload = async (file: Express.Multer.File): Promise<string> => {
     const filePath = `uploads/${year}/${month}/${fileName}`;
 
     const command: s3FileObj = {
-      bucket: s3BucketName!,
+      bucket: configAWS.s3BucketName!,
       key: filePath,
       body: file.buffer,
       mimeType: file.mimetype,
@@ -27,7 +23,7 @@ export const upload = async (file: Express.Multer.File): Promise<string> => {
     await s3Client.upload(command);
 
     // Return CDN URL
-    return `${cdnBaseURL}/${filePath}`;
+    return `${configCDN.cdnBaseURL}/${filePath}`;
   } catch (error) {
     console.error("Upload error:", error);
     throw new Error("Failed to upload file to cloud storage");

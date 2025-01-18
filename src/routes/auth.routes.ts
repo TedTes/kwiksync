@@ -12,10 +12,10 @@ import {
   verifyMagicLinkController,
 } from "../controllers";
 import { generateTokens, setCookie } from "../utils";
-import { envVariables } from "../config";
+import { webServerURL } from "../config";
 export const authRoutes = Router();
 
-const allowedOrigin = `${envVariables.webServerURL}/dashboard`;
+const allowedOrigin = `${webServerURL}/dashboard`;
 
 authRoutes.post(
   "/register",
