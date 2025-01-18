@@ -5,6 +5,7 @@ import { initializeDatabase } from "./config";
 import { AppDataSource } from "./config";
 import { Server } from "http";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import {
   productRoutes,
   authRoutes,
@@ -51,6 +52,7 @@ const startServer = async () => {
     const app = express();
     app
       .use(cors())
+      .use(cookieParser())
       .use(express.static(path.join(__dirname, "../dist")))
       .use(express.json())
       .get("/api/v1/health", (req, res) => {
@@ -61,13 +63,13 @@ const startServer = async () => {
       .use("/api/v1/auth", authRoutes)
       .use("/api/v1/hooks", webhookRoutes)
       .use("/api/v1/products", authenticate, productRoutes)
-      .use("/api/v1/analytics", analyticsRoutes)
+      .use("/api/v1/analytics", authenticate, analyticsRoutes)
       .use("/api/v1/users", authenticate, userRoutes)
       .use("/api/v1/sales", authenticate, salesRoutes)
-      .use("/api/v1/metrics", metricRoutes)
-      .use("/api/v1/inventory", inventoryRoutes)
-      .use("/api/v1/trending", trendingRoutes)
-      .use("/api/v1/platform", platformRouter)
+      .use("/api/v1/metrics", authenticate, metricRoutes)
+      .use("/api/v1/inventory", authenticate, inventoryRoutes)
+      .use("/api/v1/trending", authenticate, trendingRoutes)
+      .use("/api/v1/platform", authenticate, platformRouter)
       .get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
       })

@@ -74,7 +74,7 @@ export const refreshTokens = async (currRefreshToken: string) => {
 
     return { accessToken, hashedRefreshToken };
   } catch (err) {
-    throw new Error("Invalid or expired refresh token");
+    throw new Error(`Error refreshing token: ${err}`);
   }
 };
 
