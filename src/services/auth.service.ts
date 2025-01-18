@@ -136,7 +136,10 @@ export const sendMagicLink = async (email: string): Promise<void> => {
   }
 };
 
-export const verifyMagicLink = async (token: string, email: string) => {
+export const verifyMagicLink = async (
+  token: string,
+  email: string
+): Promise<IVerifiedUser> => {
   try {
     const hashedToken = createHash("sha256")
       .update(`${token}${magicLinkSecretKey}`)

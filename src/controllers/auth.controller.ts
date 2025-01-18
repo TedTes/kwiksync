@@ -7,7 +7,7 @@ import {
   sendMagicLink,
   verifyMagicLink,
 } from "../services/auth.service";
-import { rateLimit } from "../utils";
+import { rateLimit, setCookie } from "../utils";
 
 export const registerNewUser = async (
   req: Request,
@@ -125,23 +125,10 @@ export const verifyMagicLinkController = async (
 
     const result = await verifyMagicLink(token as string, email as string);
 
-    if (result.isSuccess) {
+    if (result.isSuccess && result.accessToken && result.refreshToken) {
       const { accessToken, refreshToken } = result;
-
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 15 * 60 * 1000, // 15 minutes
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
-
+      setCookie(res, "accessToken", accessToken);
+      setCookie(res, "refreshToken", refreshToken);
       res.status(200).json({
         success: true,
         message: "Authentication successful",

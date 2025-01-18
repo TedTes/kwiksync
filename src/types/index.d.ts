@@ -155,7 +155,7 @@ declare global {
     middleware?: any[];
   }
 
-  //COOKIES
+  //COOKIES TYPES
   interface CookieOptions {
     httpOnly?: boolean;
     secure?: boolean;
@@ -171,6 +171,18 @@ declare global {
     refreshToken: {
       name: string;
       options: CookieOptions;
+    };
+  }
+
+  //USER TYPES
+  interface IVerifiedUser {
+    isSuccess: boolean;
+    accessToken?: string;
+    refreshToken?: string;
+    user?: {
+      id: number;
+      email: string;
+      role: string;
     };
   }
 }

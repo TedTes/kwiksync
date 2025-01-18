@@ -11,7 +11,7 @@ import {
   sendMagicLinkController,
   verifyMagicLinkController,
 } from "../controllers";
-import { generateTokens } from "../utils";
+import { generateTokens, setCookie } from "../utils";
 import { envVariables } from "../config";
 export const authRoutes = Router();
 
@@ -93,17 +93,8 @@ authRoutes.get(
       } as User);
 
       // Set HTTP-only cookies
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-      });
+      setCookie(res, "accessToken", accessToken);
+      setCookie(res, "refreshToken", refreshToken);
 
       const data = { id, email, role };
       res.send(`

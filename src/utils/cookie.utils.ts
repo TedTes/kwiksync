@@ -7,6 +7,7 @@ export const COOKIES: Cookies = {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
+      //   maxAge: 15 * 60 * 1000, // 15 minutes
     },
   },
   refreshToken: {
