@@ -10,8 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import axios from "axios";
-import { config } from "../config";
+import { api } from "../config";
 export const OverviewView = () => {
   const [weeklyData, setWeeklyData] = useState<IWeeklyData[]>([]);
   const [platformData, setPlatformData] = useState<IPlatformData[]>([]);
@@ -23,10 +22,10 @@ export const OverviewView = () => {
       const userId = user && JSON.parse(user).id;
       try {
         const results = await Promise.allSettled([
-          axios.get(`${config.apiUrl}/analytics/weekly-revenue`),
-          axios.get(`${config.apiUrl}/analytics/platform-performance`),
-          axios.get(`${config.apiUrl}/analytics/recent-activity`),
-          axios.get(`${config.apiUrl}/metrics?id=${userId}`),
+          api.get(`/analytics/weekly-revenue`),
+          api.get(`/analytics/platform-performance`),
+          api.get(`/analytics/recent-activity`),
+          api.get(`/metrics?id=${userId}`),
         ]);
         results.forEach((result, index) => {
           if (

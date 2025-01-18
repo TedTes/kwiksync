@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Alert, Container } from "@mui/material";
-
+import { api } from "../config";
 const LowStockAlerts: React.FC = () => {
   const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
 
   const fetchLowStockAlerts = async (): Promise<void> => {
     try {
-      const response = await axios.get("/products/low-stock", {
+      const response = await api.get("/products/low-stock", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setLowStockProducts(response.data.lowStockProducts);

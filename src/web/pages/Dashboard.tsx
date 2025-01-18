@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   Layers,
   Link2,
@@ -18,8 +17,7 @@ import {
   InventoryView,
   ProductAnalytics,
 } from "../components";
-import { use } from "passport";
-const webAppServer = "http://localhost:3000";
+import { api } from "../config";
 
 interface User {
   email: string;
@@ -60,7 +58,7 @@ export const Dashboard = () => {
       }
       const userData = JSON.parse(user) as User;
       const userEmail = userData.email;
-      const response = await axios.post(`${webAppServer}/api/v1/auth/logout`, {
+      const response = await api.post(`/auth/logout`, {
         userEmail,
       });
 
@@ -98,15 +96,11 @@ export const Dashboard = () => {
       const formData = new FormData();
       formData.append("photo", file);
 
-      const response = await axios.post(
-        `${webAppServer}/api/v1/users/photo`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await api.post(`/api/v1/users/photo`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.data?.photoUrl) {
         // TODO: Update user's photo URL in local storage or state

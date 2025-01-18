@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useToast } from "./";
-import axios from "axios";
 import {
   Package,
   Settings,
@@ -20,7 +19,7 @@ import {
   LoadingIndicator,
   BulkAddItems,
 } from "./";
-import { config } from "../config";
+import { api } from "../config";
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const styles = {
@@ -110,7 +109,7 @@ export const InventoryView = () => {
         const user = localStorage.getItem("user");
         if (!user) throw new Error("No user found");
         const { id } = JSON.parse(user!);
-        const result = await axios.get(`${config.apiUrl}/inventory?id=${id}`);
+        const result = await api.get(`/inventory?id=${id}`);
         if (mounted && result?.data && Array.isArray(result.data)) {
           setInventory(result.data);
           setFilteredInventory(result.data);

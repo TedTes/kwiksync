@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
-const appServerURL = "http://localhost:3000";
+import { api } from "../config";
+
 export const VerifyPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -24,8 +24,8 @@ export const VerifyPage = () => {
           );
           return;
         }
-        const response = await axios.get(
-          `${appServerURL}/api/v1/auth/verify?token=${token}&email=${email}`
+        const response = await api.get(
+          `/auth/verify?token=${token}&email=${email}`
         );
         const data = await response.data;
 

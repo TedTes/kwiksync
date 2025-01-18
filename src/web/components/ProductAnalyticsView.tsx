@@ -8,8 +8,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Search, Eye, Heart, Share2, ShoppingCart, Medal } from "lucide-react";
-import axios from "axios";
-import { config } from "../config";
+
+import { api } from "../config";
 const rankColors: Record<number, string> = {
   1: "text-yellow-500",
   2: "text-gray-400",
@@ -30,9 +30,7 @@ export const ProductAnalytics = () => {
         const user = localStorage.getItem("user");
         if (!user) throw new Error("No user found");
         const { id } = JSON.parse(user);
-        const response = await axios.get(
-          `${config.apiUrl}/trending/products?id=${id}`
-        );
+        const response = await api.get(`/trending/products?id=${id}`);
         console.log(response);
         if (
           mounted &&

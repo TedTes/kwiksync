@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Shield, Check, X, ArrowLeft } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import { api } from "../config";
 export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -81,8 +81,8 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     }
   };
   const sendMagicLink = async (email: string) => {
-    const response = await axios.post(
-      `${appServerURL}/api/v1/auth/magic-link`,
+    const response = await api.post(
+      `/auth/magic-link`,
       { email },
       {
         headers: {

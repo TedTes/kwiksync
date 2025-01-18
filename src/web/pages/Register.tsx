@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { api } from "../config";
 import { Container, Typography, TextField, Button, Alert } from "@mui/material";
 
 const Register: React.FC = () => {
@@ -10,7 +10,7 @@ const Register: React.FC = () => {
 
   const handleRegister = async (): Promise<void> => {
     try {
-      await axios.post("/auth/register", { email, password, role });
+      await api.post("/auth/register", { email, password, role });
       alert("Registration successful! You can now log in.");
       setError(null);
     } catch (error) {
