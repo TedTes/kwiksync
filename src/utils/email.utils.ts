@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { CustomError, ErrorFactory } from "./errors";
+import { CustomError, ErrorFactory } from "./errors.utils";
 import { emailConfig } from "../config";
 const transporter = nodemailer.createTransport(emailConfig);
 // Email templates
