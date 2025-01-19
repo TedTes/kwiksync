@@ -1,6 +1,6 @@
 import { AppDataSource } from "../config";
 import { User, LoginLinks } from "../models";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { createHash, randomBytes } from "crypto";
 import { webServerURL, magicLinkSecretKey, JWTkeys } from "../config";
@@ -59,21 +59,24 @@ export const refreshTokens = async (currRefreshToken: string) => {
     const decoded: any = jwt.verify(currRefreshToken, refreshTokenKey!);
 
     const user = await userRepository.findOneBy({ id: decoded.id });
-    if (!user) throw new Error("User not found");
+    if (!user || !user.refreshToken) throw new Error("User not found");
 
-    const isValidRefreshToken = await bcrypt.compare(
-      currRefreshToken,
-      user.refreshToken || ""
-    );
+    const isValidRefreshToken = user.refreshToken === currRefreshToken;
     if (!isValidRefreshToken) throw new Error("Invalid refresh token");
-    const { accessToken, refreshToken } = generateTokens(user);
 
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    user.refreshToken = hashedRefreshToken;
+    const { accessToken, refreshToken } = generateTokens(user);
+    user.refreshToken = refreshToken;
+
     await userRepository.save(user);
 
-    return { accessToken, hashedRefreshToken };
+    return { accessToken, refreshToken };
   } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      throw new Error("Invalid refresh token format");
+    }
+    if (err instanceof TokenExpiredError) {
+      throw new Error("Refresh token expired");
+    }
     throw new Error(`Error refreshing token: ${err}`);
   }
 };
