@@ -57,8 +57,8 @@ export const login = async (email: string, password: string) => {
 export const refreshTokens = async (currRefreshToken: string) => {
   try {
     const decoded: any = jwt.verify(currRefreshToken, refreshTokenKey!);
+    const user = await userRepository.findOneBy({ id: decoded.userId });
 
-    const user = await userRepository.findOneBy({ id: decoded.id });
     if (!user || !user.refreshToken) throw new Error("User not found");
 
     const isValidRefreshToken = user.refreshToken === currRefreshToken;

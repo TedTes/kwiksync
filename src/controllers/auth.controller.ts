@@ -56,12 +56,13 @@ export const refreshTokensHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
+    const authToken = req.cookies;
+    if (!authToken || !authToken.refreshToken) {
       next({ status: 400, message: "Refresh token is required" });
     }
-    const tokens = await refreshTokens(refreshToken);
-    res.status(200).json(tokens);
+    const tokens = await refreshTokens(authToken.refreshToken);
+    setCookie(res, "accessToken", tokens.accessToken);
+    res.status(200);
   } catch (err) {
     next(err);
   }
