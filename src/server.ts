@@ -76,9 +76,9 @@ const startServer = async () => {
       })
       .use(errorHandler);
 
-    InventorySyncScheduler.startScheduler();
-    LowStockScheduler.startLowStockCheckScheduler();
-    TrendTrackingScheduler.startScheduler();
+    // InventorySyncScheduler.startScheduler();
+    // LowStockScheduler.startLowStockCheckScheduler();
+    // TrendTrackingScheduler.startScheduler();
 
     const PORT = process.env.PORT || 3000;
     const serverInstance = app.listen(PORT, () =>
