@@ -55,7 +55,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       const top = window.screenY + (window.outerHeight - height) / 2;
 
       const authWindow = window.open(
-        `${vars.apiUrl}/api/v1/auth/google`,
+        `/api/v1/auth/google`,
         "Google Login",
         `width=${width},height=${height},left=${left},top=${top}`
       );
