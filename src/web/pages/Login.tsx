@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, ArrowRight, Shield, Check, X, ArrowLeft } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { api } from "../config";
+import { api, vars } from "../config";
+
 export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const appServerURL = "http://localhost:3000";
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -55,14 +55,14 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       const top = window.screenY + (window.outerHeight - height) / 2;
 
       const authWindow = window.open(
-        `${appServerURL}/api/v1/auth/google`,
+        `${vars.apiUrl}/api/v1/auth/google`,
         "Google Login",
         `width=${width},height=${height},left=${left},top=${top}`
       );
 
       // Listen for message from OAuth popup
       const handleMessage = async (event: MessageEvent) => {
-        if (event.origin !== appServerURL) return;
+        if (event.origin !== vars.apiUrl) return;
 
         if (event.data.success) {
           localStorage.setItem("user", JSON.stringify(event.data.result));
