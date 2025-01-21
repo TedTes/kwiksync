@@ -62,9 +62,6 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
 
       // Listen for message from OAuth popup
       const handleMessage = async (event: MessageEvent) => {
-        console.log("from frontend");
-        console.log(event.origin);
-        console.log(vars.apiUrl);
         // if (event.origin !== vars.apiUrl) return;
 
         if (event.data.success) {
