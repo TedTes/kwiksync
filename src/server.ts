@@ -9,7 +9,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import {
   productRoutes,
-  authRoutes,
+  authRouter,
   webhookRoutes,
   analyticsRoutes,
   userRoutes,
@@ -61,7 +61,7 @@ const startServer = async () => {
       })
 
       .use(requestLogger)
-      .use("/api/v1/auth", authRoutes)
+      .use("/api/v1/auth", authRouter)
       .use("/api/v1/hooks", webhookRoutes)
       .use("/api/v1/products", authenticate, productRoutes)
       .use("/api/v1/analytics", authenticate, analyticsRoutes)

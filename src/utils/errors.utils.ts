@@ -42,31 +42,59 @@ export const ErrorTypes = {
 
 // Error factory for common error cases
 export const ErrorFactory = {
-  validation(message: string, details?: any) {
-    return new CustomError(ErrorTypes.VALIDATION_ERROR, message, 400, details);
+  validation(message: string, errorCode?: number, details?: any) {
+    return new CustomError(
+      ErrorTypes.VALIDATION_ERROR,
+      message,
+      errorCode || 400,
+      details
+    ).toJSON();
   },
 
-  authentication(message: string = "Authentication failed") {
-    return new CustomError(ErrorTypes.AUTHENTICATION_ERROR, message, 401);
+  authentication(
+    message: string = "Authentication failed",
+    errorCode?: number
+  ) {
+    return new CustomError(
+      ErrorTypes.AUTHENTICATION_ERROR,
+      message,
+      errorCode || 401
+    );
   },
 
-  authorization(message: string = "Not authorized") {
-    return new CustomError(ErrorTypes.AUTHORIZATION_ERROR, message, 403);
+  authorization(message: string = "Not authorized", errorCode?: number) {
+    return new CustomError(
+      ErrorTypes.AUTHORIZATION_ERROR,
+      message,
+      errorCode || 403
+    );
   },
 
-  notFound(message: string = "Resource not found") {
-    return new CustomError(ErrorTypes.NOT_FOUND_ERROR, message, 404);
+  notFound(message: string = "Resource not found", errorCode?: number) {
+    return new CustomError(
+      ErrorTypes.NOT_FOUND_ERROR,
+      message,
+      errorCode || 404
+    );
   },
 
-  conflict(message: string) {
-    return new CustomError(ErrorTypes.CONFLICT_ERROR, message, 409);
+  conflict(message: string, errorCode?: number) {
+    return new CustomError(
+      ErrorTypes.CONFLICT_ERROR,
+      message,
+      errorCode || 409
+    );
   },
 
-  rateLimit(message: string = "Too many requests") {
-    return new CustomError(ErrorTypes.RATE_LIMIT_ERROR, message, 429);
+  rateLimit(message: string = "Too many requests", errorCode?: number) {
+    return new CustomError(
+      ErrorTypes.RATE_LIMIT_ERROR,
+      message,
+      errorCode || 429
+    );
   },
 
-  server(message: string = "Internal server error") {
-    return new CustomError(ErrorTypes.SERVER_ERROR, message, 500);
+  server(message: string = "Internal server error", errorCode?: number) {
+    return new CustomError(ErrorTypes.SERVER_ERROR, message, errorCode || 500);
   },
 };

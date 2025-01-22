@@ -19,6 +19,14 @@ export const COOKIES: Cookies = {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     },
   },
+  shopifyState: {
+    name: "shopifyState",
+    options: {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    },
+  },
 };
 
 export const setCookie = (

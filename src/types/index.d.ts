@@ -172,6 +172,10 @@ declare global {
       name: string;
       options: CookieOptions;
     };
+    shopifyState: {
+      name: string;
+      options: CookieOptions;
+    };
   }
 
   //USER TYPES

@@ -27,6 +27,13 @@ export const googleAuth20 = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
   googleCallbackURL: process.env.GOOGLE_CALLBACK_URL,
 };
+export const shopifyAuth = {
+  shopifyClientId: process.env.SHOPIFY_CLIENT_ID,
+  shopifyClientSecret: process.env.SHOPIFY_CLIENT_SECRET,
+  shopifyCallbackURL: process.env.SHOPIFY_CALLBACK_URL,
+  shopifyRedirectURL: process.env.SHOPIFY_REDIRECT_URL,
+  shopfiyScope: process.env.SHOPIFY_SCOPE,
+};
 export const postgressConfig = {
   url: process.env.POSTGRES_DB_URL,
   synchronize: process.env.NODE_ENV !== "production",
