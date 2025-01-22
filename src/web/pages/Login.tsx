@@ -17,7 +17,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     if (error) {
       setError(error);
     } else if (localStorage.getItem("user")) {
-      navigate("/dashboard");
+      navigate("/home");
     }
   }, []);
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -68,7 +68,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
           localStorage.setItem("user", JSON.stringify(event.data.result));
           authWindow?.close();
           window?.removeEventListener("message", handleMessage);
-          navigate("/dashboard");
+          navigate("/home");
         } else {
           navigate("/login?error=google_login_failed");
         }
