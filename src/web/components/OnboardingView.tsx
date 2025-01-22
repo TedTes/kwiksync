@@ -4,6 +4,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { api } from "../config";
 import { toast } from "react-hot-toast";
 import { Profile } from "./";
+import axios from "axios";
 export const OnboardingView = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(
@@ -16,17 +17,38 @@ export const OnboardingView = () => {
       setConnectingPlatform(platform);
 
       const user = localStorage.getItem("user");
-      if (!user) throw new Error("User not found");
+      if (!user) {
+        toast.error("User not found. Please log in.");
+        throw new Error("User not found");
+      }
       const { id } = JSON.parse(user);
+      if (!id) {
+        toast.error("User ID not found");
+        throw new Error("User ID not found");
+      }
 
-      // Store return URL for after authentication
-      localStorage.setItem("returnTo", "/dashboard");
+      await api.get<ConnectResponse>(
+        `${api.defaults.baseURL}/auth/${platform}/connect?userId=${id}`,
+        { timeout: 10000 }
+      );
+      // const { redirectUrl } = response.data;
+      // if (redirectUrl) {
+      //   window.location.href = redirectUrl;
+      //   toast.success(`Redirecting to ${platform} for authentication.`);
+      // } else {
+      //   toast.error(`Failed to retrieve the redirect URL for ${platform}.`);
+      //   throw new Error("Redirect URL is missing in the response");
+      // }
 
-      // Redirect to platform OAuth flow
-      window.location.href = `${api.defaults.baseURL}/auth/${platform}/connect?userId=${id}`;
+      toast.success(`Successfully connected to ${platform}`);
     } catch (error) {
       console.error("Connection error:", error);
-      toast.error(`Failed to connect to ${platform}`);
+
+      if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
+        toast.error(`Connection timed out. Please try again.`);
+      } else {
+        toast.error(`Failed to connect to ${platform}.`);
+      }
     } finally {
       setIsConnecting(false);
       setConnectingPlatform(null);
