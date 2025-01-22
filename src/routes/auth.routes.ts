@@ -14,7 +14,7 @@ import {
   sendMagicLinkController,
   verifyMagicLinkController,
 } from "../controllers";
-import { generateTokens, setCookie } from "../utils";
+import { generateTokens, setCookie, validateHmac } from "../utils";
 import { webServerURL, shopifyAuth } from "../config";
 export const authRouter = Router();
 
@@ -128,10 +128,22 @@ authRouter.get("/shopify/connect", (req, res) => {
     shopifyCallbackURL,
     shopifyRedirectURL,
     shopfiyScope,
+    shopifyStateSecretKey,
   } = shopifyAuth;
 
-  const state = crypto.randomBytes(16).toString("hex");
-  setCookie(res, "shopifyState", state);
+  const statePayload = {
+    userId: req.query.userId,
+    platform: "shopify",
+    timestamp: Date.now(),
+  };
+  const base64State = Buffer.from(JSON.stringify(statePayload)).toString(
+    "base64"
+  );
+  const signature = crypto
+    .createHmac("sha256", shopifyStateSecretKey!)
+    .update(JSON.stringify(statePayload))
+    .digest("hex");
+  const state = `${base64State}.${signature}`;
 
   const params = new URLSearchParams({
     client_id: shopifyClientId!,
@@ -149,15 +161,14 @@ authRouter.get(
     if (!code || !shop) {
       throw ErrorFactory.authentication("Missing required query parameters.");
     }
-    const { shopifyClientId, shopifyClientSecret } = shopifyAuth;
-    const shopifyState = req.cookies.shopifyState;
-    if (!shopifyState) {
+    const { shopifyClientId, shopifyClientSecret, shopifyStateSecretKey } =
+      shopifyAuth;
+
+    if (!state) {
       throw ErrorFactory.authentication("Missing Shopify state cookie.");
     }
-    if (state !== shopifyState) {
-      throw ErrorFactory.authentication("Invalid state");
-    }
 
+    const statePayload = validateHmac(state as string, shopifyStateSecretKey!);
     try {
       const tokenResponse = await axios.post(
         `https://${shop}/admin/oauth/access_token`,
@@ -169,10 +180,10 @@ authRouter.get(
       );
 
       const { access_token } = tokenResponse.data;
-
+      const { userId } = statePayload;
       // Store connection in database
       // await MerchantPlatform.create({
-      //   merchantId: req.user.id,
+      //   merchantId: userId,
       //   platform: "shopify",
       //   accessToken: access_token,
       //   shopUrl: shop,

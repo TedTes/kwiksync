@@ -33,6 +33,7 @@ export const shopifyAuth = {
   shopifyCallbackURL: process.env.SHOPIFY_CALLBACK_URL,
   shopifyRedirectURL: process.env.SHOPIFY_REDIRECT_URL,
   shopfiyScope: process.env.SHOPIFY_SCOPE,
+  shopifyStateSecretKey: process.env.SHOPIFY_STATE_SECRET_KEY,
 };
 export const postgressConfig = {
   url: process.env.POSTGRES_DB_URL,
