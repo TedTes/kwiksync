@@ -126,7 +126,7 @@ const validateEmailContent = (content: EmailContent): void => {
   }
 
   if (Object.keys(errors).length > 0) {
-    throw ErrorFactory.validation("Invalid email content", errors);
+    throw ErrorFactory.validation("Invalid email content", 400, errors);
   }
 };
 const isValidEmail = (email: string): boolean => {

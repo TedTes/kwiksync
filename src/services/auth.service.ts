@@ -157,6 +157,7 @@ export const verifyMagicLink = async (
     if (!magicLink) {
       throw ErrorFactory.validation(
         "INVALID_TOKEN",
+        498,
         "Invalid or expired magic link"
       );
     } else if (magicLink.expiresAt < new Date()) {
