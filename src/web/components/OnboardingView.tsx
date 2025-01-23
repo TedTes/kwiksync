@@ -27,7 +27,7 @@ export const OnboardingView = () => {
         throw new Error("User ID not found");
       }
 
-      await api.get<ConnectResponse>(
+      await api.get(
         `${api.defaults.baseURL}/auth/${platform}/connect?userId=${id}`,
         { timeout: 10000 }
       );

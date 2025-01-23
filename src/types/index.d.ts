@@ -173,9 +173,7 @@ declare global {
       options: CookieOptions;
     };
   }
-  interface ConnectResponse {
-    redirectUrl: string;
-  }
+
   //USER TYPES
   interface IVerifiedUser {
     isSuccess: boolean;
