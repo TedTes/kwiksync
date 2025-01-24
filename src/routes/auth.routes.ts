@@ -210,9 +210,8 @@ authRouter.get("/tiktok/connect", (req: Request, res: Response) => {
     state,
     redirect_uri: tiktokCallbackURL,
   });
-  const authUrl = `${tiktokAuthURL}?${params.toString()}`;
 
-  res.json({ authUrl });
+  res.redirect(`${tiktokAuthURL}?${params.toString()}`);
 });
 
 authRouter.get("/tiktok/callback", async (req: Request, res: Response) => {
