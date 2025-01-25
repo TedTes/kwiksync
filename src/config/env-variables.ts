@@ -30,31 +30,20 @@ export const googleAuth20 = {
 export const shopifyAuth = {
   shopifyClientId: process.env.SHOPIFY_CLIENT_ID,
   shopifyClientSecret: process.env.SHOPIFY_CLIENT_SECRET,
-  shopifyCallbackURL:
-    process.env.SHOPIFY_CALLBACK_URL ||
-    "http://localhost:3000/auth/shopify/callback",
-  shopifyRedirectURL:
-    process.env.SHOPIFY_REDIRECT_URL ||
-    "https://accounts.shopify.com/oauth/authorize",
-  shopfiyScope:
-    process.env.SHOPIFY_SCOPE || "read_products,write_products,read_orders",
+  shopifyCallbackURL: process.env.SHOPIFY_CALLBACK_URL,
+  shopifyRedirectURL: process.env.SHOPIFY_REDIRECT_URL,
+  shopfiyScope: process.env.SHOPIFY_SCOPE,
   shopifyStateSecretKey: process.env.SHOPIFY_STATE_SECRET_KEY,
 };
 export const tiktokAuth = {
   tiktokClientKey: process.env.TIKTOK_CLIENT_KEY,
   tiktokClientSecret: process.env.TIKTOK_CLIENT_SECRET,
-  tiktokCallbackURL:
-    process.env.TIKTOK_CALLBACK_URL ||
-    `http://localhost:3000/auth/tiktok/callback`,
+  tiktokCallbackURL: process.env.TIKTOK_CALLBACK_URL,
   tiktokRedirectURL: process.env.TIKTOK_REDIRECT_URL,
-  tiktokScope:
-    process.env.TIKTOK_SCOPE || "product.read,product.write,order.read",
+  tiktokScope: process.env.TIKTOK_SCOPE,
   tiktokStateSecretKey: process.env.TIKTOK_STATE_SECRET_KEY,
-  tiktokTokenURL:
-    process.env.TIKTOK_TOKEN_URL || "https://auth.tiktok-shops.com/oauth/token",
-  tiktokAuthURL:
-    process.env.TIKTOK_AUTH_URL ||
-    "https://auth.tiktok-shops.com/oauth/authorize",
+  tiktokTokenURL: process.env.TIKTOK_TOKEN_URL,
+  tiktokAuthURL: process.env.TIKTOK_AUTH_URL,
 };
 export const postgressConfig = {
   url: process.env.POSTGRES_DB_URL,
