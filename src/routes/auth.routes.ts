@@ -122,7 +122,7 @@ authRouter.get(
     }
   }
 );
-authRouter.get("/shopify/connect", (req, res) => {
+authRouter.get("/shopify/connect", async (req, res) => {
   const {
     shopifyClientId,
     shopifyCallbackURL,
@@ -136,23 +136,52 @@ authRouter.get("/shopify/connect", (req, res) => {
     platform: "shopify",
     timestamp: Date.now(),
   };
-  const base64State = Buffer.from(JSON.stringify(statePayload)).toString(
-    "base64"
-  );
-  const signature = crypto
-    .createHmac("sha256", shopifyStateSecretKey!)
-    .update(JSON.stringify(statePayload))
-    .digest("hex");
-  const state = `${base64State}.${signature}`;
+  try {
+    const base64State = Buffer.from(JSON.stringify(statePayload)).toString(
+      "base64"
+    );
+    const signature = crypto
+      .createHmac("sha256", shopifyStateSecretKey!)
+      .update(JSON.stringify(statePayload))
+      .digest("hex");
+    const state = `${base64State}.${signature}`;
 
-  const params = new URLSearchParams({
-    client_id: shopifyClientId!,
-    scope: shopfiyScope,
-    redirect_uri: shopifyCallbackURL,
-    state,
-    response_type: "code",
-  });
-  res.redirect(`${shopifyRedirectURL}?${params.toString()}`);
+    const params = new URLSearchParams({
+      client_id: shopifyClientId!,
+      scope: shopfiyScope!,
+      redirect_uri: shopifyCallbackURL!,
+      state,
+      response_type: "code",
+    });
+
+    res.send(`
+       <!DOCTYPE html>
+       <html>
+         <head>
+           <title>Redirecting to Shopify...</title>
+         </head>
+         <body>
+           <form id="shopifyAuth" method="GET" action="${shopifyRedirectURL}?${params.toString()}">
+             <input type="hidden" name="client_id" value="${shopifyClientId}" />
+             <input type="hidden" name="scope" value="read_products,write_products,read_orders" />
+             <input type="hidden" name="redirect_uri" value="${shopifyCallbackURL}" />
+             <input type="hidden" name="state" value="${state}" />
+             <input type="hidden" name="response_type" value="code" />
+           </form>
+           <script>
+             document.getElementById('shopifyAuth').submit();
+           </script>
+           <noscript>
+             <p>Please click the button below to continue:</p>
+             <button type="submit" form="shopifyAuth">Continue to Shopify</button>
+           </noscript>
+         </body>
+       </html>
+     `);
+  } catch (error: any) {
+    console.error("Shopify connect error:", error);
+    res.redirect("/dashboard?error=" + encodeURIComponent(error.message));
+  }
 });
 authRouter.get(
   "/shopify/callback",
@@ -181,7 +210,7 @@ authRouter.get(
       );
 
       const { access_token } = tokenResponse.data;
-      const { userId } = statePayload;
+      // const { userId } = statePayload;
       // Store connection in database
       // await MerchantPlatform.create({
       //   merchantId: userId,
@@ -190,7 +219,6 @@ authRouter.get(
       //   shopUrl: shop,
       //   isActive: true,
       // });
-
       res.redirect("/dashboard?connection=success");
     } catch (error) {
       console.log(`shopify callback error`, error);
@@ -208,7 +236,7 @@ authRouter.get("/tiktok/connect", (req: Request, res: Response) => {
     response_type: "code",
     scope: tiktokScope!,
     state,
-    redirect_uri: tiktokCallbackURL,
+    redirect_uri: tiktokCallbackURL!,
   });
 
   res.redirect(`${tiktokAuthURL}?${params.toString()}`);
@@ -224,7 +252,7 @@ authRouter.get("/tiktok/callback", async (req: Request, res: Response) => {
   }
 
   try {
-    const tokenResponse = await axios.post(tiktokTokenURL, {
+    const tokenResponse = await axios.post(tiktokTokenURL!, {
       client_key: tiktokClientKey,
       client_secret: tiktokClientSecret,
       code,
