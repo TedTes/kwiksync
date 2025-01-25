@@ -23,10 +23,12 @@ export const validateHmac = (currState: string, secret: string) => {
   if (!base64State || !signature) {
     throw new Error("Invalid state format");
   }
-
+  const statePayload = JSON.parse(
+    Buffer.from(base64State, "base64").toString("utf8")
+  );
   const newSignature = crypto
     .createHmac("sha256", secret)
-    .update(base64State)
+    .update(JSON.stringify(statePayload))
     .digest("hex");
 
   if (newSignature !== signature) {
@@ -34,9 +36,6 @@ export const validateHmac = (currState: string, secret: string) => {
   }
   const currentTime = Date.now();
 
-  const statePayload = JSON.parse(
-    Buffer.from(base64State, "base64").toString("utf8")
-  );
   if (currentTime - statePayload.timestamp > 300000) {
     // 5 minutes
     throw ErrorFactory.authentication("State expired");
