@@ -259,7 +259,7 @@ authRouter.get("/tiktok/callback", async (req: Request, res: Response) => {
       grant_type: "authorization_code",
     });
 
-    const { access_token, refresh_token } = tokenResponse.data;
+    // const { access_token, refresh_token } = tokenResponse.data;
 
     // await MerchantPlatform.create({
     //   merchantId: req.user.id,
