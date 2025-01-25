@@ -70,7 +70,7 @@ export const OnboardingView = () => {
       description: "Sync your TikTok shop products and orders",
       icon: <Video className="w-6 h-6 text-white" />,
       bgColor: "bg-[#000000]",
-      comingSoon: false,
+      comingSoon: true,
     },
     {
       id: "instagram",
