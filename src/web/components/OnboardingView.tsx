@@ -26,21 +26,21 @@ export const OnboardingView = () => {
         toast.error("User ID not found");
         throw new Error("User ID not found");
       }
+      const form = document.createElement("form");
+      form.method = "GET";
+      form.action = `${api.defaults.baseURL}/auth/${platform}/connect`;
 
-      await api.get(
-        `${api.defaults.baseURL}/auth/${platform}/connect?userId=${id}`,
-        { timeout: 10000 }
-      );
-      // const { redirectUrl } = response.data;
-      // if (redirectUrl) {
-      //   window.location.href = redirectUrl;
-      //   toast.success(`Redirecting to ${platform} for authentication.`);
-      // } else {
-      //   toast.error(`Failed to retrieve the redirect URL for ${platform}.`);
-      //   throw new Error("Redirect URL is missing in the response");
-      // }
+      const userIdInput = document.createElement("input");
+      userIdInput.type = "hidden";
+      userIdInput.name = "userId";
+      userIdInput.value = id;
+
+      form.appendChild(userIdInput);
+      document.body.appendChild(form);
+      form.submit();
 
       toast.success(`Successfully connected to ${platform}`);
+      return;
     } catch (error) {
       console.error("Connection error:", error);
 
@@ -105,9 +105,11 @@ export const OnboardingView = () => {
             {platforms.map((platform) => (
               <button
                 key={platform.id}
-                onClick={() =>
-                  !platform.comingSoon && handlePlatformConnect(platform.id)
-                }
+                onClick={() => {
+                  return (
+                    !platform.comingSoon && handlePlatformConnect(platform.id)
+                  );
+                }}
                 disabled={isConnecting || platform.comingSoon}
                 className={`
                   w-full p-6 border-2 rounded-lg transition-all
