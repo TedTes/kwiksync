@@ -18,6 +18,7 @@ import {
   inventoryRoutes,
   trendingRoutes,
   platformRouter,
+  planRouter,
 } from "./routes";
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
@@ -71,6 +72,7 @@ const startServer = async () => {
       .use("/api/v1/inventory", authenticate, inventoryRoutes)
       .use("/api/v1/trending", authenticate, trendingRoutes)
       .use("/api/v1/platform", authenticate, platformRouter)
+      .use("/api/v1/plans", authenticate, planRouter)
       .get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
       })

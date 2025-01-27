@@ -8,3 +8,4 @@ export * from "./sales.routes";
 export * from "./metric.routes";
 export * from "./inventory.routes";
 export * from "./platform-connection.routes";
+export * from "./plan.routes";
