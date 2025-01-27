@@ -72,7 +72,7 @@ const startServer = async () => {
       .use("/api/v1/inventory", authenticate, inventoryRoutes)
       .use("/api/v1/trending", authenticate, trendingRoutes)
       .use("/api/v1/platform", authenticate, platformRouter)
-      .use("/api/v1/plans", authenticate, planRouter)
+      .use("/api/v1/pricing-plans", planRouter)
       .get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
       })
