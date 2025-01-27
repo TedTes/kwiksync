@@ -219,6 +219,16 @@ declare global {
   interface ToastContextType {
     addToast: (message: string, type: ToastType, duration?: number) => void;
   }
+
+  //billing cycle , plans
+  type billingCycle = "monthly" | "annual";
+  interface IPricingPlans {
+    name: string;
+    price: billingCycle;
+    description: string;
+    features: string[];
+    isMostPopular: boolean;
+  }
 }
 declare module "*.png" {
   const value: string;

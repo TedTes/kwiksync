@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { api } from "../config";
 import {
   ArrowRight,
   CheckCircle,
@@ -21,15 +22,10 @@ interface FeatureTab {
   description: string;
   icon: React.ElementType;
 }
-interface PricingPlan {
-  name: string;
-  price: number;
-  description: string;
-  features: string[];
-  isMostPopular?: boolean;
-}
+
 export const LandingPage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [pricingPlans, setPlans] = useState<IPricingPlans[]>([]);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
     "monthly"
   );
@@ -47,6 +43,19 @@ export const LandingPage = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  useEffect(() => {
+    async function fetchPricingPlansData() {
+      try {
+        const response = await api.get(
+          `/pricing-plans?billingCycle=${billingCycle}`
+        );
+        setPlans(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchPricingPlansData();
+  }, [billingCycle]);
   const [videoUrl, setVideoUrl] = useState(
     "https://www.youtube.com/embed/YOUR_VIDEO_ID"
   );
@@ -132,48 +141,7 @@ export const LandingPage = () => {
       icon: ArrowRight,
     },
   ];
-  const pricingPlans: PricingPlan[] = [
-    {
-      name: "Starter",
-      price: billingCycle === "monthly" ? 29 : 290,
-      description: "Perfect for small businesses and new entrepreneurs",
-      features: [
-        "Up to 2 Sales Channels",
-        "Basic Analytics",
-        "Inventory Tracking",
-        "Email Support",
-        "Limited Reports",
-      ],
-    },
-    {
-      name: "Professional",
-      price: billingCycle === "monthly" ? 79 : 790,
-      description: "Ideal for growing businesses with multiple sales channels",
-      features: [
-        "Up to 5 Sales Channels",
-        "Advanced Analytics",
-        "Automated Inventory Management",
-        "Priority Email Support",
-        "Comprehensive Reporting",
-        "Sales Forecasting",
-      ],
-      isMostPopular: true,
-    },
-    {
-      name: "Enterprise",
-      price: billingCycle === "monthly" ? 199 : 1990,
-      description: "Tailored solutions for large-scale e-commerce operations",
-      features: [
-        "Unlimited Sales Channels",
-        "Advanced Machine Learning Analytics",
-        "AI-Powered Inventory Optimization",
-        "Dedicated Account Manager",
-        "Custom Integration Support",
-        "Advanced Reporting",
-        "24/7 Priority Support",
-      ],
-    },
-  ];
+
   const handleLogin = () => {
     navigate("/login");
   };
