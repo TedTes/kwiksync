@@ -18,4 +18,10 @@ export class Plan {
 
   @Column()
   isActive: boolean;
+
+  @Column()
+  description: string;
+
+  @Column({ default: false })
+  isMostPopular: boolean;
 }
