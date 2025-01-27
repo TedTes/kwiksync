@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "migration:generate": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate -d src/config/database.ts",
-    "migration:run": "tsc --p tsconfig.migrations.json &&  node node_modules/typeorm/cli.js migration:run -d dist/migrations/config/database.js",
+    "migration:generate": "NODE_ENV=development ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate -d src/config/database.ts",
+    "migration:run": "NODE_ENV=production tsc --p tsconfig.migrations.json &&  node node_modules/typeorm/cli.js migration:run -d dist/migrations/config/database.js",
     "migration:revert": "npx typeorm migration:revert -d dist/migrations/config/database.js",
     "migration:show": "typeorm-ts-node-commonjs migration:show -d src/config/database.ts",
     "start:frontend": "webpack serve --mode development --env development --config webpack.frontend.config.js",

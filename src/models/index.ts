@@ -11,3 +11,5 @@ export * from "./platform.model";
 export * from "./merchant-product.model";
 export * from "./product-inventory.model";
 export * from "./product-platform.model";
+export * from "./plan.model";
+export * from "./merchant-subscription.model";
