@@ -13,4 +13,4 @@ export * from "./metrics.service";
 export * from "./inventory.service";
 export * from "./platform-connection.service";
 export * from "./auth.service";
-export * from "./plan.service";
+export * from "./pricing-plan.service";

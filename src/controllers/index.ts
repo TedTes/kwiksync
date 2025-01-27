@@ -8,4 +8,4 @@ export * from "./platform.controller";
 export * from "./metrics.controller";
 export * from "./inventory.controller";
 export * from "./platform-connection.controller";
-export * from "./plan.controller";
+export * from "./pricing-plan.controller";

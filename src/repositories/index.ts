@@ -5,4 +5,4 @@ export * from "./mertics.repository";
 export * from "./inventory.repository";
 export * from "./trending.repository";
 export * from "./platform-connection.repository";
-export * from "./plan.repository";
+export * from "./pricing-plan.repository";
