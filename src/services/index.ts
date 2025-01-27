@@ -15,3 +15,4 @@ export * from "./platform-connection.service";
 export * from "./auth.service";
 export * from "./pricing-plan.service";
 export * from "./payment-service.service";
+export * from "./stripe-provider.service";

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { MerchantSubscription } from "./";
 @Entity()
 export class Plan {
   @PrimaryGeneratedColumn()
@@ -21,6 +22,9 @@ export class Plan {
 
   @Column()
   description: string;
+
+  @OneToMany(() => MerchantSubscription, (subscription) => subscription.plan)
+  subscriptions: MerchantSubscription[];
 
   @Column({ default: false })
   isMostPopular: boolean;

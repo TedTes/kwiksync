@@ -16,4 +16,13 @@ export class MerchantSubscription {
 
   @Column()
   billingCycle: "monthly" | "annual";
+
+  @Column({ type: "timestamp", nullable: true })
+  trialEndsAt: Date | null;
+
+  @Column({ type: "timestamp" })
+  currentPeriodStart: Date;
+
+  @Column({ type: "timestamp" })
+  currentPeriodEnd: Date;
 }
