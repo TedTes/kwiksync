@@ -56,8 +56,8 @@ export class PaymentService {
         where: { id: parseInt(planId) },
       });
       const priceAmount = paymentData.isAnnual
-        ? plan.annualPrice
-        : plan.monthlyPrice;
+        ? plan.annualPriceInCents
+        : plan.monthlyPriceInCents;
       // Create subscription with provider
       const result = await this.provider.createSubscription(
         paymentCustomer.provider,
