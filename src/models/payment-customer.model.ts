@@ -5,12 +5,11 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
-  Unique,
+  OneToMany,
 } from "typeorm";
 import { Merchant } from "./";
 
 @Entity("payment_customers")
-@Unique(["merchantId", "provider"])
 export class PaymentCustomer {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -20,6 +19,15 @@ export class PaymentCustomer {
 
   @ManyToOne(() => Merchant, (merchant) => merchant.paymentCustomers)
   merchant: Merchant;
+
+  // @OneToMany(
+  //   () => PaymentMethod,
+  //   (paymentMethod) => paymentMethod.paymentCustomer
+  // )
+  // paymentMethods: PaymentMethod[];
+
+  @Column({ type: "jsonb", nullable: true })
+  customerMetadata: any;
 
   @CreateDateColumn()
   createdAt: Date;
