@@ -18,7 +18,7 @@ import {
   Plan,
   PaymentCustomer,
   PaymentMethod,
-  // MerchantSubscription,
+  MerchantSubscription,
 } from "../models";
 
 export const getDbConfig = (isMigration = false): DataSourceOptions => ({
@@ -42,7 +42,7 @@ export const getDbConfig = (isMigration = false): DataSourceOptions => ({
     Plan,
     PaymentCustomer,
     PaymentMethod,
-    // MerchantSubscription,
+    MerchantSubscription,
   ],
   migrations: ["dist/migrations/migrations/*.js"],
   migrationsRun: false,
