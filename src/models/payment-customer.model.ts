@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { Merchant } from "./";
+import { Merchant, PaymentMethod } from "./";
 
 @Entity("payment_customers")
 export class PaymentCustomer {
@@ -20,11 +20,11 @@ export class PaymentCustomer {
   @ManyToOne(() => Merchant, (merchant) => merchant.paymentCustomers)
   merchant: Merchant;
 
-  // @OneToMany(
-  //   () => PaymentMethod,
-  //   (paymentMethod) => paymentMethod.paymentCustomer
-  // )
-  // paymentMethods: PaymentMethod[];
+  @OneToMany(
+    () => PaymentMethod,
+    (paymentMethod) => paymentMethod.paymentCustomer
+  )
+  paymentMethods: PaymentMethod[];
 
   @Column({ type: "jsonb", nullable: true })
   customerMetadata: any;
