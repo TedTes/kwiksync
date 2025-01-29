@@ -1,14 +1,19 @@
 import { Request, Response } from "express";
 import { PaymentProvider } from "../interfaces";
 import { PaymentService } from "../services";
-
+import { paymentConfig } from "../config";
 export class SubscriptionController {
   static async create(req: Request, res: Response) {
     try {
       const { merchantId, provider, paymentData } = req.body;
-
-      const paymentService: PaymentProvider =
-        PaymentService.getProvider(provider);
+      const providerConfig = paymentConfig[provider];
+      if (!providerConfig) {
+        throw new Error(`Invalid configuration for provider: ${provider}`);
+      }
+      const paymentService: PaymentProvider = PaymentService.getProvider(
+        provider,
+        providerConfig
+      );
       const subscription = await paymentService.createSubscription(
         merchantId,
         paymentData
@@ -16,8 +21,8 @@ export class SubscriptionController {
 
       res.json(subscription);
     } catch (error: any) {
-      console.error("Subscription creation error:", error);
-      res.status(400).json({ error: error.message });
+      console.error("Subscription creating error");
+      res.status(400).json({ error: error.message || error });
     }
   }
 
