@@ -12,9 +12,6 @@ export class MerchantSubscription {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  provider: string;
-
   @ManyToOne(() => Merchant, { eager: true, onDelete: "CASCADE" })
   merchant: Merchant;
 

@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { MerchantSubscription } from "./";
 @Entity()
 export class Plan {
   @PrimaryGeneratedColumn()
@@ -29,9 +28,6 @@ export class Plan {
 
   @Column({ type: "text", nullable: true })
   description: string;
-
-  // @OneToMany(() => MerchantSubscription, (subscription) => subscription.plan)
-  // subscriptions: MerchantSubscription[];
 
   @Column({ default: false })
   isMostPopular: boolean;
