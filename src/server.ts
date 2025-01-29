@@ -19,6 +19,7 @@ import {
   trendingRoutes,
   platformRouter,
   planRouter,
+  subscriptionsRouter,
 } from "./routes";
 import { requestLogger, errorHandler, authenticate } from "./middlewares";
 
@@ -73,6 +74,7 @@ const startServer = async () => {
       .use("/api/v1/trending", authenticate, trendingRoutes)
       .use("/api/v1/platform", authenticate, platformRouter)
       .use("/api/v1/pricing-plans", planRouter)
+      .use("/api/v1/subscriptions", authenticate, subscriptionsRouter)
       .get("*", (req, res) => {
         res.sendFile(path.join(__dirname, "../dist/index.html"));
       })

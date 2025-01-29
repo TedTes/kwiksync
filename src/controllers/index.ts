@@ -9,3 +9,4 @@ export * from "./metrics.controller";
 export * from "./inventory.controller";
 export * from "./platform-connection.controller";
 export * from "./pricing-plan.controller";
+export * from "./subscription.controller";

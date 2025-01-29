@@ -9,3 +9,4 @@ export * from "./metric.routes";
 export * from "./inventory.routes";
 export * from "./platform-connection.routes";
 export * from "./pricing-plan.routes";
+export * from "./subscription.routes";
