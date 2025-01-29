@@ -12,7 +12,10 @@ export class MerchantSubscription {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Merchant, { eager: true, onDelete: "CASCADE" })
+  @ManyToOne(() => Merchant, (merchant) => merchant.subscriptions, {
+    eager: true,
+    onDelete: "CASCADE",
+  })
   merchant: Merchant;
 
   @ManyToOne(() => Plan, { eager: true })

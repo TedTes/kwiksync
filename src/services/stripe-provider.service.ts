@@ -2,7 +2,7 @@ import {
   PaymentProvider,
   CustomerData,
   SubscriptionResult,
-  SubscriptionCreateParams,
+  IPaymentMethod,
 } from "../interfaces";
 import Stripe from "stripe";
 
@@ -29,7 +29,8 @@ export class StripeProvider implements PaymentProvider {
 
   async createSubscription(
     customerId: string,
-    params: SubscriptionCreateParams
+    planId: string,
+    paymentMethod: IPaymentMethod
   ): Promise<SubscriptionResult> {
     const subscription = await this.stripe.subscriptions.create({
       customer: customerId,
@@ -55,5 +56,29 @@ export class StripeProvider implements PaymentProvider {
     customerId: string,
     paymentMethodId: string
   ): Promise<void> {}
+  async createPaymentMethod(
+    customerId: string,
+    paymentMethodId: IPaymentMethod
+  ): Promise<IPaymentMethod> {
+    return {
+      id: "pm_1234567890",
+      merchantId: "merchant_123",
+      provider: "Stripe",
+      providerId: "cus_1234567890",
+      paymentMethodType: "card",
+      cardLast4: "4242",
+      expiryDate: "12/25",
+      cvc: "123",
+      billingAddress: {
+        street: "123 Main St",
+        city: "Anytown",
+        state: "CA",
+        postalCode: "12345",
+        country: "USA",
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
   async handleWebhook(payload: any, headers: any): Promise<void> {}
 }
