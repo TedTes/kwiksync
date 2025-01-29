@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { PaymentCustomer, MerchantSubscription } from "./";
+import { MerchantSubscription } from "./";
 @Entity()
 export class Merchant {
   @PrimaryGeneratedColumn()
@@ -20,12 +20,6 @@ export class Merchant {
 
   @Column({ nullable: true })
   phone!: string;
-
-  @OneToMany(
-    () => PaymentCustomer,
-    (paymentCustomer) => paymentCustomer.merchant
-  )
-  paymentCustomers: PaymentCustomer[];
 
   @OneToMany(
     () => MerchantSubscription,

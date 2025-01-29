@@ -13,5 +13,4 @@ export * from "./product-inventory.model";
 export * from "./product-platform.model";
 export * from "./pricing-plan.model";
 export * from "./merchant-subscription.model";
-export * from "./payment-customer.model";
 export * from "./payment-method.model";

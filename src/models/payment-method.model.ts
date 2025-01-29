@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { PaymentCustomer } from "./";
 
 @Entity("payment_methods")
 export class PaymentMethod {
@@ -29,12 +28,6 @@ export class PaymentMethod {
 
   @Column({ nullable: true })
   expiryDate: Date; // For card payments
-
-  @ManyToOne(
-    () => PaymentCustomer,
-    (paymentCustomer) => paymentCustomer.paymentMethods
-  )
-  paymentCustomer: PaymentCustomer;
 
   @CreateDateColumn()
   createdAt: Date;
