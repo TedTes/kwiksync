@@ -9,8 +9,8 @@ import Stripe from "stripe";
 export class StripeProvider implements PaymentProvider {
   private stripe: Stripe;
 
-  constructor() {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  constructor(config: PaymentProviderConfig) {
+    this.stripe = new Stripe(config.secretKey, {
       apiVersion: "2024-12-18.acacia",
     });
   }

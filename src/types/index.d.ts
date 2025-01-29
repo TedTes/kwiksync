@@ -185,6 +185,16 @@ declare global {
       role: string;
     };
   }
+
+  //payment provider types
+  type PaymentProviderConfig = {
+    secretKey: string;
+    publishableKey: string;
+  };
+
+  type PaymentConfig = {
+    [key: string]: PaymentProviderConfig; // Allows any string key
+  };
 }
 
 export {};

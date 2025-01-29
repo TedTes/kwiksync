@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
+import { PaymentProvider } from "../interfaces";
 import { PaymentService } from "../services";
 
 export class SubscriptionController {
-  async create(req: Request, res: Response) {
+  static async create(req: Request, res: Response) {
     try {
-      const { merchantId, planId, provider, paymentData } = req.body;
+      const { merchantId, provider, paymentData } = req.body;
 
-      const paymentService = new PaymentService(provider);
+      const paymentService: PaymentProvider =
+        PaymentService.getProvider(provider);
       const subscription = await paymentService.createSubscription(
         merchantId,
-        planId,
         paymentData
       );
 
@@ -20,10 +21,10 @@ export class SubscriptionController {
     }
   }
 
-  async webhook(req: Request, res: Response) {
+  static async webhook(req: Request, res: Response) {
     try {
-      const { provider } = req.params;
-      const paymentService = new PaymentService(provider);
+      // const { provider } = req.params;
+      // const paymentService = new PaymentService(provider);
 
       //await paymentService.handleWebhook(req.body, req.headers);
 
