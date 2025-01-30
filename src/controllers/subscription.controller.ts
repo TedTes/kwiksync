@@ -2,10 +2,21 @@ import { Request, Response } from "express";
 import Stripe from "stripe";
 import { AppDataSource } from "../config";
 import { PaymentService } from "../services";
-
+import { PaymentProvider } from "../interfaces";
 import { Merchant, Plan, MerchantSubscription, PaymentMethod } from "../models";
 export class SubscriptionController {
-  static async createSubscription(req: Request, res: Response) {
+  private paymentService: PaymentProvider;
+  private static instances: { [key: string]: SubscriptionController } = {};
+  private constructor(provider: string) {
+    this.paymentService = PaymentService.getProvider(provider);
+  }
+  public static getInstance(provider: string): SubscriptionController {
+    if (!this.instances[provider]) {
+      this.instances[provider] = new SubscriptionController(provider);
+    }
+    return this.instances[provider];
+  }
+  async createSubscription(req: Request, res: Response) {
     try {
       const { email, planId, paymentMethodId, provider } = req.body;
 
@@ -25,16 +36,12 @@ export class SubscriptionController {
         throw res.status(404).json({ error: "Active plan not found" });
       }
 
-      const paymentService = PaymentService.getProvider(provider);
-
-      const customer: Stripe.Customer = await paymentService.createCustomer(
-        email,
-        paymentMethodId
-      );
+      const customer: Stripe.Customer =
+        await this.paymentService.createCustomer(email, paymentMethodId);
       const paymentMethod: Stripe.PaymentMethod =
-        await paymentService.createPaymentMethod(paymentMethodId);
+        await this.paymentService.createPaymentMethod(paymentMethodId);
 
-      const subscriptionResult = await paymentService.createSubscription(
+      const subscriptionResult = await this.paymentService.createSubscription(
         customer.id,
         planId,
         paymentMethod.id
@@ -81,17 +88,15 @@ export class SubscriptionController {
     }
   }
 
-  static async webhook(req: Request, res: Response) {
+  async handleWebhook(req: Request, res: Response) {
     try {
-      // const { provider } = req.params;
-      // const paymentService = new PaymentService(provider);
-
-      //await paymentService.handleWebhook(req.body, req.headers);
-
-      res.json({ received: true });
+      const sig = req.headers;
+      const rawBody = req.body;
+      await this.paymentService.handleWebhook(sig, rawBody);
+      return { received: true };
     } catch (error: any) {
       console.error("Webhook error:", error);
-      res.status(400).send(`Webhook Error: ${error.message}`);
+      return error;
     }
   }
 }

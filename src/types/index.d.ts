@@ -208,6 +208,13 @@ declare global {
       clientSecret: string | undefined;
     };
   }
+  // Express types
+
+  namespace Express {
+    interface Request {
+      rawBody?: string;
+    }
+  }
 }
 
 export {};

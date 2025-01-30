@@ -35,5 +35,5 @@ export interface PaymentProvider {
     paymentMethodId: string
   ): Promise<void>;
   createPaymentMethod(paymentMethodId: string): Promise<Stripe.PaymentMethod>;
-  handleWebhook(payload: any, headers: any): Promise<void>;
+  handleWebhook(payload: any, headers: any): Promise<{ received: boolean }>;
 }
