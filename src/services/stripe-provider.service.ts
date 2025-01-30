@@ -73,5 +73,67 @@ export class StripeProvider implements PaymentProvider {
 
     return paymentMethod;
   }
-  async handleWebhook(payload: any, headers: any): Promise<void> {}
+  async handleWebhook(
+    sig: any,
+    rawBody: string
+  ): Promise<{ received: boolean }> {
+    let event;
+    const stripeSig = sig["stripe-signature"];
+    try {
+      // Verify the webhook signature
+      event = this.stripe.webhooks.constructEvent(
+        rawBody,
+        stripeSig,
+        process.env.STRIPE_WEBHOOK_SECRET!
+      );
+    } catch (err: any) {
+      console.error(`Webhook signature verification failed: ${err}`);
+      throw {
+        message: err.message || "Webhook signature verification failed",
+        status: 400,
+      };
+    }
+
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        const paymentIntent = event.data.object; // Contains a Stripe payment intent
+        console.log(`PaymentIntent was successful! ID: ${paymentIntent.id}`);
+        //TODO: Handle successful payment  ( update  database)
+        break;
+      case "payment_method.attached":
+        const paymentMethod = event.data.object; // Contains a Stripe payment method
+        console.log(
+          `PaymentMethod was attached to a Customer! ID: ${paymentMethod.id}`
+        );
+        // TODO:Handle the event
+        break;
+      case "customer.subscription.created":
+        const subscriptionCreated = event.data.object; // Contains subscription details
+        console.log(`Subscription created! ID: ${subscriptionCreated.id}`);
+        // TODO:Handle subscription creation
+        break;
+      case "customer.subscription.updated":
+        const subscriptionUpdated = event.data.object; // Contains updated subscription details
+        console.log(`Subscription updated! ID: ${subscriptionUpdated.id}`);
+        // TODO:Handle subscription update
+        break;
+      case "customer.subscription.deleted":
+        const subscriptionDeleted = event.data.object; // Contains deleted subscription details
+        console.log(`Subscription deleted! ID: ${subscriptionDeleted.id}`);
+        //TODO: Handle subscription deletion
+        break;
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    return { received: true };
+  }
+  catch(error: any) {
+    console.error("Webhook error:", error);
+    throw {
+      status: 400,
+      message: error,
+    };
+  }
 }

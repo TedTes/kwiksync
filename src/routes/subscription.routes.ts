@@ -1,33 +1,41 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { SubscriptionController } from "../controllers";
 import { validateRequest } from "../middlewares";
 import { body } from "express-validator";
+import bodyParser from "body-parser";
+
 export const subscriptionsRouter = Router();
 
 subscriptionsRouter.post(
   "/",
   [
-    body("merchantId")
-      .isString()
-      .notEmpty()
-      .withMessage("Merchant ID is required"),
+    body("email").isEmail().notEmpty().withMessage("Email is required"),
     body("planId").isString().notEmpty().withMessage("Plan ID is required"),
-    body("paymentMethodDetails")
-      .isObject()
-      .withMessage("Payment method details are required"),
-    body("paymentMethodDetails.cardNumber")
-      .isString()
-      .notEmpty()
-      .withMessage("Card number is required"),
-    body("paymentMethodDetails.expiryDate")
-      .isString()
-      .notEmpty()
-      .withMessage("Expiry date is required"),
-    body("paymentMethodDetails.cvc")
-      .isString()
-      .notEmpty()
-      .withMessage("CVC is required"),
+    body("paymentMethodId").isString().withMessage("Payment id is required"),
+    body("provider").isString().notEmpty().withMessage("Provider is required"),
+
     validateRequest,
   ],
-  SubscriptionController.createSubscription
+  (req: Request, res: Response) => {
+    const controller = SubscriptionController.getInstance(req.body.provider);
+    return controller.createSubscription(req, res);
+  }
+);
+
+subscriptionsRouter.post(
+  "/stripe/webhook",
+  bodyParser.json({
+    verify: (req, res, buf: Buffer) => {
+      (req as any).rawBody = buf.toString();
+    },
+  }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const controller = SubscriptionController.getInstance("stripe");
+      const result = await controller.handleWebhook(req, res);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message || error });
+    }
+  }
 );
