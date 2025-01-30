@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 export interface CustomerData {
   email: string;
   paymentMethodId?: string;
@@ -17,40 +18,22 @@ export interface SubscriptionCreateParams {
   price: number;
   interval: "month" | "year";
 }
-export interface IPaymentMethod {
-  id: string;
-  merchantId: string;
-  provider: string;
-  providerId: string;
-  paymentMethodType: string;
-  cardLast4?: string;
-  expiryDate?: string;
-  cvc?: string;
-  billingAddress?: {
-    street: string;
-    city: string;
-    state?: string;
-    postalCode: string;
-    country: string;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
+
 export interface PaymentProvider {
-  createCustomer(merchantId: string, data: CustomerData): Promise<string>;
+  createCustomer(
+    email: string,
+    paymentMethodId: string
+  ): Promise<Stripe.Customer>;
   createSubscription(
     customerId: string,
     planId: string,
-    paymentMethod: IPaymentMethod
+    paymentMethodId: string
   ): Promise<SubscriptionResult>;
   cancelSubscription(subscriptionId: string): Promise<void>;
   updatePaymentMethod(
     customerId: string,
     paymentMethodId: string
   ): Promise<void>;
-  createPaymentMethod(
-    customerId: string,
-    paymentMethod: IPaymentMethod
-  ): Promise<IPaymentMethod>;
+  createPaymentMethod(paymentMethodId: string): Promise<Stripe.PaymentMethod>;
   handleWebhook(payload: any, headers: any): Promise<void>;
 }
