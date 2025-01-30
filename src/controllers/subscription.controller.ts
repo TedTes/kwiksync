@@ -1,22 +1,17 @@
 import { Request, Response } from "express";
+import Stripe from "stripe";
 import { AppDataSource } from "../config";
-import { IPaymentMethod, PaymentProvider } from "../interfaces";
 import { PaymentService } from "../services";
-import { paymentConfig } from "../config";
+
 import { Merchant, Plan, MerchantSubscription, PaymentMethod } from "../models";
 export class SubscriptionController {
   static async createSubscription(req: Request, res: Response) {
     try {
-      const { merchantId, planId, paymentMethodObject } = req.body;
-      const providerConfig = paymentConfig[paymentMethodObject.provider];
-      if (!providerConfig) {
-        throw new Error(
-          `Invalid configuration for provider: ${paymentMethodObject.provider}`
-        );
-      }
+      const { email, planId, paymentMethodId, provider } = req.body;
+
       const merchantRepo = AppDataSource.getRepository(Merchant);
       const merchant = await merchantRepo.findOne({
-        where: { id: merchantId },
+        where: { email: email },
       });
       if (!merchant) {
         throw res.status(404).json({ error: "Merchant not found" });
@@ -30,20 +25,19 @@ export class SubscriptionController {
         throw res.status(404).json({ error: "Active plan not found" });
       }
 
-      const paymentService = new PaymentService(
-        paymentMethodObject.provider,
-        providerConfig
+      const paymentService = PaymentService.getProvider(provider);
+
+      const customer: Stripe.Customer = await paymentService.createCustomer(
+        email,
+        paymentMethodId
       );
-      const paymentMethodRes: IPaymentMethod =
-        await paymentService.createPaymentMethod(
-          merchantId,
-          paymentMethodObject
-        );
+      const paymentMethod: Stripe.PaymentMethod =
+        await paymentService.createPaymentMethod(paymentMethodId);
 
       const subscriptionResult = await paymentService.createSubscription(
-        merchantId,
+        customer.id,
         planId,
-        paymentMethodRes
+        paymentMethod.id
       );
       if (!subscriptionResult) {
         throw res.status(500).json({ error: "Failed to create subscription" });
@@ -54,7 +48,7 @@ export class SubscriptionController {
       const subscription = new MerchantSubscription();
       const paymentMethodRepo = AppDataSource.getRepository(PaymentMethod);
       const paymentMethodIns = await paymentMethodRepo.findOne({
-        where: { id: paymentMethodRes.id },
+        where: { id: paymentMethod.id },
       });
       if (!paymentMethodIns) {
         throw res.status(404).json({ error: "Payment method not found" });
