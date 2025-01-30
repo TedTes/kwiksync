@@ -187,14 +187,27 @@ declare global {
   }
 
   //payment provider types
-  type PaymentProviderConfig = {
+  type PaymentProviderKey = "stripe" | "paypal";
+  interface StripeConfig {
     secretKey: string;
     publishableKey: string;
-  };
+  }
+  interface PayPalConfig {
+    clientId: string | undefined;
+    clientSecret: string | undefined;
+  }
+  type PaymentConfig = StripeConfig | PayPalConfig;
 
-  type PaymentConfig = {
-    [key: string]: PaymentProviderConfig; // Allows any string key
-  };
+  interface PaymentConfig {
+    stripe: {
+      secretKey: string | undefined;
+      publishableKey: string | undefined;
+    };
+    paypal: {
+      clientId: string | undefined;
+      clientSecret: string | undefined;
+    };
+  }
 }
 
 export {};
