@@ -14,7 +14,9 @@ import {
   Play,
   Users,
 } from "lucide-react";
-
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { PayPalPaymentForm, StripePaymentForm } from "../components/payment";
 interface FeatureTab {
   id: string;
   title: string;
@@ -24,12 +26,16 @@ interface FeatureTab {
 }
 
 export const LandingPage = () => {
+  const stripePromise = loadStripe("YOUR_PUBLISHABLE_KEY");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [pricingPlans, setPlans] = useState<IPricingPlans[]>([]);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
     "monthly"
   );
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [provider, setProvider] = useState("stripe");
+  const [selectedPlan, setSelectedPlan] = useState<string>("starter");
+  const [isPlanSelected, setIsPlanSelected] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     if (localStorage.getItem("user")) navigate("/login");
@@ -145,7 +151,16 @@ export const LandingPage = () => {
   const handleLogin = () => {
     navigate("/login");
   };
+  const handleSelectedPricingPlanAction = (plan: string) => {
+    setSelectedPlan(plan);
+    setIsPlanSelected(true);
+  };
 
+  const handleProviderChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setProvider(event.target.value);
+  };
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Progress Indicator */}
@@ -338,7 +353,13 @@ export const LandingPage = () => {
                   </span>
                 </div>
 
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition mb-6">
+                <button
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition mb-6"
+                  onClick={handleSelectedPricingPlanAction.bind(
+                    null,
+                    plan.name
+                  )}
+                >
                   Choose {plan.name}
                 </button>
 
@@ -534,6 +555,26 @@ export const LandingPage = () => {
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}
       />
+      <div>
+        {isPlanSelected && (
+          <div>
+            <label>
+              Select Payment Provider:
+              <select value={provider} onChange={handleProviderChange}>
+                <option value="stripe">Stripe</option>
+                <option value="paypal">PayPal</option>
+              </select>
+            </label>
+
+            {provider === "stripe" && (
+              <Elements stripe={stripePromise}>
+                <StripePaymentForm plan={selectedPlan} />
+              </Elements>
+            )}
+            {provider === "paypal" && <PayPalPaymentForm plan={selectedPlan} />}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
