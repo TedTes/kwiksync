@@ -6,9 +6,7 @@ const LowStockAlerts: React.FC = () => {
 
   const fetchLowStockAlerts = async (): Promise<void> => {
     try {
-      const response = await api.get("/products/low-stock", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await api.get("/products/low-stock");
       setLowStockProducts(response.data.lowStockProducts);
     } catch (error) {
       console.error("Error fetching low-stock alerts:", error);
