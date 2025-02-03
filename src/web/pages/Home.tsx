@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Dashboard } from "./";
 import { OnboardingView, Profile } from "../components";
 import { useUserStore } from "../store";
+import { toast } from "react-hot-toast";
 interface User {
   id: string;
   email: string;
@@ -22,7 +23,9 @@ export const Home = () => {
         setIsLoading(true);
         setLoadingMessage("Checking user status...");
 
-        if (!user) return;
+        if (!user) {
+          toast.error("user not found!");
+        }
 
         setIsFirstLogin(isFirstLogin ?? true);
       } catch (error) {

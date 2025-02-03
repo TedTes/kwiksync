@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 import { api } from "../config";
@@ -39,15 +40,18 @@ export const Profile: React.FC = () => {
   ) => {
     try {
       const file = event.target.files?.[0];
-      if (!file) return;
+      if (!file) {
+        toast.error("file not found");
+        return;
+      }
 
       if (!file.type.startsWith("image/")) {
-        alert("Please upload an image file");
+        toast.error("Please upload an image file");
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size should be less than 5MB");
+        toast.error("File size should be less than 5MB");
         return;
       }
 
@@ -64,11 +68,11 @@ export const Profile: React.FC = () => {
 
       if (response.data?.photoUrl) {
         // TODO: Update user's photo URL in local storage or state
-        console.log("Photo updated successfully");
+        toast.success("Photo updated successfully");
       }
     } catch (error) {
       console.error("Error uploading photo:", error);
-      alert("Failed to upload photo. Please try again.");
+      toast.error("Failed to upload photo. Please try again.");
     } finally {
       setIsUploadingPhoto(false);
     }
