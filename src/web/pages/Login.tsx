@@ -65,7 +65,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       const handleMessage = async (event: MessageEvent) => {
         // if (event.origin !== vars.apiUrl) return;
 
-        if (event.data.success) {
+        if (event.data) {
           setUser(event.data.result);
           authWindow?.close();
           window?.removeEventListener("message", handleMessage);

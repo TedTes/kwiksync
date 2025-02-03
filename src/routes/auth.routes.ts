@@ -87,7 +87,7 @@ authRouter.get(
   passport.authenticate("google", { session: false }),
   (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id, email, role } = req.user as User;
+      const { id, email, role, name, picture } = req.user as User;
       // Generate tokens
       const { accessToken, refreshToken } = generateTokens({
         id,
@@ -99,7 +99,7 @@ authRouter.get(
       setCookie(res, "accessToken", accessToken);
       setCookie(res, "refreshToken", refreshToken);
 
-      const data = { id, email, role };
+      const data = { id, email, role, name, picture };
       res.send(`
       <script>
         window.opener.postMessage({
