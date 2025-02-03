@@ -131,7 +131,7 @@ export const sendMagicLink = async (email: string): Promise<void> => {
   } catch (error: any) {
     console.error("Send magic link error:", error);
     if (error.code === "EMAIL_ERROR") {
-      throw ErrorFactory.server("Failed to send magic link");
+      throw ErrorFactory.serverError("Failed to send magic link");
     }
     throw error;
   }
@@ -191,12 +191,11 @@ export const verifyMagicLink = async (
         id: user.id,
         email: user.email,
         role: user.role,
+        picture: user.picture,
+        name: user.name,
       },
     };
-  } catch (error) {
-    console.error("Verify magic link error:", error);
-    return {
-      isSuccess: false,
-    };
+  } catch (error: any) {
+    throw ErrorFactory.serverError(error);
   }
 };

@@ -78,7 +78,6 @@ export const sendMagicLinkController = async (
 
     if (!email || typeof email !== "string") {
       res.status(400).json({
-        success: false,
         message: "Email is required",
       });
       return;
@@ -86,7 +85,6 @@ export const sendMagicLinkController = async (
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       res.status(400).json({
-        success: false,
         message: "Invalid email format",
       });
       return;
@@ -97,7 +95,6 @@ export const sendMagicLinkController = async (
     const isRateLimited = await rateLimit.check(rateLimitKey);
     if (isRateLimited) {
       res.status(429).json({
-        success: false,
         message: "Too many requests. Please try again later.",
       });
       return;
@@ -107,7 +104,6 @@ export const sendMagicLinkController = async (
     await rateLimit.increment(rateLimitKey);
 
     res.status(200).json({
-      success: true,
       message: "Magic link sent successfully",
     });
   } catch (error: any) {
@@ -125,24 +121,16 @@ export const verifyMagicLinkController = async (
     const { token, email } = req.query;
 
     const result = await verifyMagicLink(token as string, email as string);
+    if (!result.accessToken || !result.refreshToken)
+      throw "Internal server error : missing access or refreshtoken";
 
-    if (result.isSuccess && result.accessToken && result.refreshToken) {
-      const { accessToken, refreshToken } = result;
-      setCookie(res, "accessToken", accessToken);
-      setCookie(res, "refreshToken", refreshToken);
-      res.status(200).json({
-        success: true,
-        message: "Authentication successful",
-        user: result.user,
-      });
-      return;
-    }
-
-    res.status(400).json({
-      success: result.isSuccess,
-      message: "Invalid or expired magic link",
+    const { accessToken, refreshToken } = result;
+    setCookie(res, "accessToken", accessToken);
+    setCookie(res, "refreshToken", refreshToken);
+    res.status(200).json({
+      message: "Authentication successful",
+      user: result.user,
     });
-    return;
   } catch (error) {
     console.error("Magic link verification error:", error);
     next(error);

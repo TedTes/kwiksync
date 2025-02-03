@@ -183,6 +183,8 @@ declare global {
       id: number;
       email: string;
       role: string;
+      picture: string;
+      name: string;
     };
   }
 

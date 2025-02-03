@@ -75,7 +75,7 @@ export const ErrorFactory = {
       ErrorTypes.NOT_FOUND_ERROR,
       message,
       errorCode || 404
-    );
+    ).toJSON();
   },
 
   conflict(message: string, errorCode?: number) {
@@ -83,7 +83,7 @@ export const ErrorFactory = {
       ErrorTypes.CONFLICT_ERROR,
       message,
       errorCode || 409
-    );
+    ).toJSON();
   },
 
   rateLimit(message: string = "Too many requests", errorCode?: number) {
@@ -91,10 +91,10 @@ export const ErrorFactory = {
       ErrorTypes.RATE_LIMIT_ERROR,
       message,
       errorCode || 429
-    );
+    ).toJSON();
   },
 
-  server(message: string = "Internal server error", errorCode?: number) {
+  serverError(message: string = "Internal server error", errorCode?: number) {
     return new CustomError(ErrorTypes.SERVER_ERROR, message, errorCode || 500);
   },
 };

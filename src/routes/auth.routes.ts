@@ -103,7 +103,6 @@ authRouter.get(
       res.send(`
       <script>
         window.opener.postMessage({
-          success: true,
           result: ${JSON.stringify(data)},
         }, "${allowedOrigin}");
         window.close();
@@ -114,7 +113,6 @@ authRouter.get(
       res.send(`
       <script>
         window.opener.postMessage({
-          success: false,
         });
         window.close();
       </script>
