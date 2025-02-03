@@ -105,7 +105,7 @@ export const verifyEmailService = async (): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error("Email service verification failed:", error);
-    throw ErrorFactory.server("Email service configuration error");
+    throw ErrorFactory.serverError("Email service configuration error");
   }
 };
 const validateEmailContent = (content: EmailContent): void => {
