@@ -11,15 +11,16 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { api } from "../config";
+import { useUserStore } from "../store";
 export const OverviewView = () => {
   const [weeklyData, setWeeklyData] = useState<IWeeklyData[]>([]);
   const [platformData, setPlatformData] = useState<IPlatformData[]>([]);
   const [recentActivity, setRecentActivity] = useState<IRecentActivity[]>([]);
   const [metrics, setMetrics] = useState<MerchantMetrics[]>([]);
+  const { user } = useUserStore();
   useEffect(() => {
     const fetchData = async () => {
-      const user = localStorage.getItem("user");
-      const userId = user && JSON.parse(user).id;
+      const userId = user && user.id;
       try {
         const results = await Promise.allSettled([
           api.get(`/analytics/weekly-revenue`),

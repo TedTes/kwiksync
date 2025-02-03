@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 import { Dashboard } from "./";
 import { OnboardingView, Profile } from "../components";
+import { useUserStore } from "../store";
 interface User {
   id: string;
   email: string;
@@ -14,15 +15,15 @@ export const Home = () => {
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [isFirstLogin, setIsFirstLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { user } = useUserStore();
   useEffect(() => {
     const checkUserStatus = async () => {
       try {
         setIsLoading(true);
         setLoadingMessage("Checking user status...");
-        const userData = localStorage.getItem("user");
-        if (!userData) return;
-        let { isFirstLogin } = JSON.parse(userData);
+
+        if (!user) return;
+
         setIsFirstLogin(isFirstLogin ?? true);
       } catch (error) {
         console.error("Error checking user status:", error);

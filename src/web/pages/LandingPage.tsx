@@ -17,6 +17,7 @@ import {
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { PayPalPaymentForm, StripePaymentForm } from "../components/payment";
+import { useUserStore } from "../store";
 interface FeatureTab {
   id: string;
   title: string;
@@ -36,9 +37,10 @@ export const LandingPage = () => {
   const [provider, setProvider] = useState("stripe");
   const [selectedPlan, setSelectedPlan] = useState<string>("starter");
   const [isPlanSelected, setIsPlanSelected] = useState(false);
+  const { user } = useUserStore();
   const navigate = useNavigate();
   useEffect(() => {
-    if (localStorage.getItem("user")) navigate("/login");
+    if (user) navigate("/login");
     const handleScroll = () => {
       const totalScroll =
         document.documentElement.scrollHeight - window.innerHeight;

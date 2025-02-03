@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../config";
-
+import { useUserStore } from "../store";
 export const VerifyPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-
+  const { user, setUser } = useUserStore();
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const existingUser = localStorage.getItem("user");
-        if (existingUser) {
+        if (user) {
           navigate("/dashboard");
           return;
         }
@@ -29,8 +28,8 @@ export const VerifyPage = () => {
         );
         const data = await response.data;
 
-        if (data.success) {
-          localStorage.setItem("user", JSON.stringify(data.user));
+        if (data.user) {
+          setUser(data.user);
           navigate("/dashboard");
         } else {
           navigate("/login?error=The link is invalid or expired");

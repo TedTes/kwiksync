@@ -2,21 +2,21 @@ import React, { useState, useEffect } from "react";
 import { ShoppingCart, Zap, AlertTriangle, X } from "lucide-react";
 import "../index.css";
 import { api } from "../config";
+import { useUserStore } from "../store";
 export const PlatformsView = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
     null
   );
   const [platformStat, setPlatformStat] = useState<PlatformConnection[]>([]);
+  const { user } = useUserStore();
 
   useEffect(() => {
     let mounted = true;
     async function fetchPlatformStat() {
       try {
-        const user = localStorage.getItem("user");
         if (!user) throw "Error : user not found!";
-        const { id } = JSON.parse(user);
 
-        const response = await api.get(`/platform/stat?id=${id}`);
+        const response = await api.get(`/platform/stat?id=${user.id}`);
         if (mounted && response && Array.isArray(response.data)) {
           setPlatformStat(response.data);
         }

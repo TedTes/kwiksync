@@ -20,7 +20,7 @@ import {
   BulkAddItems,
 } from "./";
 import { api } from "../config";
-
+import { useUserStore } from "../store";
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const styles = {
     low: "bg-yellow-100 text-yellow-800",
@@ -61,6 +61,7 @@ export const InventoryView = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showBulkAdd, setShowBulkAdd] = useState(false);
   const [suppliers, setSuppliers] = useState<SupplierInfo[]>([]);
+  const { user } = useUserStore();
   const { addToast } = useToast();
   //  useRef and useEffect for click outside handling
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -106,9 +107,8 @@ export const InventoryView = () => {
     let mounted = true;
     async function fetchInventory() {
       try {
-        const user = localStorage.getItem("user");
         if (!user) throw new Error("No user found");
-        const { id } = JSON.parse(user!);
+        const { id } = JSON.parse(user.id);
         const result = await api.get(`/inventory?id=${id}`);
         if (mounted && result?.data && Array.isArray(result.data)) {
           setInventory(result.data);

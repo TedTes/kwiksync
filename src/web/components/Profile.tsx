@@ -3,26 +3,23 @@ import { useNavigate } from "react-router-dom";
 
 import { api } from "../config";
 import { RefreshCw, User, LogOut } from "lucide-react";
-
+import { useUserStore } from "../store";
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
-
+  const { user, clearUser } = useUserStore();
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const handleLogout = async () => {
     try {
-      const user = localStorage.getItem("user");
       if (!user) throw new Error("User data not found");
 
-      const { email } = JSON.parse(user);
-      await api.post(`/auth/logout`, { userEmail: email });
-
-      localStorage.clear();
+      await api.post(`/auth/logout`, { userEmail: user.email });
+      clearUser();
       sessionStorage.clear();
     } catch (error) {
       console.error("Logout error:", error);

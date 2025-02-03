@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Search, Eye, Heart, Share2, ShoppingCart, Medal } from "lucide-react";
-
+import { useUserStore } from "../store";
 import { api } from "../config";
 const rankColors: Record<number, string> = {
   1: "text-yellow-500",
@@ -22,15 +22,14 @@ export const ProductAnalytics = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<TrendingProduct[]>([]);
   const [sortBy, setSortBy] = useState<SortByType>("engagement");
-
+  const { user } = useUserStore();
   useEffect(() => {
     let mounted = true;
     async function fetchProducts() {
       try {
-        const user = localStorage.getItem("user");
         if (!user) throw new Error("No user found");
-        const { id } = JSON.parse(user);
-        const response = await api.get(`/trending/products?id=${id}`);
+
+        const response = await api.get(`/trending/products?id=${user.id}`);
         console.log(response);
         if (
           mounted &&

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Mail, ArrowRight, Shield, Check, X, ArrowLeft } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api, vars } from "../config";
-
+import { useUserStore } from "../store";
 export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -11,12 +11,13 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user, setUser } = useUserStore();
 
   useEffect(() => {
     const error = searchParams.get("error");
     if (error) {
       setError(error);
-    } else if (localStorage.getItem("user")) {
+    } else if (user) {
       navigate("/home");
     }
   }, []);
@@ -65,7 +66,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         // if (event.origin !== vars.apiUrl) return;
 
         if (event.data.success) {
-          localStorage.setItem("user", JSON.stringify(event.data.result));
+          setUser(event.data.result);
           authWindow?.close();
           window?.removeEventListener("message", handleMessage);
           navigate("/home");

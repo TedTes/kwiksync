@@ -5,24 +5,25 @@ import { api } from "../config";
 import { toast } from "react-hot-toast";
 import { Profile } from "./";
 import axios from "axios";
+import { useUserStore } from "../store";
 export const OnboardingView = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(
     null
   );
+  const { user } = useUserStore();
 
   const handlePlatformConnect = async (platform: string) => {
     try {
       setIsConnecting(true);
       setConnectingPlatform(platform);
 
-      const user = localStorage.getItem("user");
       if (!user) {
         toast.error("User not found. Please log in.");
         throw new Error("User not found");
       }
-      const { id } = JSON.parse(user);
-      if (!id) {
+
+      if (!user.id) {
         toast.error("User ID not found");
         throw new Error("User ID not found");
       }
@@ -33,7 +34,7 @@ export const OnboardingView = () => {
       const userIdInput = document.createElement("input");
       userIdInput.type = "hidden";
       userIdInput.name = "userId";
-      userIdInput.value = id;
+      userIdInput.value = user.id;
 
       form.appendChild(userIdInput);
       document.body.appendChild(form);
