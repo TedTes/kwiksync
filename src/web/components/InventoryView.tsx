@@ -108,8 +108,8 @@ export const InventoryView = () => {
     async function fetchInventory() {
       try {
         if (!user) throw new Error("No user found");
-        const { id } = JSON.parse(user.id);
-        const result = await api.get(`/inventory?id=${id}`);
+
+        const result = await api.get(`/inventory?id=${user.id}`);
         if (mounted && result?.data && Array.isArray(result.data)) {
           setInventory(result.data);
           setFilteredInventory(result.data);

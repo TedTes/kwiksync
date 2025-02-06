@@ -47,7 +47,8 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       setIsLoading(false);
     }
   };
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     try {
       // Open Google OAuth in new window
       const width = 500;
@@ -178,7 +179,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
           )}
 
           {/* Login Form */}
-          <form onSubmit={handleEmailSubmit} className="space-y-6">
+          <form onSubmit={(e) => handleEmailSubmit(e)} className="space-y-6">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="w-5 h-5 text-gray-400" />
@@ -221,7 +222,7 @@ export const Login: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             </div>
 
             <motion.button
-              onClick={handleGoogleLogin}
+              onClick={(e) => handleGoogleLogin(e)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full flex items-center justify-center py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"

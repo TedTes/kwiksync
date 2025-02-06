@@ -35,7 +35,7 @@ export const Home = () => {
       }
     };
     checkUserStatus();
-  }, []);
+  }, [user]);
 
   return (
     <div className="w-full bg-gray-50">

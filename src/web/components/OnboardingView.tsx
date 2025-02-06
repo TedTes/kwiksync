@@ -13,7 +13,11 @@ export const OnboardingView = () => {
   );
   const { user } = useUserStore();
 
-  const handlePlatformConnect = async (platform: string) => {
+  const handlePlatformConnect = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    platform: string
+  ) => {
+    e.preventDefault();
     try {
       setIsConnecting(true);
       setConnectingPlatform(platform);
@@ -34,7 +38,7 @@ export const OnboardingView = () => {
       const userIdInput = document.createElement("input");
       userIdInput.type = "hidden";
       userIdInput.name = "userId";
-      userIdInput.value = user.id;
+      userIdInput.value = user.id.toString();
 
       form.appendChild(userIdInput);
       document.body.appendChild(form);
@@ -106,10 +110,10 @@ export const OnboardingView = () => {
             {platforms.map((platform) => (
               <button
                 key={platform.id}
-                onClick={() => {
-                  return (
-                    !platform.comingSoon && handlePlatformConnect(platform.id)
-                  );
+                onClick={async (e) => {
+                  if (!platform.comingSoon) {
+                    return await handlePlatformConnect(e, platform.id);
+                  }
                 }}
                 disabled={isConnecting || platform.comingSoon}
                 className={`
