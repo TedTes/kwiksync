@@ -12,12 +12,6 @@ export const Profile: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const { user, clearUser } = useUserStore();
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, []);
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -91,7 +85,7 @@ export const Profile: React.FC = () => {
         >
           <div className="relative flex-shrink-0">
             <img
-              src="/api/placeholder/40/40"
+              src={user.picture}
               alt="Profile"
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-gray-100"
             />
