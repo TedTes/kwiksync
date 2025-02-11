@@ -217,6 +217,17 @@ declare global {
       rawBody?: string;
     }
   }
+
+  //sync types
+  interface PlatformSyncStatus {
+    jobId: string;
+    platform: string;
+    status: "pending" | "completed" | "failed";
+    actualStock?: number;
+    error?: string;
+    createdAt: string;
+    completedAt?: string;
+  }
 }
 
 export {};
