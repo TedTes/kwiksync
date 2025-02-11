@@ -1,5 +1,5 @@
 import { InventoryRepository } from "../repositories";
-
+import { platformSyncQueue } from "../queues";
 export class InventoryService {
   static async getMerchantInventory(
     merchantId: number
@@ -58,7 +58,7 @@ export class InventoryService {
     // Add to job queue
     await Promise.all(
       syncJobs.map((job) =>
-        PlatformSyncQueue.add("syncInventory", job, {
+        platformSyncQueue.add("syncInventory", job, {
           attempts: 3,
           backoff: {
             type: "exponential",
