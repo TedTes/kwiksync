@@ -16,7 +16,39 @@ export class ShopifyAPI {
       "X-Shopify-Access-Token": this.accessToken,
     };
   }
+  async updateStock(productId: string, stock: number): Promise<void> {
+    try {
+      // TODO: Shopify Admin API
+      const response = await fetch(
+        `${this.baseURL}/inventory_levels/set.json`,
+        {
+          method: "POST",
+          headers: this.getHeaders(),
+          body: JSON.stringify({
+            inventory_item_id: productId,
+            available: stock,
+          }),
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error(`Shopify API error: ${response.statusText}`);
+      }
+    } catch (error: any) {
+      throw new Error(`Failed to update Shopify stock: ${error.message}`);
+    }
+  }
+
+  async getStock(productId: string): Promise<number> {
+    // TODO : Implementation for getting stock from Shopify
+
+    return 0;
+  }
+
+  async validateProduct(productId: string): Promise<boolean> {
+    //TODO: Validate if product exists in Shopify
+    return true;
+  }
   async getProducts(params = {}) {
     try {
       const response = await axios.get(`${this.baseURL}/products.json`, {
