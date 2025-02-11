@@ -27,7 +27,7 @@ import {
   InventorySyncScheduler,
   LowStockScheduler,
   TrendTrackingScheduler,
-} from "./schedulers";
+} from "./jobs";
 require("./config/passport");
 
 class ServerManager {
