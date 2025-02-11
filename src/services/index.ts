@@ -16,3 +16,4 @@ export * from "./auth.service";
 export * from "./pricing-plan.service";
 export * from "./payment-service.service";
 export * from "./stripe-provider.service";
+export * from "./platform-sync-processor.service";
