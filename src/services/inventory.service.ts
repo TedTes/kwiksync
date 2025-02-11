@@ -1,5 +1,6 @@
 import { InventoryRepository } from "../repositories";
 import { platformSyncQueue } from "../queues";
+import { PlatformApiFactory } from "../factories";
 export class InventoryService {
   static async getMerchantInventory(
     merchantId: number

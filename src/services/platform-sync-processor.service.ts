@@ -1,3 +1,4 @@
+import { PlatformApiFactory } from "../factories";
 export class PlatformSyncProcessor {
   async process(job: Job) {
     const { merchantId, platform, productId, newStock } = job.data;
