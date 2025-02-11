@@ -1,4 +1,4 @@
-import { fetchTikTokInventory } from "../integration/tiktokApi";
+import { fetchTikTokInventory } from "../integration/tiktok-api";
 import { fetchProductById, restockProductById, createProduct } from "./";
 
 export const syncTikTokInventory = async () => {

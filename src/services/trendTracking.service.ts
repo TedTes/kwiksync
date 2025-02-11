@@ -1,6 +1,6 @@
 import { AppDataSource } from "../config";
 import { TrendingProduct, Product } from "../models";
-import { fetchProductEngagement } from "../integration/tiktokApi";
+import { fetchProductEngagement } from "../integration/tiktok-api";
 import { sendTrendingNotification } from "./notification.service";
 import { getMerchantByProductId } from "../repositories";
 const productRepository = AppDataSource.getRepository(Product);
