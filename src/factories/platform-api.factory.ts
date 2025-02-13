@@ -1,24 +1,13 @@
 import { ShopifyAPI } from "../integration";
 import { PlatformApi } from "../interfaces";
 export class PlatformApiFactory {
-  private static configs: Record<string, any> = {
-    shopify: {
-      apiKey: process.env.SHOPIFY_API_KEY,
-      shopDomain: process.env.SHOPIFY_SHOP_DOMAIN,
-    },
-    tiktok: {
-      appKey: process.env.TIKTOK_APP_KEY,
-      appSecret: process.env.TIKTOK_APP_SECRET,
-      accessToken: process.env.TIKTOK_ACCESS_TOKEN,
-    },
-    instagram: {
-      accessToken: process.env.INSTAGRAM_ACCESS_TOKEN,
-    },
-  };
-
   private static instances: Record<string, PlatformApi> = {};
 
-  static getApi(platform: string): PlatformApi {
+  static getApi(
+    platform: string,
+    accessToken: string,
+    shop: string
+  ): PlatformApi {
     // Return cached instance if exists
     if (this.instances[platform]) {
       return this.instances[platform];
@@ -27,7 +16,7 @@ export class PlatformApiFactory {
     // Create new instance based on platform
     switch (platform.toLowerCase()) {
       case "shopify":
-        this.instances[platform] = new ShopifyAPI(this.configs.shopify);
+        this.instances[platform] = new ShopifyAPI(shop, accessToken);
         break;
       case "tiktok":
         //   this.instances[platform] = new TikTokApi(this.configs.tiktok);
@@ -44,7 +33,6 @@ export class PlatformApiFactory {
 
   // Method to refresh configurations (useful for testing or token updates)
   static updateConfig(platform: string, config: any): void {
-    this.configs[platform] = config;
     // Clear cached instance to force new instance with new config
     delete this.instances[platform];
   }

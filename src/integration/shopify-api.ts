@@ -1,6 +1,7 @@
 import axios from "axios";
+import { PlatformApi } from "../interfaces";
 
-export class ShopifyAPI {
+export class ShopifyAPI implements PlatformApi {
   private shop: string;
   private accessToken: string;
   private baseURL: string;
